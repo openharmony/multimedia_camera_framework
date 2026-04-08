@@ -303,6 +303,9 @@ const std::vector<napi_property_descriptor> CameraSessionNapi::white_balance_pro
     DECLARE_NAPI_FUNCTION("setWhiteBalanceMode", CameraSessionNapi::SetWhiteBalanceMode),
     DECLARE_NAPI_FUNCTION("getWhiteBalance", CameraSessionNapi::GetWhiteBalance),
     DECLARE_NAPI_FUNCTION("setWhiteBalance", CameraSessionNapi::SetWhiteBalance),
+    DECLARE_NAPI_FUNCTION("getColorTintRange", CameraSessionNapi::GetColorTintRange),
+    DECLARE_NAPI_FUNCTION("getColorTint", CameraSessionNapi::GetColorTint),
+    DECLARE_NAPI_FUNCTION("setColorTint", CameraSessionNapi::SetColorTint),
 };
 
 const std::vector<napi_property_descriptor> CameraSessionNapi::auto_switch_props = {
