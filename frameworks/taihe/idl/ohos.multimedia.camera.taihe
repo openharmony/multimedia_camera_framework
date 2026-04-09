@@ -879,11 +879,15 @@ interface PhotoSession : Session, Flash, Zoom, AutoExposure, AutoDeviceSwitch, C
 
   GetSpecificImplPtr(): i64;
 
-  OnIsoInfoChange(callback:(data: IsoInfo)=> void): void;
-  OffIsoInfoChange(callback: Optional<(data: IsoInfo)=> void>): void;
+  @rename("onIsoInfoChange")
+  OnIsoInfoChangeWithoutErr(callback:(data: IsoInfo)=> void): void;
+  @rename("offIsoInfoChange")
+  OffIsoInfoChangeWithoutErr(callback: Optional<(data: IsoInfo)=> void>): void;
 
-  OnExposureInfoChange(callback:(data: ExposureInfo)=> void): void;
-  OffExposureInfoChange(callback: Optional<(data: ExposureInfo)=> void>): void;
+  @rename("onExposureInfoChange")
+  OnExposureInfoChangeWithoutErr(callback:(data: ExposureInfo)=> void): void;
+  @rename("offExposureInfoChange")
+  OffExposureInfoChangeWithoutErr(callback: Optional<(data: ExposureInfo)=> void>): void;
 }
 
 interface PhotoConflictFunctions : ZoomQuery, MacroQuery {
@@ -1684,11 +1688,15 @@ interface TimeLapsePhotoSession : Session, Focus, ManualFocus, AutoExposure, Man
   OnFocusStateChange(callback: (err: @sts_type("BusinessError<void>") Opaque, data: FocusState)=> void): void;
   OffFocusStateChange(callback: Optional<(err: @sts_type("BusinessError<void>") Opaque, data: FocusState)=> void>): void;
 
-  OnIsoInfoChange(callback: (err: @sts_type("BusinessError<void>") Opaque, data: IsoInfo)=> void): void;
-  OffIsoInfoChange(callback: Optional<(err: @sts_type("BusinessError<void>") Opaque, data: IsoInfo)=> void>): void;
+  @rename("onIsoInfoChange")
+  OnIsoInfoChangeWithErr(callback: (err: @sts_type("BusinessError<void>") Opaque, data: IsoInfo)=> void): void;
+  @rename("offIsoInfoChange")
+  OffIsoInfoChangeWithErr(callback: Optional<(err: @sts_type("BusinessError<void>") Opaque, data: IsoInfo)=> void>): void;
 
-  OnExposureInfoChange(callback: (err: @sts_type("BusinessError<void>") Opaque, data: ExposureInfo)=> void): void;
-  OffExposureInfoChange(callback: Optional<(err: @sts_type("BusinessError<void>") Opaque, data: ExposureInfo)=> void>): void;
+  @rename("onExposureInfoChange")
+  OnExposureInfoChangeWithErr(callback: (err: @sts_type("BusinessError<void>") Opaque, data: ExposureInfo)=> void): void;
+  @rename("offExposureInfoChange")
+  OffExposureInfoChangeWithErr(callback: Optional<(err: @sts_type("BusinessError<void>") Opaque, data: ExposureInfo)=> void>): void;
 
   OnTryAEInfoChange(callback: (err: @sts_type("BusinessError<void>") Opaque, data: TryAEInfo)=> void): void;
   OffTryAEInfoChange(callback: Optional<(err: @sts_type("BusinessError<void>") Opaque, data: TryAEInfo)=> void>): void;
@@ -2023,11 +2031,15 @@ interface ProfessionalPhotoSession : Session, AutoExposure, ManualExposure, Focu
   OnSmoothZoomInfoAvailable(callback: (err: @sts_type("BusinessError<void>") Opaque, data: SmoothZoomInfo)=> void): void;
   OffSmoothZoomInfoAvailable(callback: Optional<(err: @sts_type("BusinessError<void>") Opaque, data: SmoothZoomInfo)=> void>);
 
-  OnIsoInfoChange(callback: (err: @sts_type("BusinessError<void>") Opaque, data: IsoInfo)=> void): void;
-  OffIsoInfoChange(callback: Optional<(err: @sts_type("BusinessError<void>") Opaque, data: IsoInfo)=> void>);
+  @rename("onIsoInfoChange")
+  OnIsoInfoChangeWithErr(callback: (err: @sts_type("BusinessError<void>") Opaque, data: IsoInfo)=> void): void;
+  @rename("offIsoInfoChange")
+  OffIsoInfoChangeWithErr(callback: Optional<(err: @sts_type("BusinessError<void>") Opaque, data: IsoInfo)=> void>);
 
-  OnExposureInfoChange(callback: (err: @sts_type("BusinessError<void>") Opaque, data: ExposureInfo)=> void): void;
-  OffExposureInfoChange(callback: Optional<(err: @sts_type("BusinessError<void>") Opaque, data: ExposureInfo)=> void>);
+  @rename("onExposureInfoChange")
+  OnExposureInfoChangeWithErr(callback: (err: @sts_type("BusinessError<void>") Opaque, data: ExposureInfo)=> void): void;
+  @rename("offExposureInfoChange")
+  OffExposureInfoChangeWithErr(callback: Optional<(err: @sts_type("BusinessError<void>") Opaque, data: ExposureInfo)=> void>);
 
   OnApertureInfoChange(callback: (err: @sts_type("BusinessError<void>") Opaque, data: ApertureInfo)=> void): void;
   OffApertureInfoChange(callback: Optional<(err: @sts_type("BusinessError<void>") Opaque, data: ApertureInfo)=> void>);
@@ -2092,11 +2104,15 @@ interface ProfessionalVideoSession : Session, AutoExposure, ManualExposure, Focu
   OnSmoothZoomInfoAvailable(callback: (err: @sts_type("BusinessError<void>") Opaque, data: SmoothZoomInfo)=> void): void;
   OffSmoothZoomInfoAvailable(callback: Optional<(err: @sts_type("BusinessError<void>") Opaque, data: SmoothZoomInfo)=> void>);
 
-  OnIsoInfoChange(callback: (err: @sts_type("BusinessError<void>") Opaque, data: IsoInfo)=> void): void;
-  OffIsoInfoChange(callback: Optional<(err: @sts_type("BusinessError<void>") Opaque, data: IsoInfo)=> void>);
+  @rename("onIsoInfoChange")
+  OnIsoInfoChangeWithErr(callback: (err: @sts_type("BusinessError<void>") Opaque, data: IsoInfo)=> void): void;
+  @rename("offIsoInfoChange")
+  OffIsoInfoChangeWithErr(callback: Optional<(err: @sts_type("BusinessError<void>") Opaque, data: IsoInfo)=> void>);
 
-  OnExposureInfoChange(callback: (err: @sts_type("BusinessError<void>") Opaque, data: ExposureInfo)=> void): void;
-  OffExposureInfoChange(callback: Optional<(err: @sts_type("BusinessError<void>") Opaque, data: ExposureInfo)=> void>);
+  @rename("onExposureInfoChange")
+  OnExposureInfoChangeWithErr(callback: (err: @sts_type("BusinessError<void>") Opaque, data: ExposureInfo)=> void): void;
+  @rename("offExposureInfoChange")
+  OffExposureInfoChangeWithErr(callback: Optional<(err: @sts_type("BusinessError<void>") Opaque, data: ExposureInfo)=> void>);
 
   OnApertureInfoChange(callback: (err: @sts_type("BusinessError<void>") Opaque, data: ApertureInfo)=> void): void;
   OffApertureInfoChange(callback: Optional<(err: @sts_type("BusinessError<void>") Opaque, data: ApertureInfo)=> void>);
