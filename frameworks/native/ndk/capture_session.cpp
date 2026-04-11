@@ -1027,9 +1027,7 @@ Camera_ErrorCode OH_CaptureSession_GetRAWCaptureZoomRatioRange(
     CHECK_RETURN_RET_ELOG(session == nullptr, CAMERA_INVALID_ARGUMENT, "Invalid argument, session is null!");
     CHECK_RETURN_RET_ELOG(minZoom == nullptr, CAMERA_INVALID_ARGUMENT, "Invalid argument, minZoom is null!");
     CHECK_RETURN_RET_ELOG(maxZoom == nullptr, CAMERA_INVALID_ARGUMENT, "Invalid argument, maxZoom is null!");
-
-    session->GetRAWCaptureZoomRatioRange(minZoom, maxZoom);
-    return CAMERA_OK;
+    return session->GetRAWCaptureZoomRatioRange(minZoom, maxZoom);
 }
 
 Camera_ErrorCode OH_CaptureSession_GetSupportedPhysicalApertures(
@@ -1055,9 +1053,9 @@ Camera_ErrorCode OH_CaptureSession_GetPhysicalAperture(const Camera_CaptureSessi
     CHECK_RETURN_RET_ELOG(session == nullptr, CAMERA_INVALID_ARGUMENT, "Invalid argument, session is null!");
     CHECK_RETURN_RET_ELOG(aperture == nullptr, CAMERA_INVALID_ARGUMENT, "Invalid argument, aperture is null!");
     float fAperture = 0.0f;
-    session->GetPhysicalAperture(&fAperture);
+    Camera_ErrorCode ret = session->GetPhysicalAperture(&fAperture);
     *aperture = static_cast<double>(fAperture);
-    return CAMERA_OK;
+    return ret;
 }
 
 Camera_ErrorCode OH_CaptureSession_SetPhysicalAperture(const Camera_CaptureSession* session, double aperture)

@@ -5415,8 +5415,10 @@ napi_value CameraSessionNapi::SetExposureDuration(napi_env env, napi_callback_in
     napi_get_undefined(env, &result);
     CameraSessionNapi* cameraSessionNapi = nullptr;
     CameraNapiParamParser jsParamParser(env, info, cameraSessionNapi, exposureDurationValue);
-    CHECK_RETURN_RET_ELOG(!jsParamParser.AssertStatus(OPERATION_NOT_ALLOWED, "parse parameter occur error"), nullptr,
-        "CameraSessionNapi::IsOISModeSupported parse parameter occur error");
+    if (!jsParamParser.IsStatusOk()) {
+        exposureDurationValue = 0; // use default value
+        MEDIA_ERR_LOG("CameraSessionNapi::SetExposureDuration get input fail");
+    }
     if (cameraSessionNapi->cameraSession_ != nullptr) {
         MEDIA_DEBUG_LOG("SetExposureDuration : exposureDuration = %{public}d", exposureDurationValue);
         cameraSessionNapi->cameraSession_->LockForControl();
@@ -5424,10 +5426,11 @@ napi_value CameraSessionNapi::SetExposureDuration(napi_env env, napi_callback_in
             cameraSessionNapi->cameraSession_->SetSensorExposureTime(static_cast<uint32_t>(exposureDurationValue));
         cameraSessionNapi->cameraSession_->UnlockForControl();
         if (!CameraNapiUtils::CheckError(env, retCode)) {
-            return result;
+            return nullptr;
         }
     } else {
         MEDIA_ERR_LOG("SetExposureDuration call Failed!");
+        return nullptr;
     }
     return result;
 }
