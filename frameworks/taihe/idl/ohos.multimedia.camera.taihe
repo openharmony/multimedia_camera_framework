@@ -774,6 +774,11 @@ enum FlashState: i32 {
   FLASH_STATE_FLASHING = 2,
 }
 
+enum ExposureState: i32 {
+  EXPOSURE_STATE_SCAN = 0,
+  EXPOSURE_STATE_CONVERGED,
+}
+
 interface PhotoSession : Session, Flash, Zoom, AutoExposure, AutoDeviceSwitch, ColorManagement, Focus, Macro, WhiteBalance, ManualIso, ManualFocus, ManualExposure, Aperture, OIS {
   Preconfig(preconfigType: PreconfigType, preconfigRatio: Optional<PreconfigRatio>): void;
   CanPreconfig(preconfigType: PreconfigType, preconfigRatio: Optional<PreconfigRatio>): bool;
@@ -884,6 +889,9 @@ interface PhotoSession : Session, Flash, Zoom, AutoExposure, AutoDeviceSwitch, C
 
   OnExposureInfoChange(callback:(data: ExposureInfo)=> void): void;
   OffExposureInfoChange(callback: Optional<(data: ExposureInfo)=> void>): void;
+
+  OnExposureStateChange(callback:(data: ExposureState)=> void): void;
+  OffExposureStateChange(callback: Optional<(data: ExposureState)=> void>): void;
 }
 
 interface PhotoConflictFunctions : ZoomQuery, MacroQuery {

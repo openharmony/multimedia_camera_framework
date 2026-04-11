@@ -334,6 +334,28 @@ private:
     OH_CaptureSession_OnExposureDurationChange exposureInfoCallback_ = nullptr;
 };
 
+class InnerCaptureSessionExposureStateCallback : public ExposureCallback {
+public:
+    InnerCaptureSessionExposureStateCallback(
+        const Camera_CaptureSession* captureSession, void* context,
+        OH_CaptureSession_OnExposureStateChange exposureStateCallback)
+        : captureSession_(captureSession), context_(context), exposureStateCallback_(exposureStateCallback) {};
+    ~InnerCaptureSessionExposureStateCallback() = default;
+ 
+    void OnExposureState(ExposureState state) override
+    {
+        MEDIA_INFO_LOG("OnExposureState is called!");
+        int32_t exState = static_cast<int32_t>(state);
+        CHECK_RETURN(captureSession_ == nullptr || exposureStateCallback_ == nullptr);
+        exposureStateCallback_(context_, static_cast<OH_Camera_ExposureState>(exState));
+    }
+ 
+private:
+    const Camera_CaptureSession* captureSession_;
+    void* context_ = nullptr;
+    OH_CaptureSession_OnExposureStateChange exposureStateCallback_ = nullptr;
+};
+
 bool IsCurrentModeInList(OHOS::sptr<CaptureSession> innerCaptureSession, const std::vector<SceneMode> modes)
 {
     CHECK_RETURN_RET(innerCaptureSession == nullptr, false);
@@ -1609,4 +1631,27 @@ Camera_ErrorCode Camera_CaptureSession::GetZoomPointInfos(
     int32_t ret = innerCaptureSession_->GetZoomPointInfos(zoomPointInfoList);
     MEDIA_DEBUG_LOG("GetZoomPointInfos ret:[%{public}d]", ret);
     return FrameworkToNdkCameraError(ret);
+}
+
+Camera_ErrorCode Camera_CaptureSession::RegisterExposureStateCallback(
+    void* context, OH_CaptureSession_OnExposureStateChange exposureStateChange) const
+{
+    SceneMode mode = innerCaptureSession_->GetMode();
+    CHECK_RETURN_RET(mode != SceneMode::CAPTURE, Camera_ErrorCode::CAMERA_OK);
+    shared_ptr<InnerCaptureSessionExposureStateCallback> innerExposureStateCallback =
+        make_shared<InnerCaptureSessionExposureStateCallback>(this, context, exposureStateChange);
+    CHECK_RETURN_RET_ELOG(
+        innerExposureStateCallback == nullptr, CAMERA_OK, "create innerCallback failed!");
+    innerCaptureSession_->SetExposureCallback(innerExposureStateCallback);
+    return CAMERA_OK;
+}
+ 
+Camera_ErrorCode Camera_CaptureSession::UnregisterExposureStateCallback(
+    void* context, OH_CaptureSession_OnExposureStateChange exposureStateChange) const
+{
+    MEDIA_INFO_LOG("Camera_CaptureSession::UnregisterExposureStateCallback");
+    SceneMode mode = innerCaptureSession_->GetMode();
+    CHECK_RETURN_RET(mode != SceneMode::CAPTURE, Camera_ErrorCode::CAMERA_OK);
+    innerCaptureSession_->SetExposureCallback(nullptr);
+    return CAMERA_OK;
 }

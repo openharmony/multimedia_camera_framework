@@ -84,11 +84,16 @@ protected:
         std::shared_ptr<uintptr_t> callback, bool isOnce) override;
     void UnregisterIsoInfoCallbackListener(const std::string& eventName,
         std::shared_ptr<uintptr_t> callback) override;
+    void RegisterExposureStateCallbackListener(const std::string& eventName, std::shared_ptr<uintptr_t> callback,
+        bool isOncce) override;
+    void UnregisterExposureStateCallbackListener(const std::string& eventName,
+        std::shared_ptr<uintptr_t> callback) override;
         
 private:
     std::shared_ptr<ExposureInfoCallbackListener> exposureInfoCallback_ = nullptr;
     std::shared_ptr<FlashStateCallbackListener> flashStateCallback_ = nullptr;
     std::shared_ptr<IsoInfoSyncCallbackListener> isoInfoCallback_ = nullptr;
+    std::shared_ptr<ExposureStateCallbackListener> exposureStateCallback_ = nullptr;
 };
 } // namespace Camera
 } // namespace Ani

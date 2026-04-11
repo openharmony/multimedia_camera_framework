@@ -484,6 +484,18 @@ typedef enum Camera_ExposureMode {
     EXPOSURE_MODE_MANUAL = 3,
 } Camera_ExposureMode;
 
+typedef enum OH_Camera_ExposureState {
+    /**
+     * Scan state.
+     */
+    OH_EXPOSURE_STATE_SCAN = 0,
+ 
+    /**
+     * Converged state.
+     */
+    OH_EXPOSURE_STATE_CONVERGED = 1
+} OH_Camera_ExposureState;
+
 /**
  * @brief Enum for exposure metering mode.
  *
