@@ -369,5 +369,25 @@ void PhotoSessionImpl::UnregisterIsoInfoCallbackListener(const std::string& even
     CHECK_RETURN_ELOG(isoInfoCallback_ == nullptr, "isoInfoCallback is null");
     isoInfoCallback_->RemoveCallbackRef(eventName, callback);
 }
+
+void PhotoSessionImpl::RegisterExposureStateCallbackListener(const std::string& eventName,
+    std::shared_ptr<uintptr_t> callback, bool isOnce)
+{
+    CHECK_RETURN_ELOG(photoSession_ == nullptr, "photoSession_ is null!");
+    if (exposureStateCallback_ == nullptr) {
+        ani_env *env = get_env();
+        exposureStateCallback_ = std::make_shared<ExposureStateCallbackListener>(env);
+        photoSession_->SetExposureCallback(exposureStateCallback_);
+    }
+    exposureStateCallback_->SaveCallbackReference(eventName, callback, isOnce);
+}
+ 
+void PhotoSessionImpl::UnregisterExposureStateCallbackListener(const std::string& eventName,
+    std::shared_ptr<uintptr_t> callback)
+{
+    CHECK_RETURN_ELOG(exposureStateCallback_ == nullptr, "exposureStateCallback is null!");
+    exposureStateCallback_->RemoveCallbackRef(eventName, callback);
+}
+
 } // namespace Camera
 } // namespace Ani

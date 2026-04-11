@@ -177,6 +177,17 @@ public:
 private:
     void OnIsoInfoChangedCallback(OHOS::CameraStandard::IsoInfo info) const;
 };
+
+class ExposureStateCallbackListener : public OHOS::CameraStandard::ExposureCallback, public ListenerBase,
+    public std::enable_shared_from_this<ExposureStateCallbackListener> {
+public:
+    ExposureStateCallbackListener(ani_env* env) : ListenerBase(env) {}
+    ~ExposureStateCallbackListener() = default;
+    void OnExposureState(OHOS::CameraStandard::ExposureCallback::ExposureState state) override;
+private:
+    void OnExposureStateChangedCallback(OHOS::CameraStandard::ExposureCallback::ExposureState info) const;
+};
+
 class SessionImpl : public CameraAniEventEmitter<SessionImpl>,
                     virtual public SessionBase {
 public:
@@ -260,6 +271,8 @@ public:
     void OffFlashStateChange(optional_view<callback<void(FlashState)>> callback);
     void OnIsoInfoChange(callback_view<void(IsoInfo const&)> callback);
     void OffIsoInfoChange(optional_view<callback<void(IsoInfo const&)>> callback);
+    void OnExposureStateChange(callback_view<void(ExposureState)> callback);
+    void OffExposureStateChange(optional_view<callback<void(ExposureState)>> callback);
 
     std::shared_ptr<SessionCallbackListener> sessionCallback_ = nullptr;
     std::shared_ptr<FocusCallbackListener> focusCallback_ = nullptr;
@@ -306,6 +319,10 @@ private:
     static const EmitterFunctions fun_map_;
 
 protected:
+    virtual void RegisterExposureStateCallbackListener(const std::string& eventName,
+        std::shared_ptr<uintptr_t> callback, bool isOnce);
+    virtual void UnregisterExposureStateCallbackListener(const std::string& eventName,
+        std::shared_ptr<uintptr_t> callback);
     virtual void RegisterIsoInfoCallbackListener(const std::string& eventName, std::shared_ptr<uintptr_t> callback,
         bool isOnce);
     virtual void UnregisterIsoInfoCallbackListener(const std::string& eventName, std::shared_ptr<uintptr_t> callback);
