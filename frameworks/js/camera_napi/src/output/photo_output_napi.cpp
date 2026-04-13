@@ -95,6 +95,16 @@ void ProcessCapture(PhotoOutputAsyncContext* context, bool isBurst)
         if (context->rotation != -1) {
             capSettings->SetRotation(static_cast<PhotoCaptureSetting::RotationConfig>(context->rotation));
         }
+        if (context->hasPhotoSettings && context->compressionQuality != -1) {
+            int32_t compressionQuality = context->compressionQuality;
+            if (compressionQuality < 0 || compressionQuality > 100) {
+                MEDIA_WARNING_LOG("PhotoOutputAsyncContext: invalid compressionQuality=%{public}d, clamp to [0, 100]",
+                    compressionQuality);
+                compressionQuality = compressionQuality < 0 ? 0 : 100;
+            }
+            MEDIA_INFO_LOG("PhotoOutputAsyncContext: CompressionQuality is set to %{public}d", compressionQuality);
+            capSettings->SetCompressionQuality(compressionQuality);
+        }
         if (!context->isMirrorSettedByUser) {
             capSettings->SetMirror(context->objectInfo->GetEnableMirror());
         } else {
@@ -960,10 +970,11 @@ bool ParseCaptureSettings(napi_env env, napi_callback_info info, PhotoOutputAsyn
     CameraNapiObject settingsNapiOjbect { {
         { "quality", &asyncContext->quality },
         { "rotation", &asyncContext->rotation },
+        { "compressionQuality", &asyncContext->compressionQuality },
         { "location", &settingsLocationNapiOjbect },
         { "mirror", &asyncContext->isMirror },
     } };
-    unordered_set<std::string> optionalKeys = { "quality", "rotation", "location", "mirror" };
+    unordered_set<std::string> optionalKeys = { "quality", "rotation", "compressionQuality", "location", "mirror" };
     settingsNapiOjbect.SetOptionalKeys(optionalKeys);
 
     asyncFunction =
