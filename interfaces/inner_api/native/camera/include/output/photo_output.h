@@ -79,7 +79,19 @@ public:
      * @param timestamp Represents timestamp information for the photo capture callback
      */
     virtual void OnFrameShutterEnd(const int32_t captureId, const uint64_t timestamp) const = 0;
+    /**
+     * @brief Set the compression quality for photo saving.
+     *
+     * @param quality compression quality (e.g. 0-100). -1 means not set.
+     */
+    void SetCompressionQuality(int32_t quality);
 
+    /**
+     * @brief Get the compression quality for photo saving.
+     *
+     * @return compression quality, -1 means not set.
+     */
+    int32_t GetCompressionQuality() const;
     /**
      * @brief Called when capture ready end.
      *
@@ -256,6 +268,7 @@ private:
     std::shared_ptr<OHOS::Camera::CameraMetadata> captureMetadataSetting_;
     std::shared_ptr<Location> location_;
     std::mutex locationMutex_;
+    int32_t compressionQuality_ = -1;
 };
 
 typedef struct captureMonitorInfo {
