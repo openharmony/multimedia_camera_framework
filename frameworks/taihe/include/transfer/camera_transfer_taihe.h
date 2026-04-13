@@ -26,31 +26,31 @@ using namespace taihe;
 using namespace ohos::multimedia::camera;
 
 CameraInput CameraInputTransferStaticImpl(uintptr_t input);
-uintptr_t CameraInputTransferDynamicImpl(CameraInput input);
+uintptr_t CameraInputTransferDynamicImpl(weak::CameraInput input);
 
 PhotoOutput PhotoOutputTransferStaticImpl(uintptr_t input);
-uintptr_t PhotoOutputTransferDynamicImpl(PhotoOutput input);
+uintptr_t PhotoOutputTransferDynamicImpl(weak::PhotoOutput input);
 
 PreviewOutput PreviewOutputTransferStaticImpl(uintptr_t input);
-uintptr_t PreviewOutputTransferDynamicImpl(PreviewOutput input);
+uintptr_t PreviewOutputTransferDynamicImpl(weak::PreviewOutput input);
 
 VideoOutput VideoOutputTransferStaticImpl(uintptr_t input);
-uintptr_t VideoOutputTransferDynamicImpl(VideoOutput input);
+uintptr_t VideoOutputTransferDynamicImpl(weak::VideoOutput input);
 
 MetadataOutput MetadataOutputTransferStaticImpl(uintptr_t input);
-uintptr_t MetadataOutputTransferDynamicImpl(MetadataOutput input);
+uintptr_t MetadataOutputTransferDynamicImpl(weak::MetadataOutput input);
 
 VideoSession VideoSessionTransferStaticImpl(uintptr_t input);
-uintptr_t VideoSessionTransferDynamicImpl(VideoSession input);
+uintptr_t VideoSessionTransferDynamicImpl(weak::VideoSession input);
 
 SecureSession SecureSessionTransferStaticImpl(uintptr_t input);
-uintptr_t SecureSessionTransferDynamicImpl(SecureSession input);
+uintptr_t SecureSessionTransferDynamicImpl(weak::SecureSession input);
 
 PhotoSession PhotoSessionTransferStaticImpl(uintptr_t input);
-uintptr_t PhotoSessionTransferDynamicImpl(PhotoSession input);
+uintptr_t PhotoSessionTransferDynamicImpl(weak::PhotoSession input);
 
 Photo PhotoTransferStaticImpl(uintptr_t input);
-uintptr_t PhotoTransferDynamicImpl(Photo input);
+uintptr_t PhotoTransferDynamicImpl(weak::Photo input);
 
 } // namespace Camera
 } // namespace Ani

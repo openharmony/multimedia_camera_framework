@@ -223,10 +223,10 @@ public:
     void OffError(optional_view<callback<void(uintptr_t)>> callback);
     void OnFocusStateChange(callback_view<void(uintptr_t, FocusState)> callback);
     void OffFocusStateChange(optional_view<callback<void(uintptr_t, FocusState)>> callback);
-    void OnExposureInfoChange(callback_view<void(uintptr_t, ExposureInfo const&)> callback);
-    void OffExposureInfoChange(optional_view<callback<void(uintptr_t, ExposureInfo const&)>> callback);
-    void OnIsoInfoChange(callback_view<void(uintptr_t, IsoInfo const&)> callback);
-    void OffIsoInfoChange(optional_view<callback<void(uintptr_t, IsoInfo const&)>> callback);
+    void OnExposureInfoChangeWithErr(callback_view<void(uintptr_t, ExposureInfo const&)> callback);
+    void OffExposureInfoChangeWithErr(optional_view<callback<void(uintptr_t, ExposureInfo const&)>> callback);
+    void OnIsoInfoChangeWithErr(callback_view<void(uintptr_t, IsoInfo const&)> callback);
+    void OffIsoInfoChangeWithErr(optional_view<callback<void(uintptr_t, IsoInfo const&)>> callback);
     void OnSmoothZoomInfoAvailable(callback_view<void(uintptr_t, SmoothZoomInfo const&)> callback);
     void OffSmoothZoomInfoAvailable(optional_view<callback<void(uintptr_t, SmoothZoomInfo const&)>> callback);
     void OnLcdFlashStatus(callback_view<void(uintptr_t, LcdFlashStatus const&)> callback);
@@ -265,8 +265,8 @@ public:
     bool IsControlCenterSupported();
     array<ControlCenterEffectType> GetSupportedEffectTypes();
     void EnableControlCenter(bool enabled);
-    void OnExposureInfoChange(callback_view<void(ExposureInfo const&)> callback);
-    void OffExposureInfoChange(optional_view<callback<void(ExposureInfo const&)>> callback);
+    void OnExposureInfoChangeWithoutErr(callback_view<void(ExposureInfo const&)> callback);
+    void OffExposureInfoChangeWithoutErr(optional_view<callback<void(ExposureInfo const&)>> callback);
     void OnFlashStateChange(callback_view<void(FlashState)> callback);
     void OffFlashStateChange(optional_view<callback<void(FlashState)>> callback);
     void OnIsoInfoChangeWithoutErr(callback_view<void(IsoInfo const&)> callback);
