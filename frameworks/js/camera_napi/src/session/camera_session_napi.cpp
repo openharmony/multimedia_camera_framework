@@ -464,13 +464,15 @@ void ExposureCallbackListener::OnExposureStateCallbackAsync(ExposureState state)
 void ExposureCallbackListener::OnExposureStateCallback(ExposureState state) const
 {
     MEDIA_DEBUG_LOG("OnExposureStateCallback is called");
-    napi_value result[ARGS_TWO] = {nullptr, nullptr};
-    napi_value retVal;
-
-    napi_get_undefined(env_, &result[PARAM0]);
-    napi_create_int32(env_, state, &result[PARAM1]);
-    ExecuteCallbackNapiPara callbackNapiPara { .recv = nullptr, .argc = ARGS_TWO, .argv = result, .result = &retVal };
-    ExecuteCallback("exposureStateChange", callbackNapiPara);
+    ExecuteCallbackScopeSafe(
+        "exposureStateChange",
+        [&]() {
+            napi_value errCode = CameraNapiUtils::GetUndefinedValue(env_);
+            napi_value exposureState;
+            napi_create_uint32(env_, state, &exposureState);
+            return ExecuteCallbackData(env_, errCode, exposureState);
+        },
+        false);
 }
 
 void ExposureCallbackListener::OnExposureState(const ExposureState state)

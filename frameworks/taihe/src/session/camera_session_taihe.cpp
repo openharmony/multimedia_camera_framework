@@ -1080,12 +1080,12 @@ void SessionImpl::OffExposureStateChange(optional_view<callback<void(ExposureSta
     ListenerTemplate<SessionImpl>::Off(this, callback, "exposureStateChange");
 }
 
-void SessionImpl::OnExposureInfoChange(callback_view<void(ExposureInfo const&)> callback)
+void SessionImpl::OnExposureInfoChangeWithoutErr(callback_view<void(ExposureInfo const&)> callback)
 {
     ListenerTemplate<SessionImpl>::On(this, callback, "exposureInfoChange");
 }
 
-void SessionImpl::OffExposureInfoChange(optional_view<callback<void(ExposureInfo const&)>> callback)
+void SessionImpl::OffExposureInfoChangeWithoutErr(optional_view<callback<void(ExposureInfo const&)>> callback)
 {
     ListenerTemplate<SessionImpl>::Off(this, callback, "exposureInfoChange");
 }
