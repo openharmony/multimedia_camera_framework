@@ -513,7 +513,8 @@ HWTEST_F(DeferredPhotoJobUnitTest, photo_job_repository_unittest_001, TestSize.L
  * SubFunction: NA
  * FunctionPoints: NA
  * EnvConditions: NA
- * CaseDescription: Media library AddImage path supplies metadata; job must expose same quality via GetCompressionQuality
+ * CaseDescription: Media library AddImage path supplies metadata;
+ *job must expose same quality via GetCompressionQuality
  */
 HWTEST_F(DeferredPhotoJobUnitTest,
     photo_job_repository_compression_quality_unittest, TestSize.Level0)
