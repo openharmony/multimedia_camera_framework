@@ -369,7 +369,7 @@ napi_value PreviewOutputNapi::CreatePreviewOutput(napi_env env, Profile& profile
 
         surface->SetUserData(CameraManager::surfaceFormat, std::to_string(profile.GetCameraFormat()));
         int retCode = CameraManager::GetInstance()->CreatePreviewOutput(profile, surface, &sPreviewOutput_);
-        if (!CameraNapiUtils::CheckError(env, retCode)) {
+        if (!CameraNapiUtils::CheckErrorV2(env, retCode)) {
             return nullptr;
         }
         if (sPreviewOutput_ == nullptr) {
@@ -413,7 +413,7 @@ napi_value PreviewOutputNapi::CreatePreviewOutput(napi_env env, std::string surf
             return result;
         }
         int retCode = CameraManager::GetInstance()->CreatePreviewOutputWithoutProfile(surface, &sPreviewOutput_);
-        if (!CameraNapiUtils::CheckError(env, retCode)) {
+        if (!CameraNapiUtils::CheckErrorV2(env, retCode)) {
             return nullptr;
         }
         if (sPreviewOutput_ == nullptr) {
@@ -942,6 +942,11 @@ napi_value PreviewOutputNapi::GetPreviewRotation(napi_env env, napi_callback_inf
             env, SERVICE_FATL_ERROR, "GetPreviewRotation Camera service fatal error.");
         return result;
     }
+    if (retCode == SERVICE_FATL_ERROR_OF_INVALID_SESSION_CFG) {
+        CameraNapiUtils::ThrowError(
+            env, SERVICE_FATL_ERROR, "Camera service fatal error: Invalid Session Configuration.");
+        return result;
+    }
     napi_create_int32(env, retCode, &result);
     MEDIA_INFO_LOG("PreviewOutputNapi GetPreviewRotation! %{public}d", retCode);
     return result;
@@ -973,8 +978,9 @@ napi_value PreviewOutputNapi::SetPreviewRotation(napi_env env, napi_callback_inf
         return nullptr;
     }
     retCode = previewOutputNapi->previewOutput_->SetPreviewRotation(imageRotation, isDisplayLocked);
-    if (!CameraNapiUtils::CheckError(env, retCode)) {
-        MEDIA_ERR_LOG("PreviewOutputNapi::SetPreviewRotation! %{public}d", retCode);
+    if (!CameraNapiUtils::CheckErrorV2(env, retCode)) {
+        MEDIA_ERR_LOG("PreviewOutputNapi::SetPreviewRotation! %{public}s",
+                      CameraNapiUtils::GetJSErrorCode(retCode).c_str());
         return nullptr;
     }
     MEDIA_DEBUG_LOG("PreviewOutputNapi::SetPreviewRotation success");

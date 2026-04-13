@@ -1264,8 +1264,8 @@ int32_t PhotoOutput::GetPhotoRotation()
     sptr<CameraDevice> cameraObj;
     auto session = GetSession();
     // LCOV_EXCL_START
-    CHECK_RETURN_RET_ELOG(
-        session == nullptr, SERVICE_FATL_ERROR, "PhotoOutput GetPhotoRotation error!, session is nullptr");
+    CHECK_RETURN_RET_ELOG(session == nullptr, SERVICE_FATL_ERROR_OF_INVALID_SESSION_CFG,
+                          "PhotoOutput GetPhotoRotation error!, session is nullptr");
     auto inputDevice = session->GetInputDevice();
     CHECK_RETURN_RET_ELOG(
         inputDevice == nullptr, SERVICE_FATL_ERROR, "PhotoOutput GetPhotoRotation error!, inputDevice is nullptr");

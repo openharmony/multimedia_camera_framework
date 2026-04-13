@@ -788,16 +788,18 @@ HWTEST_F(CameraBaseFunctionModuleTest, camera_base_function_moduletest_003, Test
     sptr<PreviewOutput> previewOutput = CreatePreviewOutput(previewProfiles_[0]);
     ASSERT_NE(previewOutput, nullptr);
 
-    EXPECT_EQ(captureSession_->AddInput((sptr<CaptureInput>&)cameraInput_), OPERATION_NOT_ALLOWED);
-    EXPECT_EQ(captureSession_->AddOutput((sptr<CaptureOutput>&)previewOutput), OPERATION_NOT_ALLOWED);
+    EXPECT_EQ(GetCameraErrorCode(captureSession_->AddInput((sptr<CaptureInput>&)cameraInput_)), OPERATION_NOT_ALLOWED);
+    EXPECT_EQ(GetCameraErrorCode(captureSession_->AddOutput((sptr<CaptureOutput> &)previewOutput)),
+              OPERATION_NOT_ALLOWED);
 
     EXPECT_EQ(captureSession_->BeginConfig(), SUCCESS);
     EXPECT_EQ(captureSession_->AddInput((sptr<CaptureInput>&)cameraInput_), SUCCESS);
     EXPECT_EQ(captureSession_->AddOutput((sptr<CaptureOutput>&)previewOutput), SUCCESS);
     EXPECT_EQ(captureSession_->CommitConfig(), SUCCESS);
 
-    EXPECT_EQ(captureSession_->AddInput((sptr<CaptureInput>&)cameraInput_), OPERATION_NOT_ALLOWED);
-    EXPECT_EQ(captureSession_->AddOutput((sptr<CaptureOutput>&)previewOutput), OPERATION_NOT_ALLOWED);
+    EXPECT_EQ(GetCameraErrorCode(captureSession_->AddInput((sptr<CaptureInput>&)cameraInput_)), OPERATION_NOT_ALLOWED);
+    EXPECT_EQ(GetCameraErrorCode(captureSession_->AddOutput((sptr<CaptureOutput> &)previewOutput)),
+              OPERATION_NOT_ALLOWED);
 
     EXPECT_EQ(captureSession_->Start(), SUCCESS);
     WAIT(DURATION_AFTER_SESSION_START);
@@ -1339,7 +1341,7 @@ HWTEST_F(CameraBaseFunctionModuleTest, camera_base_function_moduletest_017, Test
     float exposureValue = 0.0;
     EXPECT_EQ(captureSessionForSys_->GetExposureValue(), 0);
     EXPECT_EQ(captureSessionForSys_->GetExposureValue(exposureValue), SESSION_NOT_CONFIG);
-    EXPECT_EQ(captureSessionForSys_->SetExposureBias(exposureValue), SESSION_NOT_CONFIG);
+    EXPECT_EQ(GetCameraErrorCode(captureSessionForSys_->SetExposureBias(exposureValue)), SESSION_NOT_CONFIG);
 
     std::vector<float> ranges;
     EXPECT_EQ(captureSessionForSys_->GetExposureBiasRange().empty(), true);
@@ -1370,7 +1372,7 @@ HWTEST_F(CameraBaseFunctionModuleTest, camera_base_function_moduletest_017, Test
     EXPECT_EQ(captureSessionForSys_->GetExposureValue(), 0);
     EXPECT_EQ(captureSessionForSys_->GetExposureValue(exposureValue), SUCCESS);
     captureSessionForSys_->LockForControl();
-    EXPECT_EQ(captureSessionForSys_->SetExposureBias(exposureValue), OPERATION_NOT_ALLOWED);
+    EXPECT_EQ(GetCameraErrorCode(captureSessionForSys_->SetExposureBias(exposureValue)), OPERATION_NOT_ALLOWED);
     captureSessionForSys_->UnlockForControl();
     sleep(TIME_FOR_CAMERA_RECOVERY_8);
 }
@@ -1607,7 +1609,7 @@ HWTEST_F(CameraBaseFunctionModuleTest, camera_base_function_moduletest_017, Test
     cameraInput_ = nullptr;
 
     EXPECT_EQ(captureSessionForSys_->GetZoomRatioRange().empty(), true);
-    EXPECT_EQ(captureSessionForSys_->GetZoomRatioRange(ranges), SUCCESS);
+    EXPECT_EQ(GetCameraErrorCode(captureSessionForSys_->GetZoomRatioRange(ranges)), SUCCESS);
     EXPECT_EQ(captureSessionForSys_->GetZoomRatio(), 0);
     EXPECT_EQ(captureSessionForSys_->GetZoomRatio(zoomRatio), SUCCESS);
     captureSessionForSys_->LockForControl();
@@ -3100,9 +3102,9 @@ HWTEST_F(CameraBaseFunctionModuleTest, camera_base_function_moduletest_070, Test
 {
     CreateNormalSession();
     sptr<CaptureInput> input = nullptr;
-    EXPECT_EQ(captureSession_->AddInput(input), OPERATION_NOT_ALLOWED);
+    EXPECT_EQ(GetCameraErrorCode(captureSession_->AddInput(input)), OPERATION_NOT_ALLOWED);
     sptr<CaptureOutput> output = nullptr;
-    EXPECT_EQ(captureSession_->AddOutput(output), OPERATION_NOT_ALLOWED);
+    EXPECT_EQ(GetCameraErrorCode(captureSession_->AddOutput(output)), OPERATION_NOT_ALLOWED);
 
     EXPECT_EQ(captureSession_->BeginConfig(), SUCCESS);
 
@@ -3122,9 +3124,9 @@ HWTEST_F(CameraBaseFunctionModuleTest, camera_base_function_moduletest_071, Test
 {
     CreateNormalSession();
     sptr<CaptureInput> input = nullptr;
-    EXPECT_EQ(captureSession_->RemoveInput(input), OPERATION_NOT_ALLOWED);
+    EXPECT_EQ(GetCameraErrorCode(captureSession_->RemoveInput(input)), OPERATION_NOT_ALLOWED);
     sptr<CaptureOutput> output = nullptr;
-    EXPECT_EQ(captureSession_->RemoveOutput(output), OPERATION_NOT_ALLOWED);
+    EXPECT_EQ(GetCameraErrorCode(captureSession_->RemoveOutput(output)), OPERATION_NOT_ALLOWED);
 
     EXPECT_EQ(captureSession_->BeginConfig(), SUCCESS);
 
@@ -3427,7 +3429,7 @@ HWTEST_F(CameraBaseFunctionModuleTest, camera_base_function_moduletest_077, Test
     EXPECT_EQ(captureSession_->GetExposureValue(exposureValue), SUCCESS);
 
     captureSession_->LockForControl();
-    EXPECT_EQ(captureSession_->SetExposureBias(exposureValue), OPERATION_NOT_ALLOWED);
+    EXPECT_EQ(GetCameraErrorCode(captureSession_->SetExposureBias(exposureValue)), OPERATION_NOT_ALLOWED);
     captureSession_->UnlockForControl();
     std::vector<FocusMode> getSupportedFocusModes = captureSession_->GetSupportedFocusModes();
     EXPECT_EQ(getSupportedFocusModes.empty(), true);
@@ -3474,7 +3476,7 @@ HWTEST_F(CameraBaseFunctionModuleTest, camera_base_function_moduletest_078, Test
 
     std::vector<float> zoomRatioRange = captureSession_->GetZoomRatioRange();
     EXPECT_EQ(zoomRatioRange.empty(), true);
-    EXPECT_EQ(captureSession_->GetZoomRatioRange(zoomRatioRange), SUCCESS);
+    EXPECT_EQ(GetCameraErrorCode(captureSession_->GetZoomRatioRange(zoomRatioRange)), SUCCESS);
 
     float zoomRatio = captureSession_->GetZoomRatio();
     EXPECT_EQ(zoomRatio, 0);
