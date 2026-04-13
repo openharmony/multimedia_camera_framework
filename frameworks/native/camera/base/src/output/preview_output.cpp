@@ -917,8 +917,8 @@ int32_t PreviewOutput::GetPreviewRotation()
     ImageRotation result = ImageRotation::ROTATION_0;
     sptr<CameraDevice> cameraObj;
     auto session = GetSession();
-    CHECK_RETURN_RET_ELOG(
-        session == nullptr, SERVICE_FATL_ERROR, "PreviewOutput GetPreviewRotation error!, session is nullptr");
+    CHECK_RETURN_RET_ELOG(session == nullptr, SERVICE_FATL_ERROR_OF_INVALID_SESSION_CFG,
+                          "PreviewOutput GetPreviewRotation error!, session is nullptr");
     // LCOV_EXCL_START
     auto inputDevice = session->GetInputDevice();
     CHECK_RETURN_RET_ELOG(
@@ -954,8 +954,8 @@ int32_t PreviewOutput::GetPreviewRotation(int32_t imageRotation)
     ImageRotation result = ImageRotation::ROTATION_0;
     sptr<CameraDevice> cameraObj;
     auto session = GetSession();
-    CHECK_RETURN_RET_ELOG(
-        session == nullptr, SERVICE_FATL_ERROR, "PreviewOutput GetPreviewRotation error!, session is nullptr");
+    CHECK_RETURN_RET_ELOG(session == nullptr, SERVICE_FATL_ERROR_OF_INVALID_SESSION_CFG,
+                          "PreviewOutput GetPreviewRotation error!, session is nullptr");
     // LCOV_EXCL_START
     auto inputDevice = session->GetInputDevice();
     CHECK_RETURN_RET_ELOG(
@@ -1001,8 +1001,8 @@ int32_t PreviewOutput::SetPreviewRotation(int32_t imageRotation, bool isDisplayL
     ImageRotation result = ROTATION_0;
     sptr<CameraDevice> cameraObj;
     auto session = GetSession();
-    CHECK_RETURN_RET_ELOG(
-        session == nullptr, SERVICE_FATL_ERROR, "PreviewOutput SetPreviewRotation error!, session is nullptr");
+    CHECK_RETURN_RET_ELOG(session == nullptr, SERVICE_FATL_ERROR_OF_INVALID_SESSION_CFG,
+                          "PreviewOutput SetPreviewRotation error!, session is nullptr");
     // LCOV_EXCL_START
     session->SetHasFitedRotation(true);
     auto inputDevice = session->GetInputDevice();

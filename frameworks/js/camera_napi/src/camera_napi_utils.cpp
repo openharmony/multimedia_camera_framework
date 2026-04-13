@@ -28,10 +28,62 @@ static const std::map<int32_t, std::string> errorCodeToMessage = {
     {7400201, "Camera service fatal error."},
 };
 
+static const std::map<int32_t, std::string> errorCodeToMessageV2 = {
+    {7400101, "Parameter missing or parameter type incorrect."},
+    {7400102, "Operation not allowed."},
+    {74001021, "Operation not allowed: Session not ready."},
+    {74001022, "Operation not allowed: Feature or mode unsupported."},
+    {74001023, "Operation not allowed: Device unavailable."},
+    {7400103, "Session not config."},
+    {7400104, "Session not running."},
+    {7400105, "Session config locked."},
+    {7400106, "Device setting locked."},
+    {7400107, "Can not use camera cause of conflict."},
+    {7400108, "Camera disabled cause of security reason."},
+    {7400109, "Can not use camera cause of preempted."},
+    {7400110, "Unresolved conflicts with current configurations."},
+    {7400201, "Camera service fatal error."},
+    {74002011, "Camera service fatal error: Unsupported resolution configuration."},
+    {74002012, "Camera service fatal error: Alloc failed."},
+    {74002013, "Camera service fatal error: Invalid Session Configuration."}
+};
+
+static const std::map<int32_t, std::string> errorCodeToJSErrorCode = {
+    {7400102, "7400102"},
+    {74001021, "7400102"},
+    {74001022, "7400102"},
+    {74001023, "7400102"},
+    {7400103, "7400103"},
+    {7400201, "7400201"},
+    {74002011, "7400201"},
+    {74002012, "7400201"},
+    {74002013, "7400201"}
+};
+
+std::string CameraNapiUtils::GetJSErrorCode(int32_t errorCode)
+{
+    auto it = errorCodeToJSErrorCode.find(errorCode);
+    if (it != errorCodeToJSErrorCode.end()) {
+        return it->second;
+    } else {
+        return std::to_string(errorCode);
+    }
+}
+
 std::string CameraNapiUtils::GetErrorMessage(int32_t errorCode)
 {
     auto it = errorCodeToMessage.find(errorCode);
     if (it != errorCodeToMessage.end()) {
+        return it->second;
+    } else {
+        return "";
+    }
+}
+
+std::string CameraNapiUtils::GetErrorMessageV2(int32_t errorCode)
+{
+    auto it = errorCodeToMessageV2.find(errorCode);
+    if (it != errorCodeToMessageV2.end()) {
         return it->second;
     } else {
         return "";
@@ -258,6 +310,15 @@ bool CameraNapiUtils::CheckError(napi_env env, int32_t retCode)
     if ((retCode != 0)) {
         std::string errorCode = std::to_string(retCode);
         napi_throw_error(env, errorCode.c_str(), GetErrorMessage(retCode).c_str());
+        return false;
+    }
+    return true;
+}
+
+bool CameraNapiUtils::CheckErrorV2(napi_env env, int32_t retCode)
+{
+    if ((retCode != 0)) {
+        napi_throw_error(env, GetJSErrorCode(retCode).c_str(), GetErrorMessageV2(retCode).c_str());
         return false;
     }
     return true;

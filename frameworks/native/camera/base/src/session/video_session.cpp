@@ -289,10 +289,10 @@ int32_t VideoSession::Preconfig(PreconfigType preconfigType, ProfileSizeRatio pr
     // LCOV_EXCL_START
     MEDIA_INFO_LOG("VideoSession::Preconfig type:%{public}d ratio:%{public}d", preconfigType, preconfigRatio);
     std::shared_ptr<PreconfigProfiles> configs = GeneratePreconfigProfiles(preconfigType, preconfigRatio);
-    CHECK_RETURN_RET_ELOG(configs == nullptr, SERVICE_FATL_ERROR,
+    CHECK_RETURN_RET_ELOG(configs == nullptr, SERVICE_FATL_ERROR_OF_CONFIG,
         "VideoSession::Preconfig not support this type:%{public}d ratio:%{public}d", preconfigType, preconfigRatio);
-    CHECK_RETURN_RET_ELOG(
-        !IsPreconfigProfilesLegal(configs), SERVICE_FATL_ERROR, "VideoSession::Preconfig preconfigProfile is illegal.");
+    CHECK_RETURN_RET_ELOG(!IsPreconfigProfilesLegal(configs), SERVICE_FATL_ERROR_OF_CONFIG,
+                          "VideoSession::Preconfig preconfigProfile is illegal.");
     SetPreconfigProfiles(configs);
     MEDIA_INFO_LOG("VideoSession::Preconfig profile info\n%{public}s", configs->ToString().c_str());
     return SUCCESS;

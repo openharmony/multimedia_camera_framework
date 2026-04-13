@@ -304,10 +304,10 @@ int32_t PhotoSession::Preconfig(PreconfigType preconfigType, ProfileSizeRatio pr
     // LCOV_EXCL_START
     MEDIA_INFO_LOG("PhotoSession::Preconfig type:%{public}d ratio:%{public}d", preconfigType, preconfigRatio);
     std::shared_ptr<PreconfigProfiles> configs = GeneratePreconfigProfiles(preconfigType, preconfigRatio);
-    CHECK_RETURN_RET_ELOG(configs == nullptr, SERVICE_FATL_ERROR,
+    CHECK_RETURN_RET_ELOG(configs == nullptr, SERVICE_FATL_ERROR_OF_CONFIG,
         "PhotoSession::Preconfig not support this type:%{public}d ratio:%{public}d", preconfigType, preconfigRatio);
-    CHECK_RETURN_RET_ELOG(
-        !IsPreconfigProfilesLegal(configs), SERVICE_FATL_ERROR, "PhotoSession::Preconfig preconfigProfile is illegal.");
+    CHECK_RETURN_RET_ELOG(!IsPreconfigProfilesLegal(configs), SERVICE_FATL_ERROR_OF_CONFIG,
+                          "PhotoSession::Preconfig preconfigProfile is illegal.");
     SetPreconfigProfiles(configs);
     MEDIA_INFO_LOG("PhotoSession::Preconfig profile info\n%{public}s", configs->ToString().c_str());
     return SUCCESS;

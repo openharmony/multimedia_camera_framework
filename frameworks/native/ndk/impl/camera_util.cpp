@@ -20,55 +20,40 @@
 
 namespace OHOS {
 namespace CameraStandard {
+static const std::unordered_map<int32_t, Camera_ErrorCode> frameworkToNdkErrorMap = {
+    {static_cast<int32_t>(CameraErrorCode::SUCCESS), CAMERA_OK},
+    {static_cast<int32_t>(CameraErrorCode::NO_SYSTEM_APP_PERMISSION), CAMERA_OPERATION_NOT_ALLOWED},
+    {static_cast<int32_t>(CameraErrorCode::PARAMETER_ERROR), CAMERA_INVALID_ARGUMENT},
+    {static_cast<int32_t>(CameraErrorCode::INVALID_ARGUMENT), CAMERA_INVALID_ARGUMENT},
+    {static_cast<int32_t>(CameraErrorCode::OPERATION_NOT_ALLOWED), CAMERA_OPERATION_NOT_ALLOWED},
+    {static_cast<int32_t>(CameraErrorCode::OPERATION_NOT_ALLOWED_OF_SESSION_READY), CAMERA_OPERATION_NOT_ALLOWED},
+    {static_cast<int32_t>(CameraErrorCode::OPERATION_NOT_ALLOWED_OF_UNSUPPORTED_FEATURE), CAMERA_OPERATION_NOT_ALLOWED},
+    {static_cast<int32_t>(CameraErrorCode::OPERATION_NOT_ALLOWED_OF_DEVICE), CAMERA_OPERATION_NOT_ALLOWED},
+    {static_cast<int32_t>(CameraErrorCode::SESSION_NOT_CONFIG), CAMERA_SESSION_NOT_CONFIG},
+    {static_cast<int32_t>(CameraErrorCode::SESSION_NOT_RUNNING), CAMERA_SESSION_NOT_RUNNING},
+    {static_cast<int32_t>(CameraErrorCode::SESSION_CONFIG_LOCKED), CAMERA_SESSION_CONFIG_LOCKED},
+    {static_cast<int32_t>(CameraErrorCode::DEVICE_SETTING_LOCKED), CAMERA_DEVICE_SETTING_LOCKED},
+    {static_cast<int32_t>(CameraErrorCode::CONFLICT_CAMERA), CAMERA_CONFLICT_CAMERA},
+    {static_cast<int32_t>(CameraErrorCode::DEVICE_DISABLED), CAMERA_DEVICE_DISABLED},
+    {static_cast<int32_t>(CameraErrorCode::DEVICE_PREEMPTED), CAMERA_DEVICE_PREEMPTED},
+    {static_cast<int32_t>(CameraErrorCode::SERVICE_FATL_ERROR), CAMERA_SERVICE_FATAL_ERROR},
+    {static_cast<int32_t>(CameraErrorCode::SERVICE_FATL_ERROR_OF_CONFIG), CAMERA_SERVICE_FATAL_ERROR},
+    {static_cast<int32_t>(CameraErrorCode::SERVICE_FATL_ERROR_OF_ALLOC), CAMERA_SERVICE_FATAL_ERROR},
+    {static_cast<int32_t>(CameraErrorCode::SERVICE_FATL_ERROR_OF_INVALID_SESSION_CFG), CAMERA_SERVICE_FATAL_ERROR},
+    {static_cast<int32_t>(CameraErrorCode::UNRESOLVED_CONFLICTS_BETWEEN_STREAMS),
+     CAMERA_UNRESOLVED_CONFLICTS_WITH_CURRENT_CONFIGURATIONS}
+};
+
 Camera_ErrorCode FrameworkToNdkCameraError(int32_t ret)
 {
-    Camera_ErrorCode err = CAMERA_OK;
-    switch (ret) {
-        case CameraErrorCode::SUCCESS:
-            err = CAMERA_OK;
-            break;
-        case CameraErrorCode::NO_SYSTEM_APP_PERMISSION:
-            err = CAMERA_OPERATION_NOT_ALLOWED;
-            break;
-        case CameraErrorCode::PARAMETER_ERROR:
-        case CameraErrorCode::INVALID_ARGUMENT:
-            err = CAMERA_INVALID_ARGUMENT;
-            break;
-        case CameraErrorCode::OPERATION_NOT_ALLOWED:
-            err = CAMERA_OPERATION_NOT_ALLOWED;
-            break;
-        case CameraErrorCode::SESSION_NOT_CONFIG:
-            err = CAMERA_SESSION_NOT_CONFIG;
-            break;
-        case CameraErrorCode::SESSION_NOT_RUNNING:
-            err = CAMERA_SESSION_NOT_RUNNING;
-            break;
-        case CameraErrorCode::SESSION_CONFIG_LOCKED:
-            err = CAMERA_SESSION_CONFIG_LOCKED;
-            break;
-        case CameraErrorCode::DEVICE_SETTING_LOCKED:
-            err = CAMERA_DEVICE_SETTING_LOCKED;
-            break;
-        case CameraErrorCode::CONFLICT_CAMERA:
-            err = CAMERA_CONFLICT_CAMERA;
-            break;
-        case CameraErrorCode::DEVICE_DISABLED:
-            err = CAMERA_DEVICE_DISABLED;
-            break;
-        case CameraErrorCode::DEVICE_PREEMPTED:
-            err = CAMERA_DEVICE_PREEMPTED;
-            break;
-        case CameraErrorCode::SERVICE_FATL_ERROR:
-            err = CAMERA_SERVICE_FATAL_ERROR;
-            break;
-        case CameraErrorCode::UNRESOLVED_CONFLICTS_BETWEEN_STREAMS:
-            err = CAMERA_UNRESOLVED_CONFLICTS_WITH_CURRENT_CONFIGURATIONS;
-            break;
-        default:
-            MEDIA_ERR_LOG("ServiceToCameraError() error code from service: %{public}d", ret);
-            break;
+    auto it = frameworkToNdkErrorMap.find(ret);
+    if (it != frameworkToNdkErrorMap.end()) {
+        return it->second;
     }
-    return err;
+    if (ret != static_cast<int32_t>(CameraErrorCode::SUCCESS)) {
+        MEDIA_ERR_LOG("FrameworkToNdkCameraError() unknown error code: %{public}d", ret);
+    }
+    return CAMERA_OK;
 }
 
 void ProcessCameraInfos(const std::vector<sptr<CameraDevice>>& cameraObjList, CameraPosition innerPosition,

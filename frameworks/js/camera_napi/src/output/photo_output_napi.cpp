@@ -873,7 +873,7 @@ napi_value PhotoOutputNapi::CreatePhotoOutput(napi_env env, Profile& profile, st
             retCode =
                 CameraManager::GetInstance()->CreatePhotoOutput(profile, producer, &sPhotoOutput_, photoSurface);
         }
-        CHECK_RETURN_RET_ELOG(!CameraNapiUtils::CheckError(env, retCode) || sPhotoOutput_ == nullptr, result,
+        CHECK_RETURN_RET_ELOG(!CameraNapiUtils::CheckErrorV2(env, retCode) || sPhotoOutput_ == nullptr, result,
             "failed to create CreatePhotoOutput");
         CHECK_EXECUTE(surfaceId == "", sPhotoOutput_->SetNativeSurface(true));
         status = napi_new_instance(env, constructor, 0, nullptr, &result);
@@ -914,7 +914,7 @@ napi_value PhotoOutputNapi::CreatePhotoOutput(napi_env env, std::string surfaceI
             retCode = CameraManager::GetInstance()->CreatePhotoOutputWithoutProfile(
             producer, &sPhotoOutput_, photoSurface);
         }
-        CHECK_RETURN_RET_ELOG(!CameraNapiUtils::CheckError(env, retCode) || sPhotoOutput_ == nullptr, result,
+        CHECK_RETURN_RET_ELOG(!CameraNapiUtils::CheckErrorV2(env, retCode) || sPhotoOutput_ == nullptr, result,
             "failed to create CreatePhotoOutput");
         CHECK_EXECUTE(surfaceId == "", sPhotoOutput_->SetNativeSurface(true));
         status = napi_new_instance(env, constructor, 0, nullptr, &result);
@@ -1306,6 +1306,11 @@ napi_value PhotoOutputNapi::GetPhotoRotation(napi_env env, napi_callback_info in
             env, SERVICE_FATL_ERROR, "GetPhotoRotation Camera service fatal error.");
         return result;
     }
+    if (retCode == SERVICE_FATL_ERROR_OF_INVALID_SESSION_CFG) {
+        CameraNapiUtils::ThrowError(
+            env, SERVICE_FATL_ERROR, "Camera service fatal error: Invalid Session Configuration.");
+        return result;
+    }
     napi_create_int32(env, retCode, &result);
     MEDIA_INFO_LOG("PhotoOutputNapi GetPhotoRotation! %{public}d", retCode);
     return result;
@@ -1587,7 +1592,8 @@ void PhotoOutputNapi::RegisterQuickThumbnailCallbackListener(
     MEDIA_INFO_LOG("PhotoOutputNapi RegisterQuickThumbnailCallbackListener!");
     if (!isQuickThumbnailEnabled_) {
         MEDIA_ERR_LOG("quickThumbnail is not enabled!");
-        napi_throw_error(env, std::to_string(SESSION_NOT_RUNNING).c_str(), "");
+        napi_throw_error(env, std::to_string(SESSION_NOT_RUNNING).c_str(),
+                         "Session not running: QuickThumbnail is not enabled!");
         return;
     }
     CHECK_RETURN_ELOG(photoOutput_ == nullptr, "PhotoOutput is null!");
@@ -1605,7 +1611,8 @@ void PhotoOutputNapi::UnregisterQuickThumbnailCallbackListener(
     CHECK_RETURN_ELOG(!CameraNapiSecurity::CheckSystemApp(env), "SystemApi!");
     if (!isQuickThumbnailEnabled_) {
         MEDIA_ERR_LOG("quickThumbnail is not enabled!");
-        napi_throw_error(env, std::to_string(SESSION_NOT_RUNNING).c_str(), "");
+        napi_throw_error(env, std::to_string(SESSION_NOT_RUNNING).c_str(),
+                         "Session not running: QuickThumbnail is not enabled!");
         return;
     }
 

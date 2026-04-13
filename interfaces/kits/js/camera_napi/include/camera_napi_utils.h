@@ -146,6 +146,7 @@ public:
                                      napi_value *argv, CameraSteps step);
 
     static bool CheckError(napi_env env, int32_t retCode);
+    static bool CheckErrorV2(napi_env env, int32_t retCode);
 
     static double FloatToDouble(float val);
 
@@ -388,6 +389,8 @@ public:
     static napi_value CreateJsPointArray(napi_env env, napi_status& status, const std::vector<float>& nativePointArray);
 
     static std::string GetErrorMessage(int32_t errorCode);
+    static std::string GetErrorMessageV2(int32_t errorCode);
+    static std::string GetJSErrorCode(int32_t errorCode);
 
     static bool ParseCameraTypesArray(napi_env env, napi_value typesValue, std::vector<CameraType>& outTypes);
 private:

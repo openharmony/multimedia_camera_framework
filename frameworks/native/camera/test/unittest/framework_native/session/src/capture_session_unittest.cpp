@@ -750,7 +750,7 @@ HWTEST_F(CaptureSessionUnitTest, capture_session_unittest_019, TestSize.Level0)
 
     SceneFeature feature = FEATURE_MACRO;
     bool isEnable = true;
-    EXPECT_EQ(session->EnableFeature(feature, isEnable), CameraErrorCode::OPERATION_NOT_ALLOWED);
+    EXPECT_EQ(GetCameraErrorCode(session->EnableFeature(feature, isEnable)), CameraErrorCode::OPERATION_NOT_ALLOWED);
     feature = FEATURE_ENUM_MAX;
     EXPECT_EQ(session->EnableFeature(feature, isEnable), INVALID_ARGUMENT);
 
@@ -1656,7 +1656,7 @@ HWTEST_F(CaptureSessionUnitTest, camera_framework_unittest_015, TestSize.Level0)
     if (isSupported) {
         EXPECT_EQ(session->SetVideoStabilizationMode(MIDDLE), 0);
     } else {
-        EXPECT_EQ(session->SetVideoStabilizationMode(MIDDLE), 7400102);
+        EXPECT_EQ(GetCameraErrorCode(session->SetVideoStabilizationMode(MIDDLE)), 7400102);
     }
 
     sptr<PhotoOutput> photoOutput = (sptr<PhotoOutput> &)photo;
@@ -1874,7 +1874,7 @@ HWTEST_F(CaptureSessionUnitTest, camera_framework_unittest_019, TestSize.Level0)
     auto macroStatusCallback = std::make_shared<AppMacroStatusCallback>();
 
     EXPECT_EQ(sessionForSys->GetColorEffect(), COLOR_EFFECT_NORMAL);
-    EXPECT_EQ(sessionForSys->EnableMacro(true), OPERATION_NOT_ALLOWED);
+    EXPECT_EQ(GetCameraErrorCode(sessionForSys->EnableMacro(true)), OPERATION_NOT_ALLOWED);
 
     EXPECT_EQ(sessionForSys->BeginConfig(), 0);
 
@@ -1891,7 +1891,7 @@ HWTEST_F(CaptureSessionUnitTest, camera_framework_unittest_019, TestSize.Level0)
     sessionForSys->innerInputDevice_ = nullptr;
     EXPECT_EQ(sessionForSys->GetColorEffect(), COLOR_EFFECT_NORMAL);
     EXPECT_EQ(sessionForSys->IsMacroSupported(), false);
-    EXPECT_EQ(sessionForSys->EnableMacro(true), OPERATION_NOT_ALLOWED);
+    EXPECT_EQ(GetCameraErrorCode(sessionForSys->EnableMacro(true)), OPERATION_NOT_ALLOWED);
 
     sessionForSys->LockForControl();
     sessionForSys->SetColorEffect(COLOR_EFFECT_NORMAL);
@@ -1941,13 +1941,13 @@ HWTEST_F(CaptureSessionUnitTest, camera_framework_unittest_020, TestSize.Level0)
     session->innerCaptureSession_ = nullptr;
     EXPECT_EQ(session->CanAddInput(input), false);
 
-    EXPECT_EQ(session->AddInput(input), OPERATION_NOT_ALLOWED);
-    EXPECT_EQ(session->AddOutput(preview), OPERATION_NOT_ALLOWED);
+    EXPECT_EQ(GetCameraErrorCode(session->AddInput(input)), OPERATION_NOT_ALLOWED);
+    EXPECT_EQ(GetCameraErrorCode(session->AddOutput(preview)), OPERATION_NOT_ALLOWED);
 
     EXPECT_EQ(session->CommitConfig(), OPERATION_NOT_ALLOWED);
 
-    EXPECT_EQ(session->RemoveOutput(preview), OPERATION_NOT_ALLOWED);
-    EXPECT_EQ(session->RemoveInput(input), OPERATION_NOT_ALLOWED);
+    EXPECT_EQ(GetCameraErrorCode(session->RemoveOutput(preview)), OPERATION_NOT_ALLOWED);
+    EXPECT_EQ(GetCameraErrorCode(session->RemoveInput(input)), OPERATION_NOT_ALLOWED);
     EXPECT_EQ(preview->Release(), 0);
     EXPECT_EQ(input->Release(), 0);
     session->Release();
