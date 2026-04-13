@@ -1026,7 +1026,7 @@ Camera_ErrorCode OH_CaptureSession_UnregisterExposureInfoChangeCallback(const Ca
  * @brief Capture session exposure state change callback.
  *
  * @param exposureState The exposure duration which delivered by the callback.
- * @since 24
+ * @since 26
  */
 typedef void(*OH_CaptureSession_OnExposureStateChange)(void* context, OH_Camera_ExposureState exposureState);
  
@@ -1037,7 +1037,7 @@ typedef void(*OH_CaptureSession_OnExposureStateChange)(void* context, OH_Camera_
  * @param callback The {@link OH_CaptureSession_OnExposureStateChange} to be registered.
  * @return {@link #CAMERA_OK} if the method call succeeds.
  * {@link #CAMERA_INVALID_ARGUMENT} if parameter missing or parameter type incorrect.
- * @since 24
+ * @since 26
  */
 Camera_ErrorCode OH_CaptureSession_RegisterExposureStateChangeCallback(const Camera_CaptureSession* session,
     void* context, OH_CaptureSession_OnExposureStateChange callback);
@@ -1049,7 +1049,7 @@ Camera_ErrorCode OH_CaptureSession_RegisterExposureStateChangeCallback(const Cam
  * @param callback The {@link OH_CaptureSession_OnExposureStateChange} to be unregistered.
  * @return {@link #CAMERA_OK} if the method call succeeds.
  * {@link #CAMERA_INVALID_ARGUMENT} if parameter missing or parameter type incorrect.
- * @since 24
+ * @since 26
  */
 Camera_ErrorCode OH_CaptureSession_UnregisterExposureStateChangeCallback(const Camera_CaptureSession* session,
     void* context, OH_CaptureSession_OnExposureStateChange callback);

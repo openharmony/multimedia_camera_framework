@@ -484,6 +484,11 @@ typedef enum Camera_ExposureMode {
     EXPOSURE_MODE_MANUAL = 3,
 } Camera_ExposureMode;
 
+/**
+ * @brief Enumerates camera exposure states.
+ 
+ * @since 26
+ */
 typedef enum OH_Camera_ExposureState {
     /**
      * Scan state.
