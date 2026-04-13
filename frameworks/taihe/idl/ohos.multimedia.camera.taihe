@@ -887,8 +887,10 @@ interface PhotoSession : Session, Flash, Zoom, AutoExposure, AutoDeviceSwitch, C
   OnIsoInfoChange(callback:(data: IsoInfo)=> void): void;
   OffIsoInfoChange(callback: Optional<(data: IsoInfo)=> void>): void;
 
-  OnExposureInfoChange(callback:(data: ExposureInfo)=> void): void;
-  OffExposureInfoChange(callback: Optional<(data: ExposureInfo)=> void>): void;
+  @rename("onExposureInfoChange")
+  OnExposureInfoChangeWithoutErr(callback:(data: ExposureInfo)=> void): void;
+  @rename("offExposureInfoChange")
+  OffExposureInfoChangeWithoutErr(callback: Optional<(data: ExposureInfo)=> void>): void;
 
   OnExposureStateChange(callback:(data: ExposureState)=> void): void;
   OffExposureStateChange(callback: Optional<(data: ExposureState)=> void>): void;

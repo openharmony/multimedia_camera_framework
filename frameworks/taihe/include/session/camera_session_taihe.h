@@ -269,8 +269,8 @@ public:
     void OffExposureInfoChange(optional_view<callback<void(ExposureInfo const&)>> callback);
     void OnFlashStateChange(callback_view<void(FlashState)> callback);
     void OffFlashStateChange(optional_view<callback<void(FlashState)>> callback);
-    void OnIsoInfoChange(callback_view<void(IsoInfo const&)> callback);
-    void OffIsoInfoChange(optional_view<callback<void(IsoInfo const&)>> callback);
+    void OnIsoInfoChangeWithoutErr(callback_view<void(IsoInfo const&)> callback);
+    void OffIsoInfoChangeWithoutErr(optional_view<callback<void(IsoInfo const&)>> callback);
     void OnExposureStateChange(callback_view<void(ExposureState)> callback);
     void OffExposureStateChange(optional_view<callback<void(ExposureState)>> callback);
 
