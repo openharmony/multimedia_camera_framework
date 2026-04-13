@@ -391,12 +391,12 @@ void FocusCallbackListener::OnFocusStateCallback(OHOS::CameraStandard::FocusCall
     mainHandler_->PostTask(task, "OnFocusStateChange", 0, OHOS::AppExecFwk::EventQueue::Priority::IMMEDIATE, {});
 }
 
-void SessionImpl::OnExposureInfoChange(callback_view<void(uintptr_t, ExposureInfo const&)> callback)
+void SessionImpl::OnExposureInfoChangeWithErr(callback_view<void(uintptr_t, ExposureInfo const&)> callback)
 {
     ListenerTemplate<SessionImpl>::On(this, callback, "exposureInfoChange");
 }
 
-void SessionImpl::OffExposureInfoChange(optional_view<callback<void(uintptr_t, ExposureInfo const&)>> callback)
+void SessionImpl::OffExposureInfoChangeWithErr(optional_view<callback<void(uintptr_t, ExposureInfo const&)>> callback)
 {
     ListenerTemplate<SessionImpl>::Off(this, callback, "exposureInfoChange");
 }
@@ -443,12 +443,12 @@ void SessionImpl::UnregisterFlashStateCallbackListener(
         "this type callback can not be registered in current session!");
 }
 
-void SessionImpl::OnIsoInfoChange(callback_view<void(uintptr_t, IsoInfo const&)> callback)
+void SessionImpl::OnIsoInfoChangeWithErr(callback_view<void(uintptr_t, IsoInfo const&)> callback)
 {
     ListenerTemplate<SessionImpl>::On(this, callback, "isoInfoChange");
 }
 
-void SessionImpl::OffIsoInfoChange(optional_view<callback<void(uintptr_t, IsoInfo const&)>> callback)
+void SessionImpl::OffIsoInfoChangeWithErr(optional_view<callback<void(uintptr_t, IsoInfo const&)>> callback)
 {
     ListenerTemplate<SessionImpl>::Off(this, callback, "isoInfoChange");
 }
@@ -1100,12 +1100,12 @@ void SessionImpl::OffFlashStateChange(optional_view<callback<void(FlashState)>> 
     ListenerTemplate<SessionImpl>::Off(this, callback, "flashStateChange");
 }
 
-void SessionImpl::OnIsoInfoChange(callback_view<void(IsoInfo const&)> callback)
+void SessionImpl::OnIsoInfoChangeWithoutErr(callback_view<void(IsoInfo const&)> callback)
 {
     ListenerTemplate<SessionImpl>::On(this, callback, "isoInfoChange");
 }
 
-void SessionImpl::OffIsoInfoChange(optional_view<callback<void(IsoInfo const&)>> callback)
+void SessionImpl::OffIsoInfoChangeWithoutErr(optional_view<callback<void(IsoInfo const&)>> callback)
 {
     ListenerTemplate<SessionImpl>::Off(this, callback, "isoInfoChange");
 }
