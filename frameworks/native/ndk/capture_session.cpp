@@ -979,6 +979,27 @@ Camera_ErrorCode OH_CaptureSession_UnregisterExposureInfoChangeCallback(
     return CAMERA_OK;
 }
 
+Camera_ErrorCode OH_CaptureSession_RegisterExposureStateChangeCallback(
+    const Camera_CaptureSession* session, void* context, OH_CaptureSession_OnExposureStateChange callback)
+{
+    MEDIA_INFO_LOG("Camera_ErrorCode::OH_CaptureSession_RegisterExposureStateChangeCallback enter");
+    CHECK_RETURN_RET_ELOG(session == nullptr, CAMERA_INVALID_ARGUMENT, "Invalid argument, session is null!");
+    CHECK_RETURN_RET_ELOG(
+        callback == nullptr, CAMERA_INVALID_ARGUMENT, "Invalid argument, callback is null!");
+    return session->RegisterExposureStateCallback(context, callback);
+}
+ 
+Camera_ErrorCode OH_CaptureSession_UnregisterExposureStateChangeCallback(
+    const Camera_CaptureSession* session, void* context, OH_CaptureSession_OnExposureStateChange callback)
+{
+    MEDIA_INFO_LOG("Camera_ErrorCode::OH_CaptureSession_UnregisterExposureStateChangeCallback enter");
+    CHECK_RETURN_RET_ELOG(session == nullptr, CAMERA_INVALID_ARGUMENT, "Invalid argument, session is null!");
+    CHECK_RETURN_RET_ELOG(
+        callback == nullptr, CAMERA_INVALID_ARGUMENT, "Invalid argument, callback is null!");
+    session->UnregisterExposureStateCallback(context, callback);
+    return CAMERA_OK;
+}
+
 Camera_ErrorCode OH_CaptureSession_RegisterFlashStateChangeCallback(
     const Camera_CaptureSession* session, OH_CaptureSession_OnFlashStateChange flashStateChange)
 {
