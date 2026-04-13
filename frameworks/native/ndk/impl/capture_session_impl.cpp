@@ -1296,6 +1296,7 @@ Camera_ErrorCode Camera_CaptureSession::GetIsoRange(int32_t* minIsoValue, int32_
     *maxIsoValue = 0;
     std::vector<int32_t> isoVec;
     int32_t ret = innerCaptureSession_->GetSensorSensitivityRange(isoVec);
+    CHECK_RETURN_RET(ret != CameraErrorCode::SUCCESS, FrameworkToNdkCameraError(ret));
     size_t minLength = 2;
     CHECK_RETURN_RET_ELOG(isoVec.size() < minLength, CAMERA_OK,
         "The length of isoVec is less than 2.");

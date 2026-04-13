@@ -4959,19 +4959,19 @@ int32_t CaptureSession::SetSensorExposureTime(uint32_t exposureTime)
 {
     CHECK_RETURN_RET_ELOG(!IsSessionCommited(), CameraErrorCode::SESSION_NOT_CONFIG,
         "CaptureSession::SetSensorExposureTime Session is not Commited");
-    CHECK_RETURN_RET_ELOG(changedMetadata_ == nullptr, CameraErrorCode::OPERATION_NOT_ALLOWED,
+    CHECK_RETURN_RET_ELOG(changedMetadata_ == nullptr, CameraErrorCode::SUCCESS,
         "CaptureSession::SetSensorExposureTime Need to call LockForControl() before setting camera properties");
     MEDIA_DEBUG_LOG("CaptureSession::SetSensorExposureTime exposure: %{public}d", exposureTime);
     auto inputDevice = GetInputDevice();
-    CHECK_RETURN_RET_ELOG(!inputDevice || !inputDevice->GetCameraDeviceInfo(), CameraErrorCode::OPERATION_NOT_ALLOWED,
+    CHECK_RETURN_RET_ELOG(!inputDevice || !inputDevice->GetCameraDeviceInfo(), CameraErrorCode::SUCCESS,
         "CaptureSession::SetSensorExposureTime camera device is null");
     ExposureMode curMode = GetExposureMode();
     CHECK_RETURN_RET_ELOG(!CameraSecurity::CheckSystemApp() && curMode != ExposureMode::EXPOSURE_MODE_MANUAL,
-        CameraErrorCode::OPERATION_NOT_ALLOWED, "Camera_CaptureSession::SetSensorExposureTime mode not in manul");
+        CameraErrorCode::SUCCESS, "Camera_CaptureSession::SetSensorExposureTime mode not in manul");
     std::vector<uint32_t> sensorExposureTimeRange;
     CHECK_RETURN_RET_ELOG((GetSensorExposureTimeRange(sensorExposureTimeRange) != CameraErrorCode::SUCCESS) ||
             sensorExposureTimeRange.empty(),
-        CameraErrorCode::OPERATION_NOT_ALLOWED, "CaptureSession::SetSensorExposureTime range is empty");
+        CameraErrorCode::SUCCESS, "CaptureSession::SetSensorExposureTime range is empty");
     const uint32_t autoLongExposure = 0;
     int32_t minIndex = 0;
     int32_t maxIndex = 1;
@@ -4999,7 +4999,7 @@ int32_t CaptureSession::SetSensorExposureTime(uint32_t exposureTime)
         sharedThis->UnlockForControl();
         CHECK_EXECUTE(retCode != CameraErrorCode::SUCCESS, sharedThis->SetDeviceCapabilityChangeStatus(true));
     }));
-    CHECK_PRINT_ELOG(!res, "CaptureSession::SetSensorExposureTime Failed to set exposure compensation");
+    CHECK_RETURN_RET_ELOG(!res, CameraErrorCode::SUCCESS, "SetSensorExposureTime Failed to set exposure compensation");
     exposureDurationValue_ = exposureTime;
     return CameraErrorCode::SUCCESS;
 }
