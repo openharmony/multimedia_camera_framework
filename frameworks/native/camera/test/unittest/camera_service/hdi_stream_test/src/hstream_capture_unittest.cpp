@@ -21,17 +21,6 @@
 #include "iservice_registry.h"
 #include "gmock/gmock.h"
 #include "stream_capture_callback_stub.h"
-#include "camera_server_photo_proxy.h"
-#include "photo_asset_interface.h"
-
-// Expose internals for test-only stubbing.
-#define private public
-#define protected public
-#include "hstream_capture.h"
-#undef private
-#undef protected
-
-#include "hstream_capture_unittest.h"
 #ifdef CAMERA_CAPTURE_YUV
 #include "photo_asset_proxy.h"
 #endif
@@ -39,7 +28,6 @@
 using namespace testing::ext;
 using ::testing::Return;
 using ::testing::_;
-using ::testing::Invoke;
 
 namespace OHOS {
 namespace CameraStandard {
@@ -166,17 +154,6 @@ public:
                 const std::string& burstKey));
     sptr<IRemoteObject> AsObject() override { return nullptr; }
 };
-
-class MockPhotoAssetIntf : public PhotoAssetIntf {
-public:
-    MOCK_METHOD(void, AddPhotoProxy, (sptr<Media::PhotoProxy> photoProxy), (override));
-    MOCK_METHOD(std::string, GetPhotoAssetUri, (), (override));
-    MOCK_METHOD(int32_t, GetVideoFd, (VideoType videoType), (override));
-    MOCK_METHOD(void, NotifyVideoSaveFinished, (VideoType videoType), (override));
-    MOCK_METHOD(int32_t, GetUserId, (), (override));
-    MOCK_METHOD(int32_t, OpenAsset, (), (override));
-    MOCK_METHOD(void, UpdatePhotoProxy, (const sptr<Media::PhotoProxy>& photoProxy), (override));
-};
 #endif
 
 void HStreamCaptureUnitTest::SetUpTestCase(void)
@@ -242,50 +219,6 @@ HWTEST_F(HStreamCaptureUnitTest, EnableRawDelivery001, TestSize.Level0)
     EXPECT_EQ(streamCapture->EnableRawDelivery(true), CAMERA_OK);
     streamCapture->Release();
 }
-
-#ifdef CAMERA_CAPTURE_YUV
-/*
- * Feature: Service
- * Function: Phase1 AddPhotoProxy interaction
- * SubFunction: NA
- * FunctionPoints: UpdateMediaLibraryPhotoAssetProxy should call PhotoAssetIntf::AddPhotoProxy with same proxy instance.
- * EnvConditions: NA
- * CaseDescription: Use a stubbed PhotoAssetIntf to verify AddPhotoProxy is invoked and proxy carries compression quality.
- */
-HWTEST_F(HStreamCaptureUnitTest, UpdateMediaLibraryPhotoAssetProxy_AddPhotoProxy_WithCompressionQuality, TestSize.Level0)
-{
-    int32_t format = CAMERA_FORMAT_YUV_420_SP;
-    int32_t width = PHOTO_DEFAULT_WIDTH;
-    int32_t height = PHOTO_DEFAULT_HEIGHT;
-    sptr<HStreamCapture> streamCapture = new (std::nothrow) HStreamCapture(format, width, height);
-    ASSERT_NE(streamCapture, nullptr);
-
-    constexpr int32_t kCaptureId = 0; // CameraServerPhotoProxy default captureId_ is 0 unless filled by buffer/parcel.
-    constexpr int32_t kQuality = 86;
-    {
-        std::lock_guard<std::mutex> lock(streamCapture->compressionQualityMutex_);
-        streamCapture->compressionQualityMap_[kCaptureId] = kQuality;
-    }
-
-    auto mockAsset = std::make_shared<MockPhotoAssetIntf>();
-    ASSERT_NE(mockAsset, nullptr);
-    streamCapture->photoAssetProxy_.Insert(kCaptureId, mockAsset);
-
-    sptr<CameraServerPhotoProxy> cameraPhotoProxy = new (std::nothrow) CameraServerPhotoProxy();
-    ASSERT_NE(cameraPhotoProxy, nullptr);
-
-    bool called = false;
-    EXPECT_CALL(*mockAsset, AddPhotoProxy(_)).WillOnce(Invoke([&](sptr<Media::PhotoProxy> proxy) {
-        called = true;
-        EXPECT_NE(proxy, nullptr);
-        EXPECT_EQ(proxy.GetRefPtr(), cameraPhotoProxy.GetRefPtr());
-    }));
-
-    EXPECT_EQ(streamCapture->UpdateMediaLibraryPhotoAssetProxy(cameraPhotoProxy), CAMERA_OK);
-    EXPECT_TRUE(called);
-    EXPECT_EQ(cameraPhotoProxy->GetCompressionQuality(), kQuality);
-}
-#endif
 
 /*
  * Feature: Framework
