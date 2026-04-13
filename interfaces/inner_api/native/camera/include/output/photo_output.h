@@ -79,19 +79,7 @@ public:
      * @param timestamp Represents timestamp information for the photo capture callback
      */
     virtual void OnFrameShutterEnd(const int32_t captureId, const uint64_t timestamp) const = 0;
-    /**
-     * @brief Set the compression quality for photo saving.
-     *
-     * @param quality compression quality (e.g. 0-100). -1 means not set.
-     */
-    void SetCompressionQuality(int32_t quality);
 
-    /**
-     * @brief Get the compression quality for photo saving.
-     *
-     * @return compression quality, -1 means not set.
-     */
-    int32_t GetCompressionQuality() const;
     /**
      * @brief Called when capture ready end.
      *
@@ -201,6 +189,18 @@ public:
      * @param qualityLevel to be set.
      */
     void SetQuality(QualityLevel qualityLevel);
+    /**
+     * @brief Set the compression quality for photo saving.
+     *
+     * @param quality compression quality (e.g. 0-100). -1 means not set.
+     */
+    void SetCompressionQuality(int32_t quality);
+    /**
+     * @brief Get the compression quality for photo saving.
+     *
+     * @return compression quality, -1 means not set.
+     */
+    int32_t GetCompressionQuality() const;
 
     /**
      * @brief Get rotation information for the photo capture settings.
