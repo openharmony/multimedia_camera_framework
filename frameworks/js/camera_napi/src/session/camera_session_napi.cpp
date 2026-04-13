@@ -238,7 +238,9 @@ const std::vector<napi_property_descriptor> CameraSessionNapi::zoom_sys_props = 
 
 const std::vector<napi_property_descriptor> CameraSessionNapi::exposure_cb_props = {
     DECLARE_NAPI_FUNCTION("onExposureInfoChange", CameraSessionNapi::OnExposureInfoChange),
-    DECLARE_NAPI_FUNCTION("offExposureInfoChange", CameraSessionNapi::OffExposureInfoChange)
+    DECLARE_NAPI_FUNCTION("offExposureInfoChange", CameraSessionNapi::OffExposureInfoChange),
+    DECLARE_NAPI_FUNCTION("onExposureStateChange", CameraSessionNapi::OnExposureStateChange),
+    DECLARE_NAPI_FUNCTION("offExposureStateChange", CameraSessionNapi::OffExposureStateChange)
 };
 
 const std::vector<napi_property_descriptor> CameraSessionNapi::flash_cb_props = {
@@ -462,13 +464,15 @@ void ExposureCallbackListener::OnExposureStateCallbackAsync(ExposureState state)
 void ExposureCallbackListener::OnExposureStateCallback(ExposureState state) const
 {
     MEDIA_DEBUG_LOG("OnExposureStateCallback is called");
-    napi_value result[ARGS_TWO] = {nullptr, nullptr};
-    napi_value retVal;
-
-    napi_get_undefined(env_, &result[PARAM0]);
-    napi_create_int32(env_, state, &result[PARAM1]);
-    ExecuteCallbackNapiPara callbackNapiPara { .recv = nullptr, .argc = ARGS_TWO, .argv = result, .result = &retVal };
-    ExecuteCallback("exposureStateChange", callbackNapiPara);
+    ExecuteCallbackScopeSafe(
+        "exposureStateChange",
+        [&]() {
+            napi_value errCode = CameraNapiUtils::GetUndefinedValue(env_);
+            napi_value exposureState;
+            napi_create_uint32(env_, state, &exposureState);
+            return ExecuteCallbackData(env_, errCode, exposureState);
+        },
+        false);
 }
 
 void ExposureCallbackListener::OnExposureState(const ExposureState state)
@@ -3932,6 +3936,20 @@ napi_value CameraSessionNapi::OffExposureInfoChange(napi_env env, napi_callback_
 {
     MEDIA_INFO_LOG("CameraSessionNapi::OffExposureInfoChange is called");
     const std::string eventName = "exposureInfoChange";
+    return ListenerTemplate<CameraSessionNapi>::Off(env, info, eventName);
+}
+
+napi_value CameraSessionNapi::OnExposureStateChange(napi_env env, napi_callback_info info)
+{
+    MEDIA_INFO_LOG("CameraSessionNapi::OnExposureStateChange is called");
+    const std::string eventName = "exposureStateChange";
+    return ListenerTemplate<CameraSessionNapi>::On(env, info, eventName);
+}
+
+napi_value CameraSessionNapi::OffExposureStateChange(napi_env env, napi_callback_info info)
+{
+    MEDIA_INFO_LOG("CameraSessionNapi::OffExposureStateChange is called");
+    const std::string eventName = "exposureStateChange";
     return ListenerTemplate<CameraSessionNapi>::Off(env, info, eventName);
 }
 

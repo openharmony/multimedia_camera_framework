@@ -401,6 +401,20 @@ void SessionImpl::OffExposureInfoChangeWithErr(optional_view<callback<void(uintp
     ListenerTemplate<SessionImpl>::Off(this, callback, "exposureInfoChange");
 }
 
+void SessionImpl::RegisterExposureStateCallbackListener(
+    const std::string& eventName, std::shared_ptr<uintptr_t> callback, bool isOnce)
+{
+    CameraUtilsTaihe::ThrowError(OHOS::CameraStandard::CameraErrorCode::OPERATION_NOT_ALLOWED,
+        "this type callback can not be registered in current session!");
+}
+ 
+void SessionImpl::UnregisterExposureStateCallbackListener(
+    const std::string& eventName, std::shared_ptr<uintptr_t> callback)
+{
+    CameraUtilsTaihe::ThrowError(OHOS::CameraStandard::CameraErrorCode::OPERATION_NOT_ALLOWED,
+        "this type callback can not be registered in current session!");
+}
+
 void SessionImpl::RegisterExposureInfoCallbackListener(
     const std::string& eventName, std::shared_ptr<uintptr_t> callback, bool isOnce)
 {
@@ -1056,6 +1070,16 @@ void ControlCenterEffectStatusCallbackListener::OnControlCenterEffectStatusChang
     OnControlCenterEffectStatusCallback(controlCenterStatusInfo);
 }
 
+void SessionImpl::OnExposureStateChange(callback_view<void(ExposureState)> callback)
+{
+    ListenerTemplate<SessionImpl>::On(this, callback, "exposureStateChange");
+}
+ 
+void SessionImpl::OffExposureStateChange(optional_view<callback<void(ExposureState)>> callback)
+{
+    ListenerTemplate<SessionImpl>::Off(this, callback, "exposureStateChange");
+}
+
 void SessionImpl::OnExposureInfoChangeWithoutErr(callback_view<void(ExposureInfo const&)> callback)
 {
     ListenerTemplate<SessionImpl>::On(this, callback, "exposureInfoChange");
@@ -1148,6 +1172,27 @@ void ExposureInfoCallbackListener::OnExposureInfoChangedCallback(OHOS::CameraSta
     mainHandler_->PostTask(task, "OnExposureInfoChange", 0, OHOS::AppExecFwk::EventQueue::Priority::IMMEDIATE, {});
 }
 
+void ExposureStateCallbackListener::OnExposureState(OHOS::CameraStandard::ExposureCallback::ExposureState state)
+{
+    MEDIA_DEBUG_LOG("OnExposureState is called, info: %{public}d.", state);
+    OnExposureStateChangedCallback(state);
+}
+ 
+void ExposureStateCallbackListener::OnExposureStateChangedCallback(
+    OHOS::CameraStandard::ExposureCallback::ExposureState info) const
+{
+    MEDIA_DEBUG_LOG("OnExposureStateChangedCallback is called, info: %{public}d.", info);
+    auto sharePtr = shared_from_this();
+    auto task = [info, sharePtr]() {
+        ohos::multimedia::camera::ExposureState stateInfo = ohos::multimedia::camera::ExposureState::from_value(
+            static_cast<int32_t>(info));
+        CHECK_RETURN_ELOG(sharePtr == nullptr, "listener not exist");
+        sharePtr->ExecuteCallback<ohos::multimedia::camera::ExposureState>("exposureStateChange", stateInfo);
+    };
+    CHECK_RETURN_ELOG(mainHandler_ == nullptr, "callback failed, mainHandler_ is nullptr!");
+    mainHandler_->PostTask(task, "OnExposureStateChange", 0, OHOS::AppExecFwk::EventQueue::Priority::IMMEDIATE, {});
+}
+
 const SessionImpl::EmitterFunctions SessionImpl::fun_map_ = {
     { "focusStateChange", {
         &SessionImpl::RegisterFocusCallbackListener,
@@ -1209,6 +1254,9 @@ const SessionImpl::EmitterFunctions SessionImpl::fun_map_ = {
     {"flashStateChange", {
         &SessionImpl::RegisterFlashStateCallbackListener,
         &SessionImpl::UnregisterFlashStateCallbackListener}},
+    {"exposureStateChange", {
+        &SessionImpl::RegisterExposureStateCallbackListener,
+        &SessionImpl::UnregisterExposureStateCallbackListener}},
 };
 const SessionImpl::EmitterFunctions& SessionImpl::GetEmitterFunctions()
 {

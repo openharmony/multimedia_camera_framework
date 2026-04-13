@@ -587,6 +587,9 @@ public:
     static napi_value OnExposureInfoChange(napi_env env, napi_callback_info info);
     static napi_value OffExposureInfoChange(napi_env env, napi_callback_info info);
 
+    static napi_value OnExposureStateChange(napi_env env, napi_callback_info info);
+    static napi_value OffExposureStateChange(napi_env env, napi_callback_info info);
+
     static napi_value OnFlashStateChange(napi_env env, napi_callback_info info);
     static napi_value OffFlashStateChange(napi_env env, napi_callback_info info);
 
