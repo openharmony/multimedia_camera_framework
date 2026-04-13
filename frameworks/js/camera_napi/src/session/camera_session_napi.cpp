@@ -239,7 +239,7 @@ const std::vector<napi_property_descriptor> CameraSessionNapi::zoom_sys_props = 
 const std::vector<napi_property_descriptor> CameraSessionNapi::exposure_cb_props = {
     DECLARE_NAPI_FUNCTION("onExposureInfoChange", CameraSessionNapi::OnExposureInfoChange),
     DECLARE_NAPI_FUNCTION("offExposureInfoChange", CameraSessionNapi::OffExposureInfoChange),
-        DECLARE_NAPI_FUNCTION("onExposureStateChange", CameraSessionNapi::OnExposureStateChange),
+    DECLARE_NAPI_FUNCTION("onExposureStateChange", CameraSessionNapi::OnExposureStateChange),
     DECLARE_NAPI_FUNCTION("offExposureStateChange", CameraSessionNapi::OffExposureStateChange)
 };
 
@@ -3950,7 +3950,7 @@ napi_value CameraSessionNapi::OffExposureStateChange(napi_env env, napi_callback
 {
     MEDIA_INFO_LOG("CameraSessionNapi::OffExposureStateChange is called");
     const std::string eventName = "exposureStateChange";
-    return ListenerTemplate<CameraSessionNapi>::On(env, info, eventName);
+    return ListenerTemplate<CameraSessionNapi>::Off(env, info, eventName);
 }
 
 napi_value CameraSessionNapi::OnFlashStateChange(napi_env env, napi_callback_info info)
