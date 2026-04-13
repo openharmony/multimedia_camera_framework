@@ -54,6 +54,8 @@ namespace OHOS {
 namespace CameraStandard {
 using namespace std;
 namespace {
+constexpr int32_t COMPRESSION_QUALITY_MIN = 0;
+constexpr int32_t COMPRESSION_QUALITY_MAX = 100;
 
 void AsyncCompleteCallback(napi_env env, napi_status status, void* data)
 {
@@ -97,10 +99,11 @@ void ProcessCapture(PhotoOutputAsyncContext* context, bool isBurst)
         }
         if (context->hasPhotoSettings && context->compressionQuality != -1) {
             int32_t compressionQuality = context->compressionQuality;
-            if (compressionQuality < 0 || compressionQuality > 100) {
+            if (compressionQuality < COMPRESSION_QUALITY_MIN || compressionQuality > COMPRESSION_QUALITY_MAX) {
                 MEDIA_WARNING_LOG("PhotoOutputAsyncContext: invalid compressionQuality=%{public}d, clamp to [0, 100]",
                     compressionQuality);
-                compressionQuality = compressionQuality < 0 ? 0 : 100;
+                compressionQuality =
+                    compressionQuality < COMPRESSION_QUALITY_MIN ? COMPRESSION_QUALITY_MIN : COMPRESSION_QUALITY_MAX;
             }
             MEDIA_INFO_LOG("PhotoOutputAsyncContext: CompressionQuality is set to %{public}d", compressionQuality);
             capSettings->SetCompressionQuality(compressionQuality);

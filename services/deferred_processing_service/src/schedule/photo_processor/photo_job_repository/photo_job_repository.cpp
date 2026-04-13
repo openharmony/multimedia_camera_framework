@@ -105,7 +105,7 @@ void PhotoJobRepository::AddDeferredJob(const std::string& imageId, bool discard
     }
     auto jobPtr =
         std::make_shared<DeferredPhotoJob>(
-            imageId, static_cast<PhotoJobType>(type), discardable, metadata,jobChangeListener_, bundleName);
+            imageId, static_cast<PhotoJobType>(type), discardable, metadata, jobChangeListener_, bundleName);
     DP_INFO_LOG("DPS_PHOTO: AddJob imageId: %{public}s, type: %{public}d, discardable: %{public}d",
         imageId.c_str(), type, discardable);
     if (jobPtr->GetPhotoJobType() == PhotoJobType::BACKGROUND) {

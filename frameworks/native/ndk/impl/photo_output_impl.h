@@ -28,7 +28,7 @@
 #include "photo_native_impl.h"
 #include "media_asset_helper.h"
 
-struct Camera_PhotoCaptureSettingExt {
+struct CameraPhotoCaptureSettingExt {
 public:
     std::shared_ptr<OHOS::CameraStandard::PhotoCaptureSetting> capSettings {nullptr};
 

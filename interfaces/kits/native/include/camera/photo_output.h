@@ -67,7 +67,7 @@ typedef struct Camera_PhotoOutput Camera_PhotoOutput;
  *
  * @since 24
  */
-typedef struct Camera_PhotoCaptureSettingExt Camera_PhotoCaptureSettingExt;
+typedef struct CameraPhotoCaptureSettingExt CameraPhotoCaptureSettingExt;
 /**
  * @brief Photo output frame start callback to be called in {@link PhotoOutput_Callbacks}.
  *
@@ -450,8 +450,8 @@ Camera_ErrorCode OH_PhotoOutput_Capture_WithCaptureSetting(Camera_PhotoOutput* p
 *         {@link #CAMERA_SERVICE_FATAL_ERROR} if camera service fatal error.
 * @since 24
 */
-    Camera_ErrorCode OH_PhotoOutput_CreatePhotoCaptureSettingExt(Camera_PhotoOutput* photoOutput,
-    Camera_PhotoCaptureSettingExt** setting);
+Camera_ErrorCode OhPhotoOutputCreatePhotoCaptureSettingExt(Camera_PhotoOutput* photoOutput,
+    CameraPhotoCaptureSettingExt** setting);
 
 /**
     * @brief Destroy a photo capture setting extension instance.
@@ -461,7 +461,7 @@ Camera_ErrorCode OH_PhotoOutput_Capture_WithCaptureSetting(Camera_PhotoOutput* p
     *         {@link #CAMERA_INVALID_ARGUMENT} if parameter missing or parameter type incorrect.
     * @since 24
     */
-Camera_ErrorCode OH_PhotoOutput_DestroyPhotoCaptureSettingExt(Camera_PhotoCaptureSettingExt* setting);
+Camera_ErrorCode OhPhotoOutputDestroyPhotoCaptureSettingExt(CameraPhotoCaptureSettingExt* setting);
 
 /**
     * @brief Set the image rotation for {@link Camera_PhotoCaptureSettingExt}.
@@ -472,7 +472,7 @@ Camera_ErrorCode OH_PhotoOutput_DestroyPhotoCaptureSettingExt(Camera_PhotoCaptur
     *         {@link #CAMERA_INVALID_ARGUMENT} if parameter missing or parameter type incorrect.
     * @since 24
     */
-Camera_ErrorCode OH_PhotoCaptureSettingExt_SetImageRotation(Camera_PhotoCaptureSettingExt* photoCaptureSettingExt,
+Camera_ErrorCode OhPhotoCaptureSettingExtSetImageRotation(CameraPhotoCaptureSettingExt* photoCaptureSettingExt,
     Camera_ImageRotation rotation);
 
 /**
@@ -484,7 +484,7 @@ Camera_ErrorCode OH_PhotoCaptureSettingExt_SetImageRotation(Camera_PhotoCaptureS
     *         {@link #CAMERA_INVALID_ARGUMENT} if parameter missing or parameter type incorrect.
     * @since 24
     */
-Camera_ErrorCode OH_PhotoCaptureSettingExt_SetLocation(Camera_PhotoCaptureSettingExt* photoCaptureSettingExt,
+Camera_ErrorCode OhPhotoCaptureSettingExtSetLocation(CameraPhotoCaptureSettingExt* photoCaptureSettingExt,
     Camera_Location location);
 
 /**
@@ -496,7 +496,8 @@ Camera_ErrorCode OH_PhotoCaptureSettingExt_SetLocation(Camera_PhotoCaptureSettin
     *         {@link #CAMERA_INVALID_ARGUMENT} if parameter missing or parameter type incorrect.
     * @since 24
     */
-Camera_ErrorCode OH_PhotoCaptureSettingExt_SetMirror(Camera_PhotoCaptureSettingExt* photoCaptureSettingExt, bool mirror);
+Camera_ErrorCode OhPhotoCaptureSettingExtSetMirror(CameraPhotoCaptureSettingExt* photoCaptureSettingExt,
+    bool mirror);
 
 /**
     * @brief Set the compression quality for {@link Camera_PhotoCaptureSettingExt}.
@@ -507,7 +508,7 @@ Camera_ErrorCode OH_PhotoCaptureSettingExt_SetMirror(Camera_PhotoCaptureSettingE
     *         {@link #CAMERA_INVALID_ARGUMENT} if parameter missing or parameter type incorrect.
     * @since 24
     */
-Camera_ErrorCode OH_PhotoCaptureSettingExt_SetCompressionQuality(Camera_PhotoCaptureSettingExt* photoCaptureSettingExt,
+Camera_ErrorCode OhPhotoCaptureSettingExtSetCompressionQuality(CameraPhotoCaptureSettingExt* photoCaptureSettingExt,
     uint8_t compressionQuality);
 
 /**
@@ -521,8 +522,8 @@ Camera_ErrorCode OH_PhotoCaptureSettingExt_SetCompressionQuality(Camera_PhotoCap
     *         {@link #CAMERA_SERVICE_FATAL_ERROR} if camera service fatal error.
     * @since 24
     */
-Camera_ErrorCode OH_PhotoOutput_Capture_WithCaptureSettingExt(Camera_PhotoOutput* photoOutput,
-    Camera_PhotoCaptureSettingExt* setting); 
+Camera_ErrorCode OhPhotoOutputCaptureWithCaptureSettingExt(Camera_PhotoOutput* photoOutput,
+    CameraPhotoCaptureSettingExt* setting);
 /**
  * @brief Release photo output.
  *
