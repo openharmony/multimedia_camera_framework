@@ -89,7 +89,8 @@ private:
 class DeferredPhotoJob : public StateMachine {
 public:
     DeferredPhotoJob(const std::string& imageId, const PhotoJobType photoJobType, const bool discardable,
-        const DpsMetadata& metadata, const std::weak_ptr<IJobStateChangeListener>& jobChangeListener, const std::string& bundleName);
+        const DpsMetadata& metadata, const std::weak_ptr<IJobStateChangeListener>& jobChangeListener,
+        const std::string& bundleName);
     ~DeferredPhotoJob() = default;
 
     bool Prepare();

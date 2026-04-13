@@ -99,7 +99,8 @@ void DeferredPhotoProcessorUnittest::SetUp()
 {
     g_sessionMockForCompressionTest = new (std::nothrow) PhotoProcessingSessionCallbackMock();
     ASSERT_NE(g_sessionMockForCompressionTest, nullptr);
-    DeferredProcessingService::GetInstance().CreateDeferredPhotoProcessingSession(USER_ID, g_sessionMockForCompressionTest);
+    DeferredProcessingService::GetInstance().CreateDeferredPhotoProcessingSession(
+        USER_ID, g_sessionMockForCompressionTest);
     sleep(1);
     scheduler_ = DPS_GetSchedulerManager();
     ASSERT_NE(scheduler_, nullptr);
@@ -310,7 +311,8 @@ HWTEST_F(DeferredPhotoProcessorUnittest, deferred_photo_processor_unittest_017, 
  * EnvConditions: NA
  * CaseDescription: DpsMetadata carries compression quality; HandleSuccess merges job quality into callback metadata
  */
-HWTEST_F(DeferredPhotoProcessorUnittest, deferred_photo_processor_unittest_compression_quality_yuv_metadata, TestSize.Level1)
+HWTEST_F(DeferredPhotoProcessorUnittest,
+    deferred_photo_processor_unittest_compression_quality_yuv_metadata, TestSize.Level1)
 {
     EventsInfo::GetInstance().SetMediaLibraryState(MediaLibraryStatus::MEDIA_LIBRARY_IDLE);
 

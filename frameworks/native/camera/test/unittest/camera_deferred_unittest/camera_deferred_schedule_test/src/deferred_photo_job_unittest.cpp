@@ -515,7 +515,8 @@ HWTEST_F(DeferredPhotoJobUnitTest, photo_job_repository_unittest_001, TestSize.L
  * EnvConditions: NA
  * CaseDescription: Media library AddImage path supplies metadata; job must expose same quality via GetCompressionQuality
  */
-HWTEST_F(DeferredPhotoJobUnitTest, photo_job_repository_compression_quality_unittest, TestSize.Level0)
+HWTEST_F(DeferredPhotoJobUnitTest,
+    photo_job_repository_compression_quality_unittest, TestSize.Level0)
 {
     auto repository = PhotoJobRepository::Create(USER_ID);
     constexpr int32_t kQuality = 73;
