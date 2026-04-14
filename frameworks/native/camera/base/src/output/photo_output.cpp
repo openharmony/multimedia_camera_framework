@@ -822,7 +822,7 @@ int32_t PhotoOutput::Capture(std::shared_ptr<PhotoCaptureSetting> photoCaptureSe
 #ifdef CAMERA_CAPTURE_YUV
     bool isSystemCapture = CameraSecurity::CheckSystemApp();
     std::shared_ptr<OHOS::Camera::CameraMetadata> metaData = photoCaptureSettings->GetCaptureMetadataSetting();
-    bool result = AddOrUpdateMetadata(metaData, OHOS_CONTROL_SYSTEM_CAPTURE, &isSystemCapture, 1);
+    bool result = AddOrUpdateMetadata(metaData, OHOS_CONTROL_CAPTURE_ROTATION, &isSystemCapture, 1);
     MEDIA_INFO_LOG("AddOrUpdateMetadata isSystemCapture: %{public}d, result: %{public}d", isSystemCapture, result);
 #endif
     defaultCaptureSetting_ = photoCaptureSettings;
