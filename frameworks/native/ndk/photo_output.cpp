@@ -259,7 +259,7 @@ Camera_ErrorCode OH_PhotoOutput_Capture_WithCaptureSetting(Camera_PhotoOutput* p
     return photoOutput->Capture_WithCaptureSetting(setting);
 }
 
-Camera_ErrorCode OhPhotoOutputCreatePhotoCaptureSettingExt(Camera_PhotoOutput* photoOutput,
+Camera_ErrorCode OH_PhotoOutput_DestroyPhotoCaptureSettingExt(Camera_PhotoOutput* photoOutput,
     CameraPhotoCaptureSettingExt** setting)
 {
     CHECK_RETURN_RET_ELOG(photoOutput == nullptr, CAMERA_INVALID_ARGUMENT, "Invalid argument, photoOutput is null!");
@@ -274,7 +274,7 @@ Camera_ErrorCode OhPhotoOutputDestroyPhotoCaptureSettingExt(CameraPhotoCaptureSe
     return setting->Release();
 }
 
-Camera_ErrorCode OhPhotoCaptureSettingExtSetImageRotation(CameraPhotoCaptureSettingExt* photoCaptureSettingExt,
+Camera_ErrorCode OH_PhotoCaptureSettingExt_SetImageRotation(CameraPhotoCaptureSettingExt* photoCaptureSettingExt,
     Camera_ImageRotation rotation)
 {
     CHECK_RETURN_RET_ELOG(photoCaptureSettingExt == nullptr, CAMERA_INVALID_ARGUMENT,
@@ -282,7 +282,7 @@ Camera_ErrorCode OhPhotoCaptureSettingExtSetImageRotation(CameraPhotoCaptureSett
     return photoCaptureSettingExt->SetImageRotation(rotation);
 }
 
-Camera_ErrorCode OhPhotoCaptureSettingExtSetLocation(CameraPhotoCaptureSettingExt* photoCaptureSettingExt,
+Camera_ErrorCode OH_PhotoCaptureSettingExt_SetLocation(CameraPhotoCaptureSettingExt* photoCaptureSettingExt,
     Camera_Location location)
 {
     CHECK_RETURN_RET_ELOG(photoCaptureSettingExt == nullptr, CAMERA_INVALID_ARGUMENT,
@@ -290,14 +290,14 @@ Camera_ErrorCode OhPhotoCaptureSettingExtSetLocation(CameraPhotoCaptureSettingEx
     return photoCaptureSettingExt->SetLocation(location);
 }
 
-Camera_ErrorCode OhPhotoCaptureSettingExtSetMirror(CameraPhotoCaptureSettingExt* photoCaptureSettingExt, bool mirror)
+Camera_ErrorCode OH_PhotoCaptureSettingExt_SetMirror(CameraPhotoCaptureSettingExt* photoCaptureSettingExt, bool mirror)
 {
     CHECK_RETURN_RET_ELOG(photoCaptureSettingExt == nullptr, CAMERA_INVALID_ARGUMENT,
         "Invalid argument, photoCaptureSettingExt is null!");
     return photoCaptureSettingExt->SetMirror(mirror);
 }
 
-Camera_ErrorCode OhPhotoCaptureSettingExtSetCompressionQuality(CameraPhotoCaptureSettingExt* photoCaptureSettingExt,
+Camera_ErrorCode OH_PhotoCaptureSettingExt_SetCompressionQuality(CameraPhotoCaptureSettingExt* photoCaptureSettingExt,
     uint8_t compressionQuality)
 {
     CHECK_RETURN_RET_ELOG(photoCaptureSettingExt == nullptr, CAMERA_INVALID_ARGUMENT,
@@ -305,7 +305,7 @@ Camera_ErrorCode OhPhotoCaptureSettingExtSetCompressionQuality(CameraPhotoCaptur
     return photoCaptureSettingExt->SetCompressionQuality(compressionQuality);
 }
 
-Camera_ErrorCode OhPhotoOutputCaptureWithCaptureSettingExt(Camera_PhotoOutput* photoOutput,
+Camera_ErrorCode OH_PhotoOutput_Capture_WithCaptureSettingExt(Camera_PhotoOutput* photoOutput,
     CameraPhotoCaptureSettingExt* setting)
 {
     CHECK_RETURN_RET_ELOG(photoOutput == nullptr, CAMERA_INVALID_ARGUMENT, "Invalid argument, photoOutput is null!");
