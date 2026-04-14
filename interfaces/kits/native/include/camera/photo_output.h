@@ -549,7 +549,7 @@ Camera_ErrorCode OH_PhotoOutput_EnableMovingPhoto(Camera_PhotoOutput* photoOutpu
  * @since 21
  */
 Camera_ErrorCode OH_PhotoOutput_CreatePhotoCaptureSettingExt(Camera_PhotoOutput* photoOutput,
- 	Camera_PhotoCaptureSettingExt** setting);
+    Camera_PhotoCaptureSettingExt** setting);
  	 
 /**
  * @brief Destroy a photo capture setting extension instance.
