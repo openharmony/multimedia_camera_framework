@@ -16,7 +16,6 @@
 #ifndef OHOS_PHOTO_OUTPUT_IMPL_H
 #define OHOS_PHOTO_OUTPUT_IMPL_H
 
-#include <memory>
 #include <mutex>
 
 #include "kits/native/include/camera/camera.h"
@@ -28,7 +27,7 @@
 #include "photo_native_impl.h"
 #include "media_asset_helper.h"
 
-struct CameraPhotoCaptureSettingExt {
+struct Camera_PhotoCaptureSettingExt {
 public:
     std::shared_ptr<OHOS::CameraStandard::PhotoCaptureSetting> capSettings {nullptr};
 
@@ -341,7 +340,7 @@ public:
     Camera_ErrorCode Capture_WithCaptureSetting(Camera_PhotoCaptureSetting setting);
 
     Camera_ErrorCode Capture_WithCaptureSettingExt(Camera_PhotoCaptureSettingExt* setting);
-
+ 
     Camera_ErrorCode CreatePhotoCaptureSettingExt(Camera_PhotoCaptureSettingExt** setting);
 
     Camera_ErrorCode Release();
