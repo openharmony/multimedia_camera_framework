@@ -44,10 +44,10 @@ Camera_PhotoOutput::~Camera_PhotoOutput()
     if (innerCallback_) {
         innerCallback_ = nullptr;
     }
-    if (photoNative_) { 
-        delete photoNative_; 
-        photoNative_ = nullptr; 
-     }
+    if (photoNative_) {
+        delete photoNative_;
+        photoNative_ = nullptr;
+    }
 }
 
 Camera_ErrorCode Camera_PhotoOutput::RegisterCallback(PhotoOutput_Callbacks* callback)
