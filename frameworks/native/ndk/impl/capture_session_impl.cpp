@@ -1537,8 +1537,8 @@ Camera_ErrorCode Camera_CaptureSession::GetPhysicalAperture(float* aperture) con
     MEDIA_DEBUG_LOG("Camera_CaptureSession::GetPhysicalAperture");
     CHECK_RETURN_RET(innerCaptureSession_ == nullptr, CAMERA_OPERATION_NOT_ALLOWED);
     CHECK_RETURN_RET(aperture == nullptr, CAMERA_INVALID_ARGUMENT);
-    innerCaptureSession_->GetPhysicalAperture(*aperture);
-    return CAMERA_OK;
+    int32_t ret = innerCaptureSession_->GetPhysicalAperture(*aperture);
+    return FrameworkToNdkCameraError(ret);
 }
 
 Camera_ErrorCode Camera_CaptureSession::SetPhysicalAperture(float aperture) const
