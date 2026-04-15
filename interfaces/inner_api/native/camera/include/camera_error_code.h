@@ -17,6 +17,8 @@
 #define CAMERA_ERROR_CODE_H
 
 #include <cstdint>
+#include <map>
+
 namespace OHOS {
 namespace CameraStandard {
 /**
@@ -31,7 +33,12 @@ enum CameraErrorCode : int32_t {
     NO_SYSTEM_APP_PERMISSION = 202,
     PARAMETER_ERROR = 401,
     INVALID_ARGUMENT = 7400101,
+    
     OPERATION_NOT_ALLOWED = 7400102,
+    OPERATION_NOT_ALLOWED_OF_SESSION_READY = 74001021,
+    OPERATION_NOT_ALLOWED_OF_UNSUPPORTED_FEATURE = 74001022,
+    OPERATION_NOT_ALLOWED_OF_DEVICE = 74001023,
+
     SESSION_NOT_CONFIG = 7400103,
     SESSION_NOT_RUNNING = 7400104,
     SESSION_CONFIG_LOCKED = 7400105,
@@ -42,9 +49,33 @@ enum CameraErrorCode : int32_t {
     UNRESOLVED_CONFLICTS_BETWEEN_STREAMS = 7400110,
     DEVICE_SWITCH_FREQUENT = 7400111,
     CAMERA_LENS_RETRACTED = 7400112,
+    // 服务致命错误
     SERVICE_FATL_ERROR = 7400201,
+    SERVICE_FATL_ERROR_OF_CONFIG = 74002011,
+    SERVICE_FATL_ERROR_OF_ALLOC = 74002012,
+    SERVICE_FATL_ERROR_OF_INVALID_SESSION_CFG = 74002013,
+
     UNSUPPORTED_MULTI_CAMERA_COMBINATION =  7400113
 };
+
+static const std::map<int32_t, int32_t> errorCodeMap  = {
+    {74001021, 7400102},
+    {74001022, 7400102},
+    {74001023, 7400102},
+    {74002011, 7400201},
+    {74002012, 7400201},
+    {74002013, 7400201}
+};
+
+inline int32_t GetCameraErrorCode(int32_t errorCode)
+{
+    auto it = errorCodeMap.find(errorCode);
+    if (it != errorCodeMap.end()) {
+        return it->second;
+    } else {
+        return errorCode;
+    }
+}
 } // namespace CameraStandard
 } // namespace OHOS
 #endif // CAMERA_ERROR_CODE_H

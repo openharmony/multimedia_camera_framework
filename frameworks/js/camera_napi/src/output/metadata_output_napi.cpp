@@ -408,7 +408,7 @@ napi_value MetadataOutputNapi::CreateMetadataOutput(napi_env env, std::vector<Me
     status = napi_get_reference_value(env, sConstructor_, &constructor);
     if (status == napi_ok) {
         int retCode = CameraManager::GetInstance()->CreateMetadataOutput(sMetadataOutput_, metadataObjectTypes);
-        if (!CameraNapiUtils::CheckError(env, retCode)) {
+        if (!CameraNapiUtils::CheckErrorV2(env, retCode)) {
             return nullptr;
         }
         if (sMetadataOutput_ == nullptr) {

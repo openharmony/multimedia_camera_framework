@@ -593,7 +593,7 @@ HWTEST_F(CameraVideoSessionUnitTest, video_session_unittest_009, TestSize.Level0
     ASSERT_NE(videoSessionForSys, nullptr);
 
     int32_t Result = videoSessionForSys->AddInput(input);
-    EXPECT_EQ(Result, CameraErrorCode::OPERATION_NOT_ALLOWED);
+    EXPECT_EQ(GetCameraErrorCode(Result), CameraErrorCode::OPERATION_NOT_ALLOWED);
 
     // 创建一个输出对象
     sptr<VideoOutput> videoOutput = nullptr;
@@ -653,7 +653,7 @@ HWTEST_F(CameraVideoSessionUnitTest, video_session_unittest_010, TestSize.Level0
 
 
     int result = videoSessionForSys->AddInput(input);
-    EXPECT_EQ(result, CameraErrorCode::OPERATION_NOT_ALLOWED);
+    EXPECT_EQ(GetCameraErrorCode(result), CameraErrorCode::OPERATION_NOT_ALLOWED);
 
     // 创建一个输出对象
     sptr<VideoOutput> videoOutput = nullptr;
@@ -665,10 +665,10 @@ HWTEST_F(CameraVideoSessionUnitTest, video_session_unittest_010, TestSize.Level0
 
     // 会话未配置时
     result = videoSessionForSys->AddOutput(nullOutput);
-    EXPECT_EQ(result, CameraErrorCode::OPERATION_NOT_ALLOWED);
+    EXPECT_EQ(GetCameraErrorCode(result), CameraErrorCode::OPERATION_NOT_ALLOWED);
 
     result = videoSessionForSys->AddOutput(videoOutputCaptureUpper);
-    EXPECT_EQ(result, CameraErrorCode::OPERATION_NOT_ALLOWED);
+    EXPECT_EQ(GetCameraErrorCode(result), CameraErrorCode::OPERATION_NOT_ALLOWED);
 
     // 配置会话
     result = videoSessionForSys->BeginConfig();

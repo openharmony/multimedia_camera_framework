@@ -1501,7 +1501,7 @@ napi_value CameraSessionNapi::AddInput(napi_env env, napi_callback_info info)
     status = napi_unwrap(env, thisVar, reinterpret_cast<void**>(&cameraSessionNapi));
     if (status == napi_ok && cameraSessionNapi != nullptr) {
         int32_t ret = cameraSessionNapi->cameraSession_->AddInput(cameraInput);
-        if (!CameraNapiUtils::CheckError(env, ret)) {
+        if (!CameraNapiUtils::CheckErrorV2(env, ret)) {
             return nullptr;
         }
     } else {
@@ -1556,7 +1556,7 @@ napi_value CameraSessionNapi::RemoveInput(napi_env env, napi_callback_info info)
         sptr<CaptureInput> cameraInput = nullptr;
         GetJSArgsForCameraInput(env, argc, argv, cameraInput);
         int32_t ret = cameraSessionNapi->cameraSession_->RemoveInput(cameraInput);
-        if (!CameraNapiUtils::CheckError(env, ret)) {
+        if (!CameraNapiUtils::CheckErrorV2(env, ret)) {
             return nullptr;
         }
         return result;
@@ -1653,7 +1653,7 @@ napi_value CameraSessionNapi::AddOutput(napi_env env, napi_callback_info info)
         sptr<CaptureOutput> cameraOutput = nullptr;
         result = GetJSArgsForCameraOutput(env, argc, argv, cameraOutput);
         int32_t ret = cameraSessionNapi->cameraSession_->AddOutput(cameraOutput);
-        if (!CameraNapiUtils::CheckError(env, ret)) {
+        if (!CameraNapiUtils::CheckErrorV2(env, ret)) {
             return nullptr;
         }
     } else {
@@ -1708,7 +1708,7 @@ napi_value CameraSessionNapi::RemoveOutput(napi_env env, napi_callback_info info
         sptr<CaptureOutput> cameraOutput = nullptr;
         result = GetJSArgsForCameraOutput(env, argc, argv, cameraOutput);
         int32_t ret = cameraSessionNapi->cameraSession_->RemoveOutput(cameraOutput);
-        if (!CameraNapiUtils::CheckError(env, ret)) {
+        if (!CameraNapiUtils::CheckErrorV2(env, ret)) {
             return nullptr;
         }
     } else {
@@ -1941,7 +1941,7 @@ napi_value CameraSessionNapi::SetVideoStabilizationMode(napi_env env, napi_callb
         napi_get_value_int32(env, argv[PARAM0], &value);
         VideoStabilizationMode videoStabilizationMode = (VideoStabilizationMode)value;
         int retCode = cameraSessionNapi->cameraSession_->SetVideoStabilizationMode(videoStabilizationMode);
-        if (!CameraNapiUtils::CheckError(env, retCode)) {
+        if (!CameraNapiUtils::CheckErrorV2(env, retCode)) {
             return nullptr;
         }
     } else {
@@ -2108,7 +2108,7 @@ napi_value CameraSessionNapi::SetFlashMode(napi_env env, napi_callback_info info
         cameraSessionNapi->cameraSession_->LockForControl();
         int retCode = cameraSessionNapi->cameraSession_->SetFlashMode(flashMode);
         cameraSessionNapi->cameraSession_->UnlockForControl();
-        if (!CameraNapiUtils::CheckError(env, retCode)) {
+        if (!CameraNapiUtils::CheckErrorV2(env, retCode)) {
             return nullptr;
         }
     } else {
@@ -2239,7 +2239,7 @@ napi_value CameraSessionNapi::SetExposureMode(napi_env env, napi_callback_info i
         cameraSessionNapi->cameraSession_->LockForControl();
         int retCode = cameraSessionNapi->cameraSession_->SetExposureMode(exposureMode);
         cameraSessionNapi->cameraSession_->UnlockForControl();
-        if (!CameraNapiUtils::CheckError(env, retCode)) {
+        if (!CameraNapiUtils::CheckErrorV2(env, retCode)) {
             return nullptr;
         }
     } else {
@@ -2393,7 +2393,7 @@ napi_value CameraSessionNapi::SetExposureBias(napi_env env, napi_callback_info i
         cameraSessionNapi->cameraSession_->LockForControl();
         int32_t retCode = cameraSessionNapi->cameraSession_->SetExposureBias((float)exposureValue);
         cameraSessionNapi->cameraSession_->UnlockForControl();
-        if (!CameraNapiUtils::CheckError(env, retCode)) {
+        if (!CameraNapiUtils::CheckErrorV2(env, retCode)) {
             return nullptr;
         }
     } else {
@@ -2635,7 +2635,7 @@ napi_value CameraSessionNapi::SetFocusMode(napi_env env, napi_callback_info info
         int retCode = cameraSessionNapi->cameraSession_->
                 SetFocusMode(static_cast<FocusMode>(focusMode));
         cameraSessionNapi->cameraSession_->UnlockForControl();
-        if (!CameraNapiUtils::CheckError(env, retCode)) {
+        if (!CameraNapiUtils::CheckErrorV2(env, retCode)) {
             return nullptr;
         }
     } else {
@@ -2775,7 +2775,7 @@ napi_value CameraSessionNapi::GetZoomRatioRange(napi_env env, napi_callback_info
     if (status == napi_ok && cameraSessionNapi != nullptr) {
         std::vector<float> vecZoomRatioList;
         int32_t retCode = cameraSessionNapi->cameraSession_->GetZoomRatioRange(vecZoomRatioList);
-        if (!CameraNapiUtils::CheckError(env, retCode)) {
+        if (!CameraNapiUtils::CheckErrorV2(env, retCode)) {
             return nullptr;
         }
         MEDIA_INFO_LOG("CameraSessionNapi::GetZoomRatioRange len = %{public}zu",
@@ -3356,7 +3356,7 @@ napi_value CameraSessionNapi::EnableMacro(napi_env env, napi_callback_info info)
         cameraSessionNapi->cameraSession_->LockForControl();
         int32_t retCode = cameraSessionNapi->cameraSession_->EnableMacro(isEnableMacro);
         cameraSessionNapi->cameraSession_->UnlockForControl();
-        if (!CameraNapiUtils::CheckError(env, retCode)) {
+        if (!CameraNapiUtils::CheckErrorV2(env, retCode)) {
             MEDIA_ERR_LOG("CameraSessionNapi::EnableMacro fail %{public}d", retCode);
             return nullptr;
         }
@@ -3484,7 +3484,7 @@ napi_value CameraSessionNapi::Preconfig(napi_env env, napi_callback_info info)
         static_cast<PreconfigType>(configType), static_cast<ProfileSizeRatio>(profileSizeRatio));
     MEDIA_INFO_LOG("CameraSessionNapi::Preconfig is called, configType: %{public}d, profileSizeRatio: %{public}d",
                    configType, profileSizeRatio);
-    if (!CameraNapiUtils::CheckError(env, retCode)) {
+    if (!CameraNapiUtils::CheckErrorV2(env, retCode)) {
         return nullptr;
     }
     return CameraNapiUtils::GetUndefinedValue(env);

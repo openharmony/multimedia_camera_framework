@@ -421,7 +421,7 @@ napi_value VideoOutputNapi::CreateVideoOutput(napi_env env, VideoProfile &profil
         }
         surface->SetUserData(CameraManager::surfaceFormat, std::to_string(profile.GetCameraFormat()));
         int retCode = CameraManager::GetInstance()->CreateVideoOutput(profile, surface, &sVideoOutput_);
-        if (!CameraNapiUtils::CheckError(env, retCode)) {
+        if (!CameraNapiUtils::CheckErrorV2(env, retCode)) {
             return nullptr;
         }
         if (sVideoOutput_ == nullptr) {
@@ -460,7 +460,7 @@ napi_value VideoOutputNapi::CreateVideoOutput(napi_env env, std::string surfaceI
             return result;
         }
         int retCode = CameraManager::GetInstance()->CreateVideoOutputWithoutProfile(surface, &sVideoOutput_);
-        if (!CameraNapiUtils::CheckError(env, retCode)) {
+        if (!CameraNapiUtils::CheckErrorV2(env, retCode)) {
             return nullptr;
         }
         if (sVideoOutput_ == nullptr) {
