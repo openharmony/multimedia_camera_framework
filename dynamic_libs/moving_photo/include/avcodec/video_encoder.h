@@ -17,6 +17,7 @@
 #define AVCODEC_SAMPLE_VIDEO_ENCODER_H
 
 #include <unordered_set>
+#include "safe_map.h"
 #include "frame_record.h"
 #include "avcodec_video_encoder.h"
 #include "camera_types.h"
@@ -76,12 +77,14 @@ public:
     }
     void SetVideoCodec(const std::shared_ptr<Size>& size, int32_t rotation);
     void RestartVideoCodec(shared_ptr<Size> size, int32_t rotation);
+    bool ProcessOverTimeFrame(sptr<FrameRecord> frameRecord);
 private:
     bool IsBframeSupported();
     int32_t SetCallback();
     int32_t Configure();
     std::shared_ptr<AVBuffer> CopyAVBuffer(std::shared_ptr<AVBuffer> &inputBuffer);
     bool EnqueueBuffer(sptr<FrameRecord> frameRecord);
+    bool ProcessEncodedBuffer(sptr<FrameRecord> frameRecord, sptr<VideoCodecAVBufferInfo> bufferInfo);
     std::atomic<bool> isStarted_ { false };
     std::mutex encoderMutex_;
     shared_ptr<AVCodecVideoEncoder> encoder_ = nullptr;
@@ -106,10 +109,14 @@ private:
     int64_t currentMinTimestamp = INT64_MAX;
 
     std::mutex tsMutex_;
+    std::mutex overTimeMutex_;
     std::priority_queue<int64_t, std::vector<int64_t>, std::greater<int64_t>> tsVec_;
     std::shared_ptr<AVBuffer> XpsBuffer_;
-    std::mutex overTimeMutex_;
-    std::unordered_set<int64_t>  overTimeSet;
+    struct OverTimeBufferInfo {
+        uint32_t index = UINT32_MAX;
+        sptr<VideoCodecAVBufferInfo> bufferInfo = nullptr;
+    };
+    SafeMap<int64_t, OverTimeBufferInfo> overTimeMap;
 };
 } // CameraStandard
 } // OHOS

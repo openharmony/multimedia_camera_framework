@@ -61,7 +61,8 @@ private:
 class CachedFrameCallbackHandle : public RefBase {
 public:
     CachedFrameCallbackHandle(vector<sptr<FrameRecord>> frameRecords,
-        EncodedEndCbFunc encodedEndCbFunc, uint64_t taskName, int32_t rotation, int32_t captureId);
+        EncodedEndCbFunc encodedEndCbFunc, uint64_t taskName, int32_t rotation, int32_t captureId,
+        wptr<AvcodecTaskManager> taskManager);
     ~CachedFrameCallbackHandle();
     void OnCacheFrameFinish(sptr<FrameRecord> frameRecord, bool cachedSuccess);
     void AbortCapture();
@@ -76,6 +77,7 @@ private:
     uint64_t taskName_;
     int32_t rotation_;
     int32_t captureId_;
+    wptr<AvcodecTaskManager> taskManager_;
 };
 } // CameraStandard
 } // OHOS
