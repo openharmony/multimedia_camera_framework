@@ -89,6 +89,12 @@ void AvcodecTaskManager::AsyncInitVideoCodec()
     }).detach();
 }
 
+bool AvcodecTaskManager::ProcessOverTimeFrame(sptr<FrameRecord> frameRecord)
+{
+    CHECK_RETURN_RET(videoEncoder_, videoEncoder_->ProcessOverTimeFrame(frameRecord));
+    return false;
+}
+
 shared_ptr<TaskManager>& AvcodecTaskManager::GetTaskManager()
 {
     lock_guard<mutex> lock(taskManagerMutex_);
@@ -143,10 +149,11 @@ void AvcodecTaskManager::EncodeVideoBuffer(sptr<FrameRecord> frameRecord, CacheC
         frameRecord->SetEncodedResult(isEncodeSuccess);
         frameRecord->SetFinishStatus();
         if (isEncodeSuccess) {
-            MEDIA_INFO_LOG("encode image success %{public}s, refCount: %{public}d", frameRecord->GetFrameId().c_str(),
-                frameRecord->GetSptrRefCount());
+            MEDIA_INFO_LOG("encode image success %{public}s, refCount: %{public}d, timestamp:%{public}" PRIu64,
+                frameRecord->GetFrameId().c_str(), frameRecord->GetSptrRefCount(), frameRecord->GetTimeStamp());
         } else {
-            MEDIA_ERR_LOG("encode image fail %{public}s", frameRecord->GetFrameId().c_str());
+            MEDIA_ERR_LOG("encode image fail %{public}s, timestamp:%{public}" PRIu64, frameRecord->GetFrameId().c_str(),
+                frameRecord->GetTimeStamp());
         }
         if (cacheCallback) {
             cacheCallback(frameRecord, isEncodeSuccess);
