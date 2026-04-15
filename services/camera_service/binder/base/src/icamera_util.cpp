@@ -104,5 +104,53 @@ int32_t ServiceToCameraError(int32_t ret)
     }
     return err;
 }
+
+
+static const std::unordered_map<int32_t, int32_t> ServiceToCameraErrorrMap = {
+    {CAMERA_OK, 0},
+    {CAMERA_ALLOC_ERROR, CameraErrorCode::SERVICE_FATL_ERROR_OF_ALLOC},
+    {CAMERA_INVALID_ARG, CameraErrorCode::SERVICE_FATL_ERROR},
+    {CAMERA_UNSUPPORTED, CameraErrorCode::DEVICE_DISABLED},
+    {CAMERA_DEVICE_BUSY, CameraErrorCode::CONFLICT_CAMERA},
+    {CAMERA_DEVICE_CLOSED, CameraErrorCode::DEVICE_DISABLED},
+    {CAMERA_DEVICE_REQUEST_TIMEOUT, CameraErrorCode::SERVICE_FATL_ERROR},
+    {CAMERA_STREAM_BUFFER_LOST, CameraErrorCode::SERVICE_FATL_ERROR},
+    {CAMERA_INVALID_SESSION_CFG, CameraErrorCode::SERVICE_FATL_ERROR_OF_INVALID_SESSION_CFG},
+    {CAMERA_CAPTURE_LIMIT_EXCEED, CameraErrorCode::SERVICE_FATL_ERROR},
+    {CAMERA_INVALID_STATE, CameraErrorCode::SERVICE_FATL_ERROR},
+    {CAMERA_UNKNOWN_ERROR, CameraErrorCode::SERVICE_FATL_ERROR},
+    {CAMERA_DEVICE_PREEMPTED, CameraErrorCode::DEVICE_PREEMPTED},
+    {CAMERA_OPERATION_NOT_ALLOWED, CameraErrorCode::OPERATION_NOT_ALLOWED},
+    {CAMERA_DEVICE_ERROR, CameraErrorCode::OPERATION_NOT_ALLOWED},
+    {CAMERA_NO_PERMISSION, CameraErrorCode::OPERATION_NOT_ALLOWED},
+    {CAMERA_DEVICE_CONFLICT, CameraErrorCode::OPERATION_NOT_ALLOWED},
+    {CAMERA_DEVICE_SWITCH_FREQUENT, CameraErrorCode::DEVICE_SWITCH_FREQUENT},
+    {CAMERA_DEVICE_LENS_RETRACTED, CameraErrorCode::CAMERA_LENS_RETRACTED},
+    {CAMERA_UNSUPPORTED_COMBINATION, CameraErrorCode::UNSUPPORTED_MULTI_CAMERA_COMBINATION},
+    
+    // IPC错误组
+    {IPC_PROXY_ERR, CameraErrorCode::SERVICE_FATL_ERROR},
+    {IPC_PROXY_DEAD_OBJECT_ERR, CameraErrorCode::SERVICE_FATL_ERROR},
+    {IPC_PROXY_NULL_INVOKER_ERR, CameraErrorCode::SERVICE_FATL_ERROR},
+    {IPC_PROXY_TRANSACTION_ERR, CameraErrorCode::SERVICE_FATL_ERROR},
+    {IPC_PROXY_INVALID_CODE_ERR, CameraErrorCode::SERVICE_FATL_ERROR},
+    {IPC_STUB_ERR, CameraErrorCode::SERVICE_FATL_ERROR},
+    {IPC_STUB_WRITE_PARCEL_ERR, CameraErrorCode::SERVICE_FATL_ERROR},
+    {IPC_STUB_INVOKE_THREAD_ERR, CameraErrorCode::SERVICE_FATL_ERROR},
+    {IPC_STUB_INVALID_DATA_ERR, CameraErrorCode::SERVICE_FATL_ERROR},
+    {IPC_STUB_CURRENT_NULL_ERR, CameraErrorCode::SERVICE_FATL_ERROR},
+    {IPC_STUB_UNKNOW_TRANS_ERR, CameraErrorCode::SERVICE_FATL_ERROR},
+    {IPC_STUB_CREATE_BUS_SERVER_ERR, CameraErrorCode::SERVICE_FATL_ERROR}
+};
+
+int32_t ServiceToCameraErrorV2(int32_t ret)
+{
+    auto it = ServiceToCameraErrorrMap.find(ret);
+    if (it != ServiceToCameraErrorrMap.end()) {
+        return it->second;
+    }
+    MEDIA_ERR_LOG("ServiceToCameraError() error code from service: %{public}d", ret);
+    return CameraErrorCode::SERVICE_FATL_ERROR;
+}
 } // namespace CameraStandard
 } // namespace OHOS
