@@ -25,6 +25,7 @@
 #include "utils/camera_log.h"
 #include "refbase.h"
 #include "surface_buffer.h"
+#include "video_encoder.h"
 
 namespace {
     using namespace std::string_literals;
@@ -94,7 +95,7 @@ void MovingPhotoVideoCache::GetFrameCachedResult(std::vector<sptr<FrameRecord>> 
     callbackVecLock_.lock();
     MEDIA_INFO_LOG("GetFrameCachedResult enter frameRecords size: %{public}zu", frameRecords.size());
     sptr<CachedFrameCallbackHandle> cacheFrameHandler =
-        new CachedFrameCallbackHandle(frameRecords, encodedEndCbFunc, taskName, rotation, captureId);
+        new CachedFrameCallbackHandle(frameRecords, encodedEndCbFunc, taskName, rotation, captureId, taskManager_);
     cachedFrameCallbackHandles_.push_back(cacheFrameHandler);
     callbackVecLock_.unlock();
     for (auto frameRecord : frameRecords) {
@@ -128,9 +129,10 @@ void MovingPhotoVideoCache::ClearCache()
 }
 
 CachedFrameCallbackHandle::CachedFrameCallbackHandle(std::vector<sptr<FrameRecord>> frameRecords,
-    EncodedEndCbFunc encodedEndCbFunc, uint64_t taskName, int32_t rotation, int32_t captureId)
+    EncodedEndCbFunc encodedEndCbFunc, uint64_t taskName, int32_t rotation, int32_t captureId,
+    wptr<AvcodecTaskManager> taskManager)
     : encodedEndCbFunc_(encodedEndCbFunc), isAbort_(false), taskName_(taskName), rotation_(rotation),
-      captureId_(captureId)
+      captureId_(captureId), taskManager_(taskManager)
 {
     std::lock_guard<std::mutex> lock(cacheFrameMutex_);
     cacheRecords_.insert(frameRecords.begin(), frameRecords.end());
@@ -153,7 +155,22 @@ void CachedFrameCallbackHandle::OnCacheFrameFinish(sptr<FrameRecord> frameRecord
     auto it = cacheRecords_.find(frameRecord);
     CHECK_RETURN(it == cacheRecords_.end());
     cacheRecords_.erase(it);
-    bool isSucc = cachedSuccess && frameRecord != nullptr && frameRecord->encodedBuffer != nullptr;
+    // If cachedSuccess is fail, try to process overtime frame
+    bool hasOverTimeEntry = false;
+    if (!cachedSuccess && frameRecord != nullptr) {
+        {
+            auto taskManager = taskManager_.promote();
+            if (taskManager) {
+                hasOverTimeEntry = taskManager->ProcessOverTimeFrame(frameRecord);
+                MEDIA_INFO_LOG("OnCacheFrameFinish: ProcessOverTimeFrame for timestamp: %{public}" PRId64
+                               ", result: %{public}d",
+                    frameRecord->GetTimeStamp(), hasOverTimeEntry);
+            }
+        }
+    }
+    // If overTimeMap has entry for this timestamp and cachedSuccess is fail, treat as success
+    bool isSucc =
+        (hasOverTimeEntry || cachedSuccess) && frameRecord != nullptr && frameRecord->encodedBuffer != nullptr;
     (isSucc ? successCacheRecords_ : errorCacheRecords_).push_back(frameRecord);
     // Still waiting for more cache encoded buffer
     CHECK_RETURN(!cacheRecords_.empty());

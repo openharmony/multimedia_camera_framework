@@ -123,6 +123,7 @@ public:
     void SetVideoId(int32_t captureId, std::string videoId);
     void RecordVideoType(int32_t captureId, VideoType type);
     void AsyncInitVideoCodec();
+    bool ProcessOverTimeFrame(sptr<FrameRecord> frameRecord);
     mutex startTimeMutex_;
     mutex endTimeMutex_;
     std::map<int32_t, int64_t> mPStartTimeMap_ = {};
