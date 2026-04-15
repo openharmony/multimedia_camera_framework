@@ -192,7 +192,7 @@ int32_t PhotoSessionImpl::GetIso()
     CHECK_RETURN_RET_ELOG(photoSession_ == nullptr, iso,
         "GetIso failed, photoSession_ is nullptr!");
     int32_t retCode = photoSession_->GetISO(iso);
-    CHECK_RETURN_RET_ELOG(retCode != OHOS::CameraStandard::CameraErrorCode::SUCCESS, iso,
+    CHECK_RETURN_RET_ELOG(!CameraUtilsTaihe::CheckError(retCode), iso,
         "%{public}s: GetIso() Failed", __FUNCTION__);
     return iso;
 }
@@ -219,7 +219,7 @@ bool PhotoSessionImpl::IsFocusDistanceSupported()
     CHECK_RETURN_RET_ELOG(photoSession_ == nullptr, false, "IsFocusDistanceSupported failed, photoSession is nullptr!");
     bool isSupported = false;
     int32_t retCode = photoSession_->IsFocusDistanceSupported(isSupported);
-    CHECK_RETURN_RET_ELOG(retCode != OHOS::CameraStandard::CameraErrorCode::SUCCESS, false,
+    CHECK_RETURN_RET_ELOG(!CameraUtilsTaihe::CheckError(retCode), false,
         "%{public}s: IsFocusDistanceSupported() Failed", __FUNCTION__);
     return isSupported;
 }
@@ -230,7 +230,7 @@ int32_t PhotoSessionImpl::GetExposureDuration()
     CHECK_RETURN_RET_ELOG(photoSession_ == nullptr, exposureDurationValue,
         "GetExposureDuration failed, photoSession is nullptr!");
     int32_t retCode = photoSession_->GetSensorExposureTime(exposureDurationValue);
-    CHECK_RETURN_RET_ELOG(retCode != OHOS::CameraStandard::CameraErrorCode::SUCCESS,
+    CHECK_RETURN_RET_ELOG(!CameraUtilsTaihe::CheckError(retCode),
         exposureDurationValue,
         "%{public}s: GetExposureDuration() Failed",
         __FUNCTION__);
@@ -244,7 +244,7 @@ array<int32_t> PhotoSessionImpl::GetSupportedExposureDurationRange()
         "GetSupportedExposureDurationRange failed, photoSession is nullptr!");
     std::vector<uint32_t> vecExposureList;
     int32_t retCode = photoSession_->GetSensorExposureTimeRange(vecExposureList);
-    CHECK_RETURN_RET_ELOG(retCode != OHOS::CameraStandard::CameraErrorCode::SUCCESS || vecExposureList.empty(),
+    CHECK_RETURN_RET_ELOG(!CameraUtilsTaihe::CheckError(retCode) || vecExposureList.empty(),
         array<int32_t>(nullptr, 0),
         "%{public}s: GetSupportedExposureDurationRange() Failed",
         __FUNCTION__);
@@ -261,7 +261,7 @@ double PhotoSessionImpl::GetExposureBiasStep()
     CHECK_RETURN_RET_ELOG(
         photoSession_ == nullptr, exposureBiasStep, "GetExposureBiasStep failed, photoSession is nullptr!");
     int32_t retCode = photoSession_->GetExposureBiasStep(exposureBiasStep);
-    CHECK_RETURN_RET_ELOG(retCode != OHOS::CameraStandard::CameraErrorCode::SUCCESS, exposureBiasStep,
+    CHECK_RETURN_RET_ELOG(!CameraUtilsTaihe::CheckError(retCode), exposureBiasStep,
         "%{public}s: GetExposureBiasStep() Failed", __FUNCTION__);
     return static_cast<double>(exposureBiasStep);
 }
@@ -273,7 +273,7 @@ void PhotoSessionImpl::SetExposureDuration(int32_t exposureDurationValue)
     MEDIA_DEBUG_LOG("SetExposureDuration exposureDuration:%{public}d", exposureDurationValue);
     int32_t retCode = photoSession_->SetSensorExposureTime(exposureDurationValue);
     photoSession_->UnlockForControl();
-    CHECK_RETURN_ELOG(retCode != OHOS::CameraStandard::CameraErrorCode::SUCCESS,
+    CHECK_RETURN_ELOG(!CameraUtilsTaihe::CheckError(retCode),
         "%{public}s: SetExposureDuration() Failed", __FUNCTION__);
 }
 

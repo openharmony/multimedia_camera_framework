@@ -1081,6 +1081,10 @@ CameraInput CameraManagerImpl::CreateCameraInputWithCameraDevice(CameraDevice co
     }
     OHOS::sptr<OHOS::CameraStandard::CameraInput> cameraInput = nullptr;
     int retCode = cameraManager_->CreateCameraInput(cameraInfo, &cameraInput);
+    if (retCode == CAMERA_NO_PERMISSION) {
+        CameraUtilsTaihe::ThrowError(CameraErrorCode::OPERATION_NOT_ALLOWED, "not allowed, because have no permission.");
+        return make_holder<CameraInputImpl, CameraInput>(cameraInput);
+    }
     CHECK_EXECUTE(retCode != OHOS::CameraStandard::CameraErrorCode::SUCCESS,
         CameraUtilsTaihe::ThrowError(retCode, "CreateCameraInput failed."));
     return make_holder<CameraInputImpl, CameraInput>(cameraInput);
@@ -1102,6 +1106,10 @@ CameraInput CameraManagerImpl::CreateCameraInputWithPosition(CameraPosition posi
     }
     OHOS::sptr<OHOS::CameraStandard::CameraInput> cameraInput = nullptr;
     int retCode = cameraManager_->CreateCameraInput(cameraInfo, &cameraInput);
+    if (retCode == CAMERA_NO_PERMISSION) {
+        CameraUtilsTaihe::ThrowError(CameraErrorCode::OPERATION_NOT_ALLOWED, "not allowed, because have no permission.");
+        return make_holder<CameraInputImpl, CameraInput>(cameraInput);
+    }
     CHECK_EXECUTE(retCode != OHOS::CameraStandard::CameraErrorCode::SUCCESS,
         CameraUtilsTaihe::ThrowError(retCode, "CreateCameraInput failed."));
     return make_holder<CameraInputImpl, CameraInput>(cameraInput);
