@@ -225,6 +225,8 @@ bool PhotoSession::IsPreconfigProfilesLegal(std::shared_ptr<PreconfigProfiles> c
 {
     // LCOV_EXCL_START
     auto cameraList = CameraManager::GetInstance()->GetSupportedCameras();
+    // if camera input has already been added, then only check this device
+    CHECK_EXECUTE(GetInputDevice(), cameraList = {GetInputDevice()->GetCameraDeviceInfo()});
     int32_t supportedCameraNum = 0;
     for (auto& device : cameraList) {
         MEDIA_INFO_LOG("PhotoSession::IsPreconfigProfilesLegal check camera:%{public}s type:%{public}d",
