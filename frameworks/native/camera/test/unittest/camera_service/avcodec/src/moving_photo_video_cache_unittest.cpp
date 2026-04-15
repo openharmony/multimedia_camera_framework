@@ -100,8 +100,9 @@ HWTEST_F(MovingPhotoVideoCacheUnitTest, moving_photo_video_cache_unittest_002, T
     uint64_t taskName = 1;
     int32_t rotation = 1;
     int32_t captureId = 1;
+    wptr<AvcodecTaskManager> taskManager = nullptr;
     CachedFrameCallbackHandle* handle =
-        new CachedFrameCallbackHandle(frameRecords, MyFunction, taskName, rotation, captureId);
+        new CachedFrameCallbackHandle(frameRecords, MyFunction, taskName, rotation, captureId, taskManager);
 
     handle->AbortCapture();
     EXPECT_EQ(handle->encodedEndCbFunc_, nullptr);
@@ -125,8 +126,9 @@ HWTEST_F(MovingPhotoVideoCacheUnitTest, moving_photo_video_cache_unittest_003, T
     uint64_t taskName = 1;
     int32_t rotation = 1;
     int32_t captureId = 1;
+    wptr<AvcodecTaskManager> taskManager = nullptr;
     sptr<CachedFrameCallbackHandle> handle = sptr<CachedFrameCallbackHandle>
-        (new CachedFrameCallbackHandle(frameRecords, MyFunction, taskName, rotation, captureId));
+        (new CachedFrameCallbackHandle(frameRecords, MyFunction, taskName, rotation, captureId, taskManager));
 
     sptr<SurfaceBuffer> videoBuffer = SurfaceBuffer::Create();
     ASSERT_NE(videoBuffer, nullptr);
@@ -161,8 +163,9 @@ HWTEST_F(MovingPhotoVideoCacheUnitTest, moving_photo_video_cache_unittest_004, T
     uint64_t taskName = 1;
     int32_t rotation = 1;
     int32_t captureId = 1;
+    wptr<AvcodecTaskManager> taskManager = nullptr;
     sptr<CachedFrameCallbackHandle> handle = sptr<CachedFrameCallbackHandle>
-        (new CachedFrameCallbackHandle(frameRecords, MyFunction, taskName, rotation, captureId));
+        (new CachedFrameCallbackHandle(frameRecords, MyFunction, taskName, rotation, captureId, taskManager));
     std::vector<uint8_t> memoryFlags = {
         static_cast<uint8_t>(MemoryFlag::MEMORY_READ_ONLY),
         static_cast<uint8_t>(MemoryFlag::MEMORY_WRITE_ONLY),
