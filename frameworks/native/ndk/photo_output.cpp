@@ -259,7 +259,7 @@ Camera_ErrorCode OH_PhotoOutput_Capture_WithCaptureSetting(Camera_PhotoOutput* p
     return photoOutput->Capture_WithCaptureSetting(setting);
 }
 
-Camera_ErrorCode OH_PhotoOutput_DestroyPhotoCaptureSettingExt(Camera_PhotoOutput* photoOutput,
+Camera_ErrorCode OH_PhotoOutput_CreatePhotoCaptureSettingExt(Camera_PhotoOutput* photoOutput,
     CameraPhotoCaptureSettingExt** setting)
 {
     CHECK_RETURN_RET_ELOG(photoOutput == nullptr, CAMERA_INVALID_ARGUMENT, "Invalid argument, photoOutput is null!");
@@ -268,7 +268,7 @@ Camera_ErrorCode OH_PhotoOutput_DestroyPhotoCaptureSettingExt(Camera_PhotoOutput
     return photoOutput->CreatePhotoCaptureSettingExt(setting);
 }
 
-Camera_ErrorCode OhPhotoOutputDestroyPhotoCaptureSettingExt(CameraPhotoCaptureSettingExt* setting)
+Camera_ErrorCode OH_PhotoOutput_DestroyPhotoCaptureSettingExt(CameraPhotoCaptureSettingExt* setting)
 {
     CHECK_RETURN_RET_ELOG(setting == nullptr, CAMERA_INVALID_ARGUMENT, "Invalid argument, setting is null!");
     return setting->Release();
