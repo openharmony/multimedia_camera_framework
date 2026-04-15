@@ -402,5 +402,16 @@ void CameraServerPhotoProxy::SetImageFormat(int32_t imageFormat)
 {
     imageFormat_ = imageFormat;
 }
+void CameraServerPhotoProxy::SetCompressionQuality(int32_t compressionQuality)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    compressionQuality_ = compressionQuality;
+}
+
+int32_t CameraServerPhotoProxy::GetCompressionQuality()
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    return compressionQuality_;
+}
 } // namespace CameraStandard
 } // namespace OHOS
