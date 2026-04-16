@@ -498,10 +498,29 @@ int32_t CameraUtilsTaihe::IncrementAndGet(uint32_t& num)
     return num;
 }
 
+static const std::map<int32_t, int32_t> errorJSCodeMap = {
+    {74001021, 7400102},
+    {74001022, 7400102},
+    {74001023, 7400102},
+    {74002011, 7400201},
+    {74002012, 7400201},
+    {74002013, 7400201}
+};
+ 
+int32_t CameraUtilsTaihe::GetErrorCode(int32_t retCode)
+{
+    auto it = errorJSCodeMap.find(retCode);
+    if (it != errorJSCodeMap.end()) {
+        return it->second;
+    } else {
+        return retCode;
+    }
+}
+
 bool CameraUtilsTaihe::CheckError(int32_t retCode)
 {
     if ((retCode != 0)) {
-        set_business_error(retCode, "Throw Error");
+        set_business_error(GetErrorCode(retCode), "Throw Error");
         return false;
     }
     return true;
