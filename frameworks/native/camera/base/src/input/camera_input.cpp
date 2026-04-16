@@ -174,16 +174,16 @@ void CameraInput::InitVariableOrientation(sptr<ICameraDeviceService> deviceObj,
         isNaturalDirectionCorrect);
 
     retCode = OHOS::Camera::FindCameraMetadataItem(metaData->get(), OHOS_FOLD_STATE_SENSOR_ORIENTATION_MAP, &item);
-    CHECK_RETURN_ELOG(retCode != CAM_META_SUCCESS,
-        "InitVariableOrientation OHOS_FOLD_STATE_SENSOR_ORIENTATION_MAP FindCameraMetadataItem Error");
-    uint32_t count = item.count;
-    CHECK_RETURN_ELOG(count % STEP_TWO, "InitVariableOrientation FindCameraMetadataItem Count 2 Error");
-    for (uint32_t index = 0; index < count / STEP_TWO; index++) {
-        uint32_t innerFoldState = static_cast<uint32_t>(item.data.i32[STEP_TWO * index]);
-        uint32_t innerOrientation = static_cast<uint32_t>(item.data.i32[STEP_TWO * index + STEP_ONE]);
-        foldStateSensorOrientationMap_[innerFoldState] = innerOrientation;
-        MEDIA_DEBUG_LOG("CameraInput::InitVariableOrientation foldStatus: %{public}d, orientation:%{public}d",
-            innerFoldState, innerOrientation);
+    if (retCode == CAM_META_SUCCESS) {
+        uint32_t count = item.count;
+        CHECK_RETURN_ELOG(count % STEP_TWO, "InitVariableOrientation FindCameraMetadataItem Count 2 Error");
+        for (uint32_t index = 0; index < count / STEP_TWO; index++) {
+            uint32_t innerFoldState = static_cast<uint32_t>(item.data.i32[STEP_TWO * index]);
+            uint32_t innerOrientation = static_cast<uint32_t>(item.data.i32[STEP_TWO * index + STEP_ONE]);
+            foldStateSensorOrientationMap_[innerFoldState] = innerOrientation;
+            MEDIA_DEBUG_LOG("CameraInput::InitVariableOrientation foldStatus: %{public}d, orientation:%{public}d",
+                innerFoldState, innerOrientation);
+        }
     }
 
     std::unordered_map<uint32_t, std::vector<uint32_t>> foldWithDirectionOrientationMap = {};
