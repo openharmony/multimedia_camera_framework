@@ -1342,7 +1342,7 @@ void HCameraDevice::UpdateCameraRotateAngle()
             UpdateRotateAngleForSpecialBundle(isResetDegree);
             return;
         }
-    } else if (!foldScreenType_.empty() && foldScreenType_[0] == '7') {
+    } else if (!foldScreenType_.empty() && (foldScreenType_[0] == '7' || foldScreenType_[0] == '8')) {
         isResetDegree = !(curDisplayMode == static_cast<int32_t>(OHOS::Rosen::FoldDisplayMode::FULL) ||
             curDisplayMode == static_cast<int32_t>(OHOS::Rosen::FoldDisplayMode::COORDINATION));
         int32_t retCode = UpdateRotateAngleForSpecialBundle(isResetDegree);
