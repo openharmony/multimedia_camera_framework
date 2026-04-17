@@ -1588,7 +1588,7 @@ void HStreamOperator::UpdateOrientationBaseGravity(int32_t rotationValue, int32_
     CHECK_RETURN_ELOG(!(cameraDevice_->GetSigleStrategyInfo(strategyInfo)), "Update roteta angle not supported");
     OHOS::Rosen::FoldDisplayMode displayMode = OHOS::Rosen::DisplayManagerLite::GetInstance().GetFoldDisplayMode();
     std::string foldScreenType = system::GetParameter("const.window.foldscreen.type", "");
-    bool isValidDisplayStatus = !foldScreenType.empty() && (foldScreenType[0] == '6') &&
+    bool isValidDisplayStatus = !foldScreenType.empty() && (foldScreenType[0] == '6' || foldScreenType[0] == '8') &&
         (displayMode == OHOS::Rosen::FoldDisplayMode::GLOBAL_FULL);
     bool isSpecialDisplayStatus = !foldScreenType.empty() && (foldScreenType[0] == '7') && (
         (displayMode == OHOS::Rosen::FoldDisplayMode::FULL) ||
