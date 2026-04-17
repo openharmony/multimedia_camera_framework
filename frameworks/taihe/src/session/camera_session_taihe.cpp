@@ -34,7 +34,8 @@ void SessionImpl::BeginConfig()
             "failed to BeginConfig, captureSession is nullptr");
         return;
     }
-    captureSession_->BeginConfig();
+    int32_t ret = captureSession_->BeginConfig();
+    CameraUtilsTaihe::CheckError(ret);
 }
 
 void SessionImpl::CommitConfigSync()
