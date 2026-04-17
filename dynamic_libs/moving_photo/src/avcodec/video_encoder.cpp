@@ -380,10 +380,12 @@ int32_t VideoEncoder::Release()
             // Release overTimeMap resources
             overTimeMap.Iterate([this](int64_t key, OverTimeBufferInfo& value) {
                 if (value.bufferInfo != nullptr) {
-                    FreeOutputData(value.index);
+                    int32_t ret = encoder_->ReleaseOutputBuffer(value.index);
+                    CHECK_PRINT_ELOG(ret != AV_ERR_OK, "Free output data failed, ret: %{public}d", ret);
                 }
             });
-            encoder_->Release();
+            int32_t ret = encoder_->Release();
+            MEDIA_DEBUG_LOG("encoder_ Release ret: %{public}d.", ret);
         };
     }
     std::unique_lock<std::mutex> contextLock(contextMutex_);
