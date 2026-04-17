@@ -46,7 +46,7 @@ int32_t GetFoldWithDirectionOrientationMap(common_metadata_header_t* metadata,
         for (uint32_t i = 1; i <= STEP_FOUR * STEP_TWO; i++) {
             orientationWithNaturalDirection.emplace_back(static_cast<uint32_t>(item.data.i32[index * STEP_NINE + i]));
         }
-        MEDIA_DEBUG_LOG("GetFoldWithDirectionOrientationMap, foldstate: %{public}d, map: %{public}s", innerFoldState,
+        MEDIA_INFO_LOG("GetFoldWithDirectionOrientationMap, foldstate: %{public}d, map: %{public}s", innerFoldState,
             Container2String(orientationWithNaturalDirection.begin(), orientationWithNaturalDirection.end()).c_str());
         foldWithDirectionOrientationMap[innerFoldState] = orientationWithNaturalDirection;
     }
@@ -78,6 +78,9 @@ int32_t GetPhysicalOrientationByFoldAndDirection(const uint32_t foldStatus, uint
             uint32_t innerNaturalDirection = orientationWithNaturalDirection[index * STEP_TWO];
             CHECK_CONTINUE(innerNaturalDirection != naturalDirection);
             orientation = orientationWithNaturalDirection[index * STEP_TWO + STEP_ONE];
+            MEDIA_INFO_LOG("GetPhysicalOrientationByFoldAndDirection foldStatus: %{public}d, "
+                "naturalDirection: %{public}d, sensorOrientation: %{public}d",
+                foldStatus, naturalDirection, orientation);
             return CAMERA_OK;
         }
     }

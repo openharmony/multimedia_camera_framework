@@ -47,7 +47,7 @@ CameraApplistManager::CameraApplistManager()
     isLogicCamera_ = system::GetParameter("const.system.sensor_correction_enable", "0") == "1";
     foldScreenType_ = system::GetParameter("const.window.foldscreen.type", "");
     CHECK_EXECUTE(!foldScreenType_.empty() && foldScreenType_[0] == '6', uriForWhiteList_ = COMPATIBLE_APP_STRATEGY);
-    if (!foldScreenType_.empty() && foldScreenType_[0] == '7') {
+    if (!foldScreenType_.empty() && (foldScreenType_[0] == '7' || foldScreenType_[0] == '8')) {
         uriForWhiteList_ = APP_LOGICAL_DEVICE_CONFIGURATION;
         GetLogicCameraScreenStatus();
     }
