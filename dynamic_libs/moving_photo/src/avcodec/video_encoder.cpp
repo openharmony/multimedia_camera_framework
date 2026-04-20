@@ -244,7 +244,7 @@ bool VideoEncoder::ProcessOverTimeFrame(sptr<FrameRecord> frameRecord)
                    "timestamp:%{public}" PRIu64 ", SeqNum: %{public}" PRIu32,
         overTimeInfo.bufferInfo->buffer->memory_->GetSize(), overTimeInfo.bufferInfo->buffer->flag_,
         overTimeInfo.bufferInfo->buffer->pts_, frameRecord->GetTimeStamp(), seqNum);
-    if (ProcessEncodedBuffer(frameRecord, overTimeInfo.bufferInfo)) {
+    if (ProcessEncodedBufferWithoutCopy(frameRecord, overTimeInfo.bufferInfo)) {
         frameRecord->SetEncodedResult(true);
         overTimeMap.Erase(frameRecord->GetTimeStamp());
         return true;
@@ -316,6 +316,33 @@ bool VideoEncoder::ProcessEncodedBuffer(sptr<FrameRecord> frameRecord, sptr<Vide
     // LCOV_EXCL_STOP
 }
 
+bool VideoEncoder::ProcessEncodedBufferWithoutCopy(
+    sptr<FrameRecord> frameRecord, sptr<VideoCodecAVBufferInfo> bufferInfo)
+{
+    // LCOV_EXCL_START
+    {
+        std::lock_guard<std::mutex> encodeLock(encoderMutex_);
+        CHECK_RETURN_RET_ELOG(!isStarted_ || encoder_ == nullptr, false, "EncodeSurfaceBuffer when encoder stop!");
+    }
+    if (bufferInfo->buffer->flag_ & AVCODEC_BUFFER_FLAGS_SYNC_FRAME) {
+        frameRecord->CacheBuffer(bufferInfo->buffer);
+        frameRecord->SetIDRProperty(true);
+        frameRecord->SetMuxerIndex(bufferInfo->muxerIndex_);
+    } else if (bufferInfo->buffer->flag_ == AVCODEC_BUFFER_FLAGS_NONE) {
+        // return P/B frame
+        frameRecord->CacheBuffer(bufferInfo->buffer);
+        frameRecord->SetIDRProperty(false);
+        frameRecord->SetMuxerIndex(bufferInfo->muxerIndex_);
+    } else {
+        MEDIA_ERR_LOG("Flag is not acceptted number: %{public}u", bufferInfo->buffer->flag_);
+        return false;
+    }
+    MEDIA_DEBUG_LOG("Success frame id is : %{public}s, refCount: %{public}d", frameRecord->GetFrameId().c_str(),
+        frameRecord->GetSptrRefCount());
+    return true;
+    // LCOV_EXCL_STOP
+}
+
 bool VideoEncoder::EncodeSurfaceBuffer(sptr<FrameRecord> frameRecord)
 {
     // LCOV_EXCL_START
@@ -377,13 +404,6 @@ int32_t VideoEncoder::Release()
     {
         std::lock_guard<std::mutex> lock(encoderMutex_);
         if (encoder_ != nullptr) {
-            // Release overTimeMap resources
-            overTimeMap.Iterate([this](int64_t key, OverTimeBufferInfo& value) {
-                if (value.bufferInfo != nullptr) {
-                    int32_t ret = encoder_->ReleaseOutputBuffer(value.index);
-                    CHECK_PRINT_ELOG(ret != AV_ERR_OK, "Free output data failed, ret: %{public}d", ret);
-                }
-            });
             int32_t ret = encoder_->Release();
             MEDIA_DEBUG_LOG("encoder_ Release ret: %{public}d.", ret);
         };
@@ -468,9 +488,13 @@ void VideoEncoder::CallBack::OnOutputBufferAvailable(uint32_t index, std::shared
     OverTimeBufferInfo overTimeInfo;
     if (encoder->overTimeMap.Find(buffer->pts_, overTimeInfo)) {
         // means no contextCond_ waiting for this framerecord
+        // copy buffer and release
+        CHECK_RETURN_ELOG(buffer->memory_ == nullptr, "memory is alloced failed!");
         OverTimeBufferInfo newInfo;
         newInfo.index = index;
-        newInfo.bufferInfo = new VideoCodecAVBufferInfo(index, encoder->muxerIndex, buffer);
+        std::shared_ptr<Media::AVBuffer> copyBuffer = encoder->CopyAVBuffer(buffer);
+        encoder->FreeOutputData(index);
+        newInfo.bufferInfo = new VideoCodecAVBufferInfo(index, encoder->muxerIndex, copyBuffer);
         encoder->overTimeMap.FindOldAndSetNew(buffer->pts_, overTimeInfo, newInfo);
         encoder->muxerIndex++;
         return;

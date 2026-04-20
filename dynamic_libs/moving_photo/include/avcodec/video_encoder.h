@@ -85,6 +85,7 @@ private:
     std::shared_ptr<AVBuffer> CopyAVBuffer(std::shared_ptr<AVBuffer> &inputBuffer);
     bool EnqueueBuffer(sptr<FrameRecord> frameRecord);
     bool ProcessEncodedBuffer(sptr<FrameRecord> frameRecord, sptr<VideoCodecAVBufferInfo> bufferInfo);
+    bool ProcessEncodedBufferWithoutCopy(sptr<FrameRecord> frameRecord, sptr<VideoCodecAVBufferInfo> bufferInfo);
     std::atomic<bool> isStarted_ { false };
     std::mutex encoderMutex_;
     shared_ptr<AVCodecVideoEncoder> encoder_ = nullptr;
