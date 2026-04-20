@@ -531,6 +531,10 @@ public:
     static napi_value GetWhiteBalance(napi_env env, napi_callback_info info);
     static napi_value SetWhiteBalance(napi_env env, napi_callback_info info);
 
+    static napi_value GetColorTintRange(napi_env env, napi_callback_info info);
+    static napi_value GetColorTint(napi_env env, napi_callback_info info);
+    static napi_value SetColorTint(napi_env env, napi_callback_info info);
+
     static napi_value BeginConfig(napi_env env, napi_callback_info info);
     static napi_value CommitConfig(napi_env env, napi_callback_info info);
 

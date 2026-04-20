@@ -3732,6 +3732,106 @@ napi_value CameraSessionNapi::SetWhiteBalance(napi_env env, napi_callback_info i
     return result;
 }
 
+napi_value CameraSessionNapi::GetColorTintRange(napi_env env, napi_callback_info info)
+{
+    MEDIA_DEBUG_LOG("GetColorTintRange is called");
+    napi_status status;
+    napi_value result = nullptr;
+    size_t argc = ARGS_ZERO;
+    napi_value argv[ARGS_ZERO];
+    napi_value thisVar = nullptr;
+ 
+    CAMERA_NAPI_GET_JS_ARGS(env, info, argc, argv, thisVar);
+ 
+    napi_get_undefined(env, &result);
+ 
+    CameraSessionNapi* cameraSessionNapi = nullptr;
+    status = napi_unwrap(env, thisVar, reinterpret_cast<void**>(&cameraSessionNapi));
+    if (status == napi_ok && cameraSessionNapi != nullptr && cameraSessionNapi->cameraSession_ != nullptr) {
+        std::vector<int32_t> colorTintRange = {};
+        int32_t retCode = cameraSessionNapi->cameraSession_->GetColorTintRange(colorTintRange);
+        if (!CameraNapiUtils::CheckError(env, retCode)) {
+            return nullptr;
+        }
+        MEDIA_INFO_LOG("CameraSessionNapi::GetColorTintRange len = %{public}zu", colorTintRange.size());
+ 
+        if (!colorTintRange.empty() && napi_create_array(env, &result) == napi_ok) {
+            for (size_t i = 0; i < colorTintRange.size(); i++) {
+                int32_t value = colorTintRange[i];
+                napi_value element;
+                napi_create_int32(env, value, &element);
+                napi_set_element(env, result, i, element);
+            }
+        } else {
+            MEDIA_ERR_LOG("colorTintRange is empty or failed to create array!");
+        }
+    } else {
+        MEDIA_ERR_LOG("GetColorTintRange call Failed!");
+    }
+    return result;
+}
+ 
+napi_value CameraSessionNapi::GetColorTint(napi_env env, napi_callback_info info)
+{
+    MEDIA_DEBUG_LOG("GetColorTint is called");
+    napi_status status;
+    napi_value result = nullptr;
+    size_t argc = ARGS_ZERO;
+    napi_value argv[ARGS_ZERO];
+    napi_value thisVar = nullptr;
+ 
+    CAMERA_NAPI_GET_JS_ARGS(env, info, argc, argv, thisVar);
+ 
+    napi_get_undefined(env, &result);
+    CameraSessionNapi* cameraSessionNapi = nullptr;
+    status = napi_unwrap(env, thisVar, reinterpret_cast<void**>(&cameraSessionNapi));
+    if (status == napi_ok && cameraSessionNapi != nullptr && cameraSessionNapi->cameraSession_ != nullptr) {
+        int32_t colorTintValue;
+        int32_t retCode = cameraSessionNapi->cameraSession_->GetColorTint(colorTintValue);
+        if (!CameraNapiUtils::CheckError(env, retCode)) {
+            return nullptr;
+        }
+        napi_create_int32(env, colorTintValue, &result);
+    } else {
+        MEDIA_ERR_LOG("GetColorTint call Failed!");
+    }
+    return result;
+}
+ 
+napi_value CameraSessionNapi::SetColorTint(napi_env env, napi_callback_info info)
+{
+    MEDIA_DEBUG_LOG("SetColorTint is called");
+    CAMERA_SYNC_TRACE;
+    napi_status status;
+    napi_value result = nullptr;
+    size_t argc = ARGS_ONE;
+    napi_value argv[ARGS_ONE] = {0};
+    napi_value thisVar = nullptr;
+ 
+    CAMERA_NAPI_GET_JS_ARGS(env, info, argc, argv, thisVar);
+ 
+    napi_get_undefined(env, &result);
+    CameraSessionNapi* cameraSessionNapi = nullptr;
+    status = napi_unwrap(env, thisVar, reinterpret_cast<void**>(&cameraSessionNapi));
+    if (status == napi_ok && cameraSessionNapi != nullptr && cameraSessionNapi->cameraSession_ != nullptr) {
+        int32_t colorTintValue;
+        napi_get_value_int32(env, argv[PARAM0], &colorTintValue);
+        
+        cameraSessionNapi->cameraSession_->LockForControl();
+        int32_t retCode = cameraSessionNapi->cameraSession_->SetColorTint(colorTintValue);
+        if (retCode != CAMERA_OK) {
+            cameraSessionNapi->cameraSession_->UnlockForControl();
+            CameraNapiUtils::ThrowError(env, CameraErrorCode::INVALID_ARGUMENT, "Failed to set color tint");
+            return nullptr;
+        }
+        MEDIA_INFO_LOG("CameraSessionNapi::SetColorTint set colorTintValue:%{public}d", colorTintValue);
+        cameraSessionNapi->cameraSession_->UnlockForControl();
+    } else {
+        MEDIA_ERR_LOG("SetColorTint call Failed!");
+    }
+    return result;
+}
+
 napi_value CameraSessionNapi::SetUsage(napi_env env, napi_callback_info info)
 {
     MEDIA_ERR_LOG("SystemApi SetUsage is called!");
