@@ -20,6 +20,7 @@
 #include <list>
 #include <memory>
 #include <mutex>
+#include <thread>
 #include <unordered_map>
 
 #include "camera_napi_auto_ref.h"
@@ -70,6 +71,16 @@ private:
         std::list<AutoRef> refList;
     };
 
+    // Hook context decoupled from ListenerBase lifetime so that the
+    // napi env cleanup hook never sees a dangling `this`.
+    struct HookContext {
+        std::mutex mutex;
+        ListenerBase* listener = nullptr; // cleared by ~ListenerBase
+        napi_env env = nullptr;
+        bool hookFired = false;           // env destruction already triggered CleanUp
+        bool hookRemoved = false;         // destructor path already removed the hook
+    };
+
     static void CleanUp(void* data);
 
     void CleanUpImpl();
@@ -94,6 +105,9 @@ private:
 
     mutable std::mutex namedCallbackMapMutex_;
     mutable std::unordered_map<std::string, std::shared_ptr<CallbackList>> namedCallbackMap_;
+
+    HookContext* hookCtx_ = nullptr;
+    std::thread::id jsThreadId_;
 };
 } // namespace CameraStandard
 } // namespace OHOS
