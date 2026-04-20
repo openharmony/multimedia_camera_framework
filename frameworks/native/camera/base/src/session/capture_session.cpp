@@ -6034,7 +6034,7 @@ int32_t CaptureSession::GetColorTintRange(std::vector<int32_t> &colorTintRange)
         colorTintRange.push_back(item.data.i32[0]);
         colorTintRange.push_back(item.data.i32[1]);
         MEDIA_INFO_LOG("CaptureSession::GetColorTintRange: [%{public}d, %{public}d]", 
-                      colorTintRange[0], colorTintRange[1]);
+            colorTintRange[0], colorTintRange[1]);
     } else {
         MEDIA_ERR_LOG("CaptureSession::GetColorTintRange: invalid metadata item count %{public}d",
             static_cast<int32_t>(item.count));
@@ -6091,7 +6091,7 @@ int32_t CaptureSession::SetColorTint(int32_t colorTintValue)
     int32_t maxColorTint = range[1];
     if (colorTintValue < minColorTint || colorTintValue > maxColorTint) {
         MEDIA_ERR_LOG("CaptureSession::SetColorTint: color tint value %{public}d out of range [%{public}d, %{public}d]",
-                     colorTintValue, minColorTint, maxColorTint);
+            colorTintValue, minColorTint, maxColorTint);
         return CameraErrorCode::INVALID_ARGUMENT;
     }
     CHECK_RETURN_RET_ELOG(changedMetadata_ == nullptr, INVALID_ARGUMENT,
