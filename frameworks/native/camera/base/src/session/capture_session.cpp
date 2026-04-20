@@ -6019,7 +6019,7 @@ int32_t CaptureSession::GetColorTintRange(std::vector<int32_t> &colorTintRange)
     CHECK_RETURN_RET_ELOG(!inputDevice || !inputDevice->GetCameraDeviceInfo(), CameraErrorCode::SUCCESS,
         "CaptureSession::GetColorTintRange camera device is null");
     auto inputDeviceInfo = inputDevice->GetCameraDeviceInfo();
-    CHECK_RETURN_RET_ELOG(!inputDeviceInfo, CameraErrorCode::SUCCESS, 
+    CHECK_RETURN_RET_ELOG(!inputDeviceInfo, CameraErrorCode::SUCCESS,
         "CaptureSession::GetColorTintRange camera deviceInfo is null");
     std::shared_ptr<Camera::CameraMetadata> metadata = inputDeviceInfo->GetCachedMetadata();
     CHECK_RETURN_RET_ELOG(metadata == nullptr, CameraErrorCode::SUCCESS,
@@ -6033,7 +6033,7 @@ int32_t CaptureSession::GetColorTintRange(std::vector<int32_t> &colorTintRange)
         colorTintRange.clear();
         colorTintRange.push_back(item.data.i32[0]);
         colorTintRange.push_back(item.data.i32[1]);
-        MEDIA_INFO_LOG("CaptureSession::GetColorTintRange: [%{public}d, %{public}d]", 
+        MEDIA_INFO_LOG("CaptureSession::GetColorTintRange: [%{public}d, %{public}d]",
             colorTintRange[0], colorTintRange[1]);
     } else {
         MEDIA_ERR_LOG("CaptureSession::GetColorTintRange: invalid metadata item count %{public}d",
