@@ -2060,6 +2060,12 @@ public:
      */
     int32_t GetManualWhiteBalance(int32_t &wbValue);
 
+    int32_t GetColorTintRange(std::vector<int32_t> &colorTintRange);
+ 
+    int32_t GetColorTint(int32_t &colorTintValue);
+    
+    int32_t SetColorTint(int32_t colorTintValue);
+    
     inline std::shared_ptr<MetadataResultProcessor> GetMetadataResultProcessor()
     {
         return metadataResultProcessor_;

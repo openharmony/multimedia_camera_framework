@@ -6010,6 +6010,101 @@ int32_t CaptureSession::GetManualWhiteBalance(int32_t &wbValue)
     return CameraErrorCode::SUCCESS;
 }
 
+int32_t CaptureSession::GetColorTintRange(std::vector<int32_t> &colorTintRange)
+{
+    MEDIA_DEBUG_LOG("CaptureSession::GetColorTintRange is called");
+    CHECK_RETURN_RET_ELOG(!(IsSessionCommited() || IsSessionConfiged()), CameraErrorCode::SESSION_NOT_CONFIG,
+        "CaptureSession::GetColorTintRange Session is not Commited");
+    auto inputDevice = GetInputDevice();
+    CHECK_RETURN_RET_ELOG(!inputDevice || !inputDevice->GetCameraDeviceInfo(), CameraErrorCode::SUCCESS,
+        "CaptureSession::GetColorTintRange camera device is null");
+    auto inputDeviceInfo = inputDevice->GetCameraDeviceInfo();
+    CHECK_RETURN_RET_ELOG(!inputDeviceInfo, CameraErrorCode::SUCCESS, 
+        "CaptureSession::GetColorTintRange camera deviceInfo is null");
+    std::shared_ptr<Camera::CameraMetadata> metadata = inputDeviceInfo->GetCachedMetadata();
+    CHECK_RETURN_RET_ELOG(metadata == nullptr, CameraErrorCode::SUCCESS,
+        "CaptureSession::GetColorTintRange camera metadata is null");
+    camera_metadata_item_t item;
+    int ret = Camera::FindCameraMetadataItem(metadata->get(), OHOS_ABILITY_COLOR_TINT_RANGE, &item);
+    CHECK_RETURN_RET_ELOG(ret != CAM_META_SUCCESS, CameraErrorCode::SUCCESS,
+        "CaptureSession::GetColorTintRange Failed with return code %{public}d", ret);
+    int32_t num = 2;
+    if (item.count == num) {
+        colorTintRange.clear();
+        colorTintRange.push_back(item.data.i32[0]);
+        colorTintRange.push_back(item.data.i32[1]);
+        MEDIA_INFO_LOG("CaptureSession::GetColorTintRange: [%{public}d, %{public}d]", 
+                      colorTintRange[0], colorTintRange[1]);
+    } else {
+        MEDIA_ERR_LOG("CaptureSession::GetColorTintRange: invalid metadata item count %{public}d",
+            static_cast<int32_t>(item.count));
+        return CameraErrorCode::INVALID_ARGUMENT;
+    }
+    return CameraErrorCode::SUCCESS;
+}
+ 
+int32_t CaptureSession::GetColorTint(int32_t &colorTintValue)
+{
+    MEDIA_DEBUG_LOG("CaptureSession::GetColorTint is called");
+    CHECK_RETURN_RET_ELOG(!IsSessionCommited(), CameraErrorCode::SESSION_NOT_CONFIG,
+        "CaptureSession::GetColorTint Session is not Commited");
+    auto inputDevice = GetInputDevice();
+    CHECK_RETURN_RET_ELOG(!inputDevice || !inputDevice->GetCameraDeviceInfo(), CameraErrorCode::SUCCESS,
+        "CaptureSession::GetColorTint camera device is null");
+    auto inputDeviceInfo = inputDevice->GetCameraDeviceInfo();
+    CHECK_RETURN_RET_ELOG(!inputDeviceInfo, CameraErrorCode::SUCCESS,
+        "CaptureSession::GetColorTint camera deviceInfo is null");
+    std::shared_ptr<Camera::CameraMetadata> metadata = inputDeviceInfo->GetCachedMetadata();
+    CHECK_RETURN_RET_ELOG(metadata == nullptr, CameraErrorCode::SUCCESS,
+        "CaptureSession::GetColorTint camera metadata is null");
+    camera_metadata_item_t item;
+    int ret = Camera::FindCameraMetadataItem(metadata->get(), OHOS_CONTROL_COLOR_TINT, &item);
+    CHECK_RETURN_RET_ELOG(ret != CAM_META_SUCCESS, CameraErrorCode::SUCCESS,
+        "CaptureSession::GetColorTint Failed with return code %{public}d", ret);
+    int32_t num = 1;
+    if (item.count == num) {
+        colorTintValue = item.data.i32[0];
+        MEDIA_INFO_LOG("CaptureSession::GetColorTint: %{public}d", colorTintValue);
+    } else {
+        MEDIA_ERR_LOG("CaptureSession::GetColorTint: invalid metadata item count %{public}d",
+            static_cast<int32_t>(item.count));
+        return CameraErrorCode::INVALID_ARGUMENT;
+    }
+    return CameraErrorCode::SUCCESS;
+}
+ 
+int32_t CaptureSession::SetColorTint(int32_t colorTintValue)
+{
+    MEDIA_DEBUG_LOG("CaptureSession::SetColorTint is called with value: %{public}d", colorTintValue);
+    
+    CHECK_RETURN_RET_ELOG(!IsSessionCommited(), CameraErrorCode::SESSION_NOT_CONFIG,
+        "CaptureSession::SetColorTint Session is not Commited");
+    
+    std::vector<int32_t> range;
+    int32_t retCode = GetColorTintRange(range);
+    int32_t num = 2;
+    if (retCode != CameraErrorCode::SUCCESS || range.size() < num) {
+        MEDIA_ERR_LOG("CaptureSession::SetColorTint: failed to get color tint range");
+        return (retCode == CameraErrorCode::SUCCESS) ? CameraErrorCode::INVALID_ARGUMENT : retCode;
+    }
+    int32_t minColorTint = range[0];
+    int32_t maxColorTint = range[1];
+    if (colorTintValue < minColorTint || colorTintValue > maxColorTint) {
+        MEDIA_ERR_LOG("CaptureSession::SetColorTint: color tint value %{public}d out of range [%{public}d, %{public}d]",
+                     colorTintValue, minColorTint, maxColorTint);
+        return CameraErrorCode::INVALID_ARGUMENT;
+    }
+    CHECK_RETURN_RET_ELOG(changedMetadata_ == nullptr, INVALID_ARGUMENT,
+        "CaptureSession::SetColorTint changedMetadata_ is NULL");
+    bool ret = AddOrUpdateMetadata(changedMetadata_, OHOS_CONTROL_COLOR_TINT, &colorTintValue, 1);
+    if (ret != true) {
+        MEDIA_ERR_LOG("CaptureSession::SetColorTint: Failed to update metadata with return code %{public}d", ret);
+        return CameraErrorCode::OPERATION_NOT_ALLOWED;
+    }
+    MEDIA_INFO_LOG("CaptureSession::SetColorTint: set color tint %{public}d successfully", colorTintValue);
+    return CameraErrorCode::SUCCESS;
+}
+
 int32_t CaptureSession::GetSupportedPhysicalApertures(std::vector<std::vector<float>>& supportedPhysicalApertures)
 {
     // The data structure of the supportedPhysicalApertures object is { {zoomMin, zoomMax,

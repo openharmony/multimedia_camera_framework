@@ -1250,6 +1250,34 @@ Camera_ErrorCode Camera_CaptureSession::SetWhiteBalance(int32_t colorTemperature
     return CAMERA_OK;
 }
 
+Camera_ErrorCode Camera_CaptureSession::GetColorTintRange(
+    std::vector<int32_t>& colorTintRange) const
+{
+    MEDIA_DEBUG_LOG("Camera_CaptureSession::GetColorTintRange is called");
+    int32_t ret = innerCaptureSession_->GetColorTintRange(colorTintRange);
+    return FrameworkToNdkCameraError(ret);
+}
+ 
+Camera_ErrorCode Camera_CaptureSession::GetColorTint(int32_t* colorTintValue) const
+{
+    MEDIA_DEBUG_LOG("Camera_CaptureSession::GetColorTint is called");
+    int32_t ctValue;
+    int32_t ret = innerCaptureSession_->GetColorTint(ctValue);
+    if (ret == CameraStandard::CameraErrorCode::SUCCESS) {
+        *colorTintValue = ctValue;
+    }
+    return FrameworkToNdkCameraError(ret);
+}
+ 
+Camera_ErrorCode Camera_CaptureSession::SetColorTint(int32_t colorTintValue) const
+{
+    MEDIA_DEBUG_LOG("Camera_CaptureSession::SetColorTint is called");
+    innerCaptureSession_->LockForControl();
+    int32_t ret = innerCaptureSession_->SetColorTint(colorTintValue);
+    innerCaptureSession_->UnlockForControl();
+    return FrameworkToNdkCameraError(ret);
+}
+
 Camera_ErrorCode Camera_CaptureSession::SetIso(int32_t iso) const
 {
     MEDIA_DEBUG_LOG("Camera_CaptureSession::SetIso is called");
