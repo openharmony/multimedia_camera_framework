@@ -21,13 +21,27 @@
 #include "camera_log.h"
 #include "js_native_api.h"
 #include "js_native_api_types.h"
+#include "napi/native_node_api.h"
 
 namespace OHOS {
 namespace CameraStandard {
 ListenerBase::ListenerBase(napi_env env) : env_(env)
 {
     MEDIA_DEBUG_LOG("ListenerBase is called.");
-    auto ret = napi_add_env_cleanup_hook(env_, ListenerBase::CleanUp, this);
+    // Record the JS thread that owns the env.
+    jsThreadId_ = std::this_thread::get_id();
+
+    // Allocate a decoupled context so that the cleanup hook's `data` pointer
+    // remains valid even if `this` is destroyed on another thread.
+    hookCtx_ = new (std::nothrow) HookContext();
+    if (hookCtx_ == nullptr) {
+        MEDIA_ERR_LOG("ListenerBase alloc HookContext fail");
+        return;
+    }
+    hookCtx_->listener = this;
+    hookCtx_->env = env;
+
+    auto ret = napi_add_env_cleanup_hook(env_, ListenerBase::CleanUp, hookCtx_);
     if (ret != napi_status::napi_ok) {
         MEDIA_ERR_LOG("add env hook error: %{public}d", ret);
     }
@@ -36,11 +50,67 @@ ListenerBase::ListenerBase(napi_env env) : env_(env)
 ListenerBase::~ListenerBase()
 {
     MEDIA_DEBUG_LOG("~ListenerBase is called.");
-    CHECK_RETURN(env_ == nullptr);
-    auto ret = napi_remove_env_cleanup_hook(env_, ListenerBase::CleanUp, this);
-    if (ret != napi_status::napi_ok) {
-        MEDIA_ERR_LOG("remove env hook error: %{public}d", ret);
+    if (hookCtx_ == nullptr) {
+        env_ = nullptr;
+        return;
     }
+
+    HookContext* ctx = hookCtx_;
+    hookCtx_ = nullptr;
+
+    // Detach ourselves from the hook context first so that, no matter when
+    // CleanUp fires, it will never touch a dangling ListenerBase.
+    bool alreadyFired = false;
+    {
+        std::lock_guard<std::mutex> lock(ctx->mutex);
+        ctx->listener = nullptr;
+        alreadyFired = ctx->hookFired;
+    }
+
+    if (alreadyFired) {
+        // Env has already been destroyed; hook already ran. Just free ctx.
+        delete ctx;
+        env_ = nullptr;
+        return;
+    }
+
+    if (std::this_thread::get_id() == jsThreadId_) {
+        // Same thread as the env owner: safe to remove the hook directly.
+        auto ret = napi_remove_env_cleanup_hook(ctx->env, ListenerBase::CleanUp, ctx);
+        if (ret != napi_status::napi_ok) {
+            MEDIA_ERR_LOG("remove env hook error: %{public}d", ret);
+        }
+        {
+            std::lock_guard<std::mutex> lock(ctx->mutex);
+            ctx->hookRemoved = true;
+        }
+        delete ctx;
+    } else {
+        // Destructor is running on a non-JS thread. Marshal the hook-removal
+        // back to the JS thread via napi_send_event. The task takes ownership
+        // of ctx and deletes it after execution.
+        MEDIA_WARNING_LOG("~ListenerBase on non-js thread, post remove-hook to js thread");
+        napi_env env = ctx->env;
+        auto task = [ctx]() {
+            {
+                std::lock_guard<std::mutex> lock(ctx->mutex);
+                if (!ctx->hookFired && !ctx->hookRemoved) {
+                    napi_remove_env_cleanup_hook(ctx->env, ListenerBase::CleanUp, ctx);
+                    ctx->hookRemoved = true;
+                }
+            }
+            delete ctx;
+        };
+        auto ret = napi_send_event(env, task, napi_eprio_immediate);
+        if (ret != napi_status::napi_ok) {
+            // Fallback: we cannot safely call napi APIs from here. Since the
+            // listener pointer inside ctx has been cleared, any later hook
+            // firing will be a harmless no-op, but ctx itself will leak.
+            // This is preferable to crashing.
+            MEDIA_ERR_LOG("napi_send_event for remove hook failed: %{public}d", ret);
+        }
+    }
+    env_ = nullptr;
 }
 
 ListenerBase::ExecuteCallbackData::ExecuteCallbackData(napi_env env, napi_value errCode, napi_value returnData)
@@ -181,11 +251,23 @@ bool ListenerBase::IsEmpty(const std::string eventName) const
 void ListenerBase::CleanUp(void* data)
 {
     MEDIA_INFO_LOG("ListenerBase::CleanUp enter");
-    ListenerBase* listener = reinterpret_cast<ListenerBase*>(data);
-    if (!listener) {
+    auto* ctx = reinterpret_cast<HookContext*>(data);
+    if (ctx == nullptr) {
         return;
     }
-    listener->CleanUpImpl();
+
+    ListenerBase* listener = nullptr;
+    {
+        std::lock_guard<std::mutex> lock(ctx->mutex);
+        ctx->hookFired = true;
+        listener = ctx->listener; // may be nullptr if destructor already ran
+    }
+    if (listener != nullptr) {
+        listener->CleanUpImpl();
+    }
+    // ctx is freed by the destructor path (either the in-thread branch or
+    // the napi_send_event task). Never free it here to avoid a race with
+    // a destructor that might run concurrently on another thread.
 }
 
 void ListenerBase::CleanUpImpl()
