@@ -614,8 +614,7 @@ napi_value CameraNapiUtils::CreateJsPointArray(
         napi_create_double(env, y, &napi_y);
         napi_set_named_property(env, pointObj, "y", napi_y);
 
-        uint32_t index = static_cast<uint32_t>(i / two);
-        if (napi_set_element(env, jsPointArray, index, pointObj) != napi_ok) {
+        if (napi_set_element(env, jsPointArray, i, pointObj) != napi_ok) {
             MEDIA_ERR_LOG("%{public}s failed to create profile napi wrapper object", __FUNCTION__);
             return nullptr;
         }

@@ -1529,17 +1529,7 @@ napi_value CameraManagerNapi::CreateCameraConcurrentResult(napi_env env, vector<
         MEDIA_ERR_LOG("resjsArray create is fail");
         return nullptr;
     }
-    size_t sizeMin = cameraDeviceArrray.size();
-    sizeMin = std::min(sizeMin, cameraConcurrentType.size());
-    sizeMin = std::min(sizeMin, modes.size());
-    sizeMin = std::min(sizeMin, outputCapabilities.size());
-    if (sizeMin != cameraDeviceArrray.size() || sizeMin != cameraConcurrentType.size() ||
-        sizeMin != modes.size() || sizeMin != outputCapabilities.size()) {
-        MEDIA_ERR_LOG("CreateCameraConcurrentResult vector size mismatch, dev:%{public}zu type:%{public}zu "
-                      "modes:%{public}zu caps:%{public}zu",
-            cameraDeviceArrray.size(), cameraConcurrentType.size(), modes.size(), outputCapabilities.size());
-    }
-    for (size_t i = 0; i < sizeMin; i++) {
+    for (size_t i = 0; i < cameraDeviceArrray.size(); i++) {
         napi_value obj = nullptr;
         napi_create_object(env, &obj);
         CHECK_CONTINUE(cameraDeviceArrray[i] == nullptr);
@@ -1573,7 +1563,6 @@ napi_value CameraManagerNapi::CreateCameraConcurrentResult(napi_env env, vector<
         }
         index = 0;
         for (auto outputCapability : outputCapabilities[i]) {
-            CHECK_CONTINUE(outputCapability == nullptr);
             napi_value outputcapability = CameraNapiObjCameraOutputCapability(*outputCapability).GenerateNapiValue(env);
             napi_set_element(env, outputcapabilitiyarray, index, outputcapability);
             index++;
