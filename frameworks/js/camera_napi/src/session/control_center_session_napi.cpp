@@ -135,7 +135,7 @@ void ControlCenterSessionNapi::Init(napi_env env)
         DECLARE_NAPI_FUNCTION("getAutoFramingStatus", ControlCenterSessionNapi::GetAutoFramingStatus),
         DECLARE_NAPI_FUNCTION("enableAutoFraming", ControlCenterSessionNapi::EnableAutoFraming),
         DECLARE_NAPI_FUNCTION("isAutoFramingSupported", ControlCenterSessionNapi::IsAutoFramingSupported),
-        DECLARE_NAPI_FUNCTION("release", Release)
+        DECLARE_NAPI_FUNCTION("release", Release),
 
         DECLARE_NAPI_FUNCTION("getSupportedColorEffects", ControlCenterSessionNapi::GetSupportedColorEffects),
         DECLARE_NAPI_FUNCTION("getColorEffect", ControlCenterSessionNapi::GetColorEffect),
