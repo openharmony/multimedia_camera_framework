@@ -274,6 +274,9 @@ int32_t CJPreviewOutput::GetPreviewRotation(int32_t value, int32_t *errCode)
     if (res == CameraError::CAMERA_SERVICE_ERROR) {
         *errCode = CameraError::CAMERA_SERVICE_ERROR;
     }
+    if (res == CameraError::SERVICE_FATL_ERROR_OF_INVALID_SESSION_CFG) {
+        *errCode = CameraError::SERVICE_FATL_ERROR_OF_INVALID_SESSION_CFG;
+    }
     return res;
 }
 
@@ -283,11 +286,7 @@ int32_t CJPreviewOutput::SetPreviewRotation(int32_t imageRotation, bool isDispla
     if (previewOutput_ == nullptr) {
         return CameraError::CAMERA_SERVICE_ERROR;
     }
-    int32_t errCode = previewOutput_->SetPreviewRotation(imageRotation, isDisplayLocked);
-    if (errCode == CameraError::CAMERA_SERVICE_ERROR) {
-        return errCode;
-    }
-    return CameraError::NO_ERROR;
+    return previewOutput_->SetPreviewRotation(imageRotation, isDisplayLocked);
 }
 
 void CJPreviewOutput::OnFrameStart(int64_t callbackId)
