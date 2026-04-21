@@ -136,6 +136,10 @@ void ControlCenterSessionNapi::Init(napi_env env)
         DECLARE_NAPI_FUNCTION("enableAutoFraming", ControlCenterSessionNapi::EnableAutoFraming),
         DECLARE_NAPI_FUNCTION("isAutoFramingSupported", ControlCenterSessionNapi::IsAutoFramingSupported),
         DECLARE_NAPI_FUNCTION("release", Release)
+
+        DECLARE_NAPI_FUNCTION("getSupportedColorEffects", ControlCenterSessionNapi::GetSupportedColorEffects),
+        DECLARE_NAPI_FUNCTION("getColorEffect", ControlCenterSessionNapi::GetColorEffect),
+        DECLARE_NAPI_FUNCTION("setColorEffect", ControlCenterSessionNapi::SetColorEffect),
     };
 
     status = napi_define_class(env, CONTROL_CENTER_SESSION_NAPI_CLASS_NAME, NAPI_AUTO_LENGTH,
@@ -412,6 +416,99 @@ napi_value ControlCenterSessionNapi::GetSupportedBeautyTypes(napi_env env, napi_
         MEDIA_ERR_LOG("GetSupportedBeautyTypes call Failed!");
     }
     return result;
+}
+
+napi_value ControlCenterSessionNapi::GetSupportedColorEffects(napi_env env, napi_callback_info info)
+{
+    if (!CameraNapiSecurity::CheckSystemApp(env)) {
+        MEDIA_ERR_LOG("SystemApi GetSupportedColorEffects is called!");
+        return nullptr;
+    }
+    ControlCenterSessionNapi* controlCenterSessionNapi = nullptr;
+    CameraNapiParamParser jsParamParser(env, info, controlCenterSessionNapi);
+    if (!jsParamParser.AssertStatus(PARAMETER_ERROR, "parse parameter occur error")) {
+        MEDIA_ERR_LOG("controlCenterSessionNapi::GetSupportedColorEffects parse parameter occur error");
+        return nullptr;
+    }
+ 
+    MEDIA_DEBUG_LOG("GetSupportedColorEffects is called");
+    napi_status status;
+    napi_value result = nullptr;
+    status = napi_create_array(env, &result);
+    if (status != napi_ok) {
+        MEDIA_ERR_LOG("napi_create_array call Failed!");
+        return result;
+    }
+    if (controlCenterSessionNapi != nullptr && controlCenterSessionNapi->controlCenterSession_ != nullptr) {
+        std::vector<int32_t> coloreffects = controlCenterSessionNapi->controlCenterSession_->GetSupportedColorEffects();
+        MEDIA_INFO_LOG("controlCenterSessionNapi::GetSupportedColorEffects len = %{public}zu",
+            coloreffects.size());
+        if (!coloreffects.empty() && status == napi_ok) {
+            for (size_t i = 0; i < coloreffects.size(); i++) {
+                int32_t coloreffect = coloreffects[i];
+                MEDIA_INFO_LOG("controlCenterSessionNapi::GetSupportedColorEffects val %{public}d", coloreffect);
+                napi_value value;
+                napi_create_int32(env, coloreffect, &value);
+                napi_set_element(env, result, i, value);
+            }
+        }
+    } else {
+        MEDIA_ERR_LOG("GetSupportedColorEffects call Failed!");
+    }
+    return result;
+}
+
+napi_value ControlCenterSessionNapi::GetColorEffect(napi_env env, napi_callback_info info)
+{
+    if (!CameraNapiSecurity::CheckSystemApp(env)) {
+        MEDIA_ERR_LOG("SystemApi GetColorEffect is called!");
+        return nullptr;
+    }
+    ControlCenterSessionNapi* controlCenterSessionNapi = nullptr;
+    CameraNapiParamParser jsParamParser(env, info, controlCenterSessionNapi);
+    if (!jsParamParser.AssertStatus(PARAMETER_ERROR, "parse parameter occur error")) {
+        MEDIA_ERR_LOG("controlCenterSessionNapi::GetColorEffect parse parameter occur error");
+        return nullptr;
+    }
+ 
+    MEDIA_DEBUG_LOG("GetColorEffect is called");
+    napi_value result = nullptr;
+    napi_get_undefined(env, &result);
+ 
+    if (controlCenterSessionNapi != nullptr && controlCenterSessionNapi->controlCenterSession_ != nullptr) {
+        ColorEffect colorEffect = controlCenterSessionNapi->controlCenterSession_->GetColorEffect();
+        MEDIA_INFO_LOG("controlCenterSessionNapi::GetColorEffect val = %{public}d", colorEffect);
+        napi_create_int32(env, colorEffect, &result);
+        return result;
+    } else {
+        MEDIA_ERR_LOG("GetColorEffect call Failed!");
+    }
+    return result;
+}
+
+napi_value ControlCenterSessionNapi::SetColorEffect(napi_env env, napi_callback_info info)
+{
+    if (!CameraNapiSecurity::CheckSystemApp(env)) {
+        MEDIA_ERR_LOG("SystemApi SetColorEffect is called!");
+        return nullptr;
+    }
+    MEDIA_DEBUG_LOG("SetColorEffect is called");
+    int32_t colorEffectNumber = 0;
+    ControlCenterSessionNapi* controlCenterSessionNapi = nullptr;
+    CameraNapiParamParser jsParamParser(env, info, controlCenterSessionNapi, colorEffectNumber);
+    if (!jsParamParser.AssertStatus(PARAMETER_ERROR, "parse parameter occur error")) {
+        MEDIA_ERR_LOG("controlCenterSessionNapi::SetColorEffect parse parameter occur error");
+        return nullptr;
+    }
+ 
+    if (controlCenterSessionNapi->controlCenterSession_ != nullptr) {
+        controlCenterSessionNapi->controlCenterSession_->SetColorEffect(
+            static_cast<ColorEffect>(colorEffectNumber));
+        MEDIA_INFO_LOG("SetColorEffect set colorEffectNumber %{public}d!", colorEffectNumber);
+    } else {
+        MEDIA_ERR_LOG("SetColorEffect call Failed!");
+    }
+    return CameraNapiUtils::GetUndefinedValue(env);
 }
 
 napi_value ControlCenterSessionNapi::GetSupportedBeautyRange(napi_env env, napi_callback_info info)

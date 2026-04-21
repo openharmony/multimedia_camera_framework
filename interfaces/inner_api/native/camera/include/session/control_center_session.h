@@ -80,6 +80,27 @@ public:
     std::vector<int32_t> GetSupportedBeautyTypes();
 
     /**
+     * @brief Get the supported color effect.
+     *
+     * @return Returns the array of coloreffect.
+     */
+    std::vector<int32_t> GetSupportedColorEffects();
+
+    /**
+     * @brief Get the current color effect.
+     *
+     * @return Returns current color effect.
+     */
+    ColorEffect GetColorEffect();
+
+    /**
+     * @brief Set the current color effect.
+     *
+     * @return Returns current color effect.
+     */
+    void SetColorEffect(ColorEffect coloreffect);
+
+    /**
      * @brief Get the supported beauty range.
      *
      * @return Returns the array of beauty range.
