@@ -333,9 +333,9 @@ bool HCameraDeviceManager::HandleCameraEvictions(std::vector<sptr<HCameraDeviceH
     }
 
     RefreshCameraDeviceHolderState(cameraRequestOpen);
+    MEDIA_INFO_LOG("focusStateOfRequestProcess = %{public}d", cameraRequestOpen->GetFocusState());
     {
         std::lock_guard<std::mutex> lock(mapMutex_);
-        MEDIA_INFO_LOG("focusStateOfRequestProcess = %{public}d", cameraRequestOpen->GetFocusState());
         for (const auto &deviceHolder : activeCameras_) {
             RefreshCameraDeviceHolderState(deviceHolder);
         }
