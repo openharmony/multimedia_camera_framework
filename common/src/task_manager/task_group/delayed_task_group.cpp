@@ -52,7 +52,16 @@ bool DelayedTaskGroup::SubmitTask(std::any param)
         return false;
     }
     std::lock_guard<std::mutex> lock(mutex_);
-    auto&& [delayTimeMs, task] = std::any_cast<std::tuple<uint32_t, std::function<void()>>&&>(std::move(param));
+    uint32_t delayTimeMs = 0;
+    std::function<void()> task;
+    try {
+        auto&& casted = std::any_cast<std::tuple<uint32_t, std::function<void()>>&&>(std::move(param));
+        delayTimeMs = std::get<0>(casted);
+        task = std::move(std::get<1>(casted));
+    } catch (const std::bad_any_cast&) {
+        MEDIA_ERR_LOG("(%s) SubmitTask failed due to bad_any_cast.", GetName().c_str());
+        return false;
+    }
     MEDIA_DEBUG_LOG("(%s) SubmitTask, delayTimeMs %{public}d ,expiring timestamp: %{public}d",
         GetName().c_str(),
         static_cast<int>(delayTimeMs),
