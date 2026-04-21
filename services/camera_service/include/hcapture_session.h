@@ -199,6 +199,10 @@ public:
     int32_t SetVirtualApertureValue(float value, bool needPersist) override;
 
     int32_t GetBeautyMetadata(std::vector<int32_t>& beautyApertureMetadata) override;
+    int32_t GetColorEffectsMetadata(std::vector<int32_t>& colorEffectMetadata) override;
+    int32_t GetColorEffect(int32_t& colourEffect) override;
+    int32_t SetColorEffect(int32_t colourEffect) override;
+
     int32_t GetBeautyRange(std::vector<int32_t>& range, int32_t type) override;
     int32_t GetBeautyValue(int32_t type, int32_t& value) override;
     int32_t SetBeautyValue(int32_t type, int32_t value, bool needPersist) override;

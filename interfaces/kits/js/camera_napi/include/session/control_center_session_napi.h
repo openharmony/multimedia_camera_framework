@@ -56,6 +56,10 @@ public:
     static napi_value GetAutoFramingStatus(napi_env env, napi_callback_info info);
     static napi_value EnableAutoFraming(napi_env env, napi_callback_info info);
     static napi_value IsAutoFramingSupported(napi_env env, napi_callback_info info);
+
+    static napi_value GetSupportedColorEffects(napi_env env, napi_callback_info info);
+    static napi_value GetColorEffect(napi_env env, napi_callback_info info);
+    static napi_value SetColorEffect(napi_env env, napi_callback_info info);
 private:
     napi_env env_;
     sptr<ControlCenterSession> controlCenterSession_;
