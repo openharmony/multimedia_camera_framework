@@ -3009,7 +3009,7 @@ void CameraManager::ParseCapability(ProfilesWrapper& profilesWrapper, sptr<Camer
 }
 
 sptr<CameraOutputCapability> CameraManager::GetSupportedOutputCapability(sptr<CameraDevice>& cameraDevice,
-    int32_t modeName) __attribute__((no_sanitize("cfi")))
+    int32_t modeName, bool completeRemove) __attribute__((no_sanitize("cfi")))
 {
     MEDIA_DEBUG_LOG("GetSupportedOutputCapability mode = %{public}d", modeName);
     auto camera = cameraDevice;
@@ -3026,7 +3026,7 @@ sptr<CameraOutputCapability> CameraManager::GetSupportedOutputCapability(sptr<Ca
     std::vector<Profile> curPhotoProfiles = camera->modePhotoProfiles_[modeName];
 #ifdef CAMERA_CAPTURE_YUV
     CHECK_EXECUTE(!IsSystemApp() && camera->GetConnectionType() != ConnectionType::CAMERA_CONNECTION_USB_PLUGIN,
-        RemoveExtendedSupportPhotoFormats(curPhotoProfiles));
+        RemoveExtendedSupportPhotoFormats(curPhotoProfiles, completeRemove));
 #endif
     cameraOutputCapability->SetPhotoProfiles(curPhotoProfiles);
     std::vector<Profile> curPreviewProfiles = camera->modePreviewProfiles_[modeName];
@@ -3062,7 +3062,7 @@ sptr<CameraOutputCapability> CameraManager::GetSupportedFullOutputCapability(spt
 #ifdef CAMERA_CAPTURE_YUV
     auto camera = cameraDevice;
     CHECK_RETURN_RET(camera == nullptr, nullptr);
-    sptr<CameraOutputCapability> cameraOutputCapability = GetSupportedOutputCapability(camera, modeName);
+    sptr<CameraOutputCapability> cameraOutputCapability = GetSupportedOutputCapability(camera, modeName, false);
     CHECK_RETURN_RET_ELOG(cameraOutputCapability == nullptr, nullptr,
         "GetSupportedOutputCapability failed, cameraOutputCapability is nullptr");
     // report full preview capabilities in this interface
@@ -3898,15 +3898,18 @@ void CameraManager::FillExtendedSupportPhotoFormats(vector<Profile>& photoProfil
     photoProfiles = extendProfiles;
 }
 
-void CameraManager::RemoveExtendedSupportPhotoFormats(std::vector<Profile>& photoProfiles)
+void CameraManager::RemoveExtendedSupportPhotoFormats(std::vector<Profile>& photoProfiles, bool completeRemove)
 {
     CHECK_RETURN(photoProfiles.size() == 0);
     std::vector<Profile> preserveProfiles = {};
     for (const auto& profile : photoProfiles) {
-        if (profile.format_ == CAMERA_FORMAT_YUV_420_SP) {
-            continue;
+        if (profile.format_ == CAMERA_FORMAT_JPEG || profile.format_ == CAMERA_FORMAT_RGBA_8888) {
+            preserveProfiles.push_back(profile);
         }
-        preserveProfiles.push_back(profile);
+        //open DNG
+        if (!completeRemove && (profile.format_ == CAMERA_FORMAT_DNG)) {
+            preserveProfiles.push_back(profile);
+        }
     }
     photoProfiles = preserveProfiles;
 }

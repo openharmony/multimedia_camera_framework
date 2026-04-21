@@ -187,7 +187,8 @@ public:
      * @param Camera device for which extend capability need to be fetched.
      * @return Returns vector the ability of the mode of cameraDevice of available camera from cameraDevice.
      */
-    sptr<CameraOutputCapability> GetSupportedOutputCapability(sptr<CameraDevice>& cameraDevice, int32_t modeName = 0);
+    sptr<CameraOutputCapability> GetSupportedOutputCapability(
+        sptr<CameraDevice>& cameraDevice, int32_t modeName = 0, bool completeRemove = true);
 
     /**
      * @brief Get full output capaility of the mode of the given camera from cameraDevice.
@@ -1212,7 +1213,7 @@ private:
     void FillVirtualSupportPreviewFormats(std::vector<Profile>& profiles);
 #ifdef CAMERA_CAPTURE_YUV
     void FillExtendedSupportPhotoFormats(std::vector<Profile>& profiles);
-    void RemoveExtendedSupportPhotoFormats(std::vector<Profile>& photoProfiles);
+    void RemoveExtendedSupportPhotoFormats(std::vector<Profile>& photoProfiles, bool completeRemove = true);
 #endif
     void FillSupportPreviewFormats(std::vector<Profile>& previewProfiles);
     inline void SetServiceProxy(sptr<ICameraService> proxy)
