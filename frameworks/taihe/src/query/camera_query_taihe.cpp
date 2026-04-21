@@ -995,6 +995,15 @@ array<int32_t> WhiteBalanceQueryImpl::GetWhiteBalanceRange()
     return array<int32_t>(whiteBalanceRange);
 }
 
+array<int32_t> WhiteBalanceQueryImpl::GetColorTintRange()
+{
+    CHECK_RETURN_RET_ELOG(captureSession_ == nullptr, {}, "SetWhiteBalance captureSession_ is null");
+    std::vector<int32_t> colorTintRange = {};
+    int32_t retCode = captureSession_->GetColorTintRange(colorTintRange);
+    CHECK_RETURN_RET(!CameraUtilsTaihe::CheckError(retCode), {});
+    return array<int32_t>(colorTintRange);
+}
+
 void WhiteBalanceImpl::SetWhiteBalance(int32_t whiteBalance)
 {
     CHECK_RETURN_ELOG(captureSession_ == nullptr, "SetWhiteBalance captureSession_ is null");
@@ -1021,6 +1030,25 @@ void WhiteBalanceImpl::SetWhiteBalanceMode(WhiteBalanceMode mode)
     captureSession_->LockForControl();
     captureSession_->SetWhiteBalanceMode(static_cast<OHOS::CameraStandard::WhiteBalanceMode>(mode.get_value()));
     captureSession_->UnlockForControl();
+}
+
+void WhiteBalanceImpl::SetColorTint(int32_t colorTint)
+{
+    CHECK_RETURN_ELOG(captureSession_ == nullptr, "SetColorTint captureSession_ is null");
+    captureSession_->LockForControl();
+    captureSession_->SetColorTint(colorTint);
+    captureSession_->UnlockForControl();
+}
+ 
+int32_t WhiteBalanceImpl::GetColorTint()
+{
+    WhiteBalanceMode errType = WhiteBalanceMode(static_cast<WhiteBalanceMode::key_t>(-1));
+    CHECK_RETURN_RET_ELOG(captureSession_ == nullptr,
+        errType, "GetWhiteBalanceMode captureSession_ is null");
+    int32_t colorTintValue;
+    int32_t retCode = captureSession_->GetColorTint(colorTintValue);
+    CHECK_RETURN_RET(!CameraUtilsTaihe::CheckError(retCode), errType);
+    return colorTintValue;
 }
 
 WhiteBalanceMode WhiteBalanceImpl::GetWhiteBalanceMode()

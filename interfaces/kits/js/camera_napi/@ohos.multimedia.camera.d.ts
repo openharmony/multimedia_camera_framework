@@ -3053,6 +3053,19 @@ function getCameraManager(context: Context): CameraManager;
      * @since 12
      */
     getWhiteBalanceRange(): Array<number>;
+ 
+    /**
+     * Query the color tint range.
+     *
+     * @returns { Array<number> } The array of color tint range.
+     *         The array contains two elements: [minColorTint, maxColorTint]
+     * @throws { BusinessError } 7400101 - Parameter missing or parameter type incorrect.
+     * @throws { BusinessError } 7400103 - Session not config.
+     * @syscap SystemCapability.Multimedia.Camera.Core
+     * @systemapi
+     * @since 26
+     */
+    getColorTintRange(): Array<number>;
   }
 
   /**
@@ -3113,6 +3126,30 @@ function getCameraManager(context: Context): CameraManager;
      * @since 12
      */
     setWhiteBalance(whiteBalance: number): void;
+ 
+    /**
+     * Set color tint value.
+     *
+     * @param { number } colorTint - Color tint value to set.
+     *        Must be within the range returned by getColorTintRange().
+     * @throws { BusinessError } 7400101 - Parameter missing or parameter type incorrect.
+     * @throws { BusinessError } 7400103 - Session not config.
+     * @syscap SystemCapability.Multimedia.Camera.Core
+     * @systemapi
+     * @since 26
+     */
+    setColorTint(colorTint: number): void;
+ 
+    /**
+     * Get current color tint value.
+     *
+     * @returns { number } The current color tint value.
+     * @throws { BusinessError } 7400103 - Session not config.
+     * @syscap SystemCapability.Multimedia.Camera.Core
+     * @systemapi
+     * @since 26
+     */
+    getColorTint(): number;
   }
 
   /**

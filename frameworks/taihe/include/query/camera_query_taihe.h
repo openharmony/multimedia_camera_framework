@@ -240,6 +240,7 @@ public:
     virtual ~WhiteBalanceQueryImpl() = default;
     virtual bool IsWhiteBalanceModeSupported(WhiteBalanceMode mode);
     virtual array<int32_t> GetWhiteBalanceRange();
+    virtual array<int32_t> GetColorTintRange();
 };
 
 class WhiteBalanceImpl : public WhiteBalanceQueryImpl {
@@ -250,6 +251,8 @@ public:
     virtual int32_t GetWhiteBalance();
     virtual void SetWhiteBalanceMode(WhiteBalanceMode mode);
     virtual WhiteBalanceMode GetWhiteBalanceMode();
+    virtual void SetColorTint(int32_t colorTint);
+    virtual int32_t GetColorTint();
 };
 
 class ManualExposureQueryImpl : virtual public SessionBase, virtual public FunctionBase {
