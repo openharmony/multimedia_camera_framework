@@ -376,7 +376,9 @@ int32_t CJPhotoOutput::GetPhotoRotation(int32_t deviceDegree, int32_t *errCode)
     int32_t retCode = photoOutput_->GetPhotoRotation(deviceDegree);
     if (retCode == CameraError::CAMERA_SERVICE_ERROR) {
         *errCode = CameraError::CAMERA_SERVICE_ERROR;
-        return -1;
+    }
+    if (retCode == CameraError::SERVICE_FATL_ERROR_OF_INVALID_SESSION_CFG) {
+        *errCode = CameraError::SERVICE_FATL_ERROR_OF_INVALID_SESSION_CFG;
     }
     return retCode;
 }
