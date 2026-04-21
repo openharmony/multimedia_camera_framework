@@ -92,6 +92,11 @@ bool CameraNapiWorkerQueueKeeper::WorkerLockCondition(std::shared_ptr<NapiWorker
                   "timeout, waitTime:%{public}lld",
         queueTask->taskName.c_str(), firstTask->taskName.c_str(), diffTime.count());
     workerQueueTasks_.pop_front();
+    if (workerQueueTasks_.empty()) {
+        MEDIA_ERR_LOG("CameraNapiWorkerQueueKeeper::WorkerLockCondition queue empty after pop_front");
+        isError = true;
+        return true;
+    }
     auto frontTask = workerQueueTasks_.front();
     if (frontTask == queueTask) {
         return true;

@@ -14,6 +14,7 @@
  */
 #include "deferred_photo_proxy_taihe.h"
 #include "camera_security_utils_taihe.h"
+#include <limits>
 
 using namespace taihe;
 using namespace OHOS;
@@ -30,9 +31,20 @@ ImageTaihe::PixelMap DeferredPhotoProxyImpl::GetThumbnailSync()
 {
     CHECK_RETURN_RET_ELOG(!OHOS::CameraStandard::CameraAniSecurity::CheckSystemApp(),
         ANI::Image::PixelMapImpl::CreatePixelMap(nullptr), "SystemApi GetThumbnailSync is called!");
+    CHECK_RETURN_RET_ELOG(deferredPhotoProxy_ == nullptr, ANI::Image::PixelMapImpl::CreatePixelMap(nullptr),
+        "GetThumbnailSync deferredPhotoProxy_ is nullptr");
     void* fdAddr = deferredPhotoProxy_->GetFileDataAddr();
+    CHECK_RETURN_RET_ELOG(fdAddr == nullptr || fdAddr == reinterpret_cast<void*>(-1),
+        ANI::Image::PixelMapImpl::CreatePixelMap(nullptr), "GetThumbnailSync invalid file addr");
     int32_t thumbnailWidth = deferredPhotoProxy_->GetWidth();
     int32_t thumbnailHeight = deferredPhotoProxy_->GetHeight();
+    CHECK_RETURN_RET_ELOG(thumbnailWidth <= 0 || thumbnailHeight <= 0, ANI::Image::PixelMapImpl::CreatePixelMap(nullptr),
+        "GetThumbnailSync invalid thumbnail size");
+    constexpr size_t bytesPerPixel = 4;
+    size_t pixelCount = static_cast<size_t>(thumbnailWidth) * static_cast<size_t>(thumbnailHeight);
+    CHECK_RETURN_RET_ELOG(pixelCount > (std::numeric_limits<size_t>::max() / bytesPerPixel),
+        ANI::Image::PixelMapImpl::CreatePixelMap(nullptr), "GetThumbnailSync size overflow");
+    size_t byteSize = pixelCount * bytesPerPixel;
     Media::InitializationOptions opts;
     opts.srcPixelFormat = Media::PixelFormat::RGBA_8888;
     opts.pixelFormat = Media::PixelFormat::RGBA_8888;
@@ -40,7 +52,7 @@ ImageTaihe::PixelMap DeferredPhotoProxyImpl::GetThumbnailSync()
     MEDIA_INFO_LOG("thumbnailWidth:%{public}d, thumbnailHeight: %{public}d",
         thumbnailWidth, thumbnailHeight);
     auto pixelMap = Media::PixelMap::Create(static_cast<const uint32_t*>(fdAddr),
-        thumbnailWidth * thumbnailHeight * 4, 0, thumbnailWidth, opts, true);
+        byteSize, 0, thumbnailWidth, opts, true);
     return ANI::Image::PixelMapImpl::CreatePixelMap(std::move(pixelMap));
 }
 

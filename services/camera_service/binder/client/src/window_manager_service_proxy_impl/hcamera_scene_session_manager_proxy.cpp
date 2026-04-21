@@ -28,9 +28,12 @@ int32_t CameraSceneSessionManagerProxy::RegisterWindowManagerAgent(WindowManager
  
     data.WriteInterfaceToken(GetDescriptor());
     data.WriteUint32(static_cast<uint32_t>(type));
+    CHECK_RETURN_RET_ELOG(windowManagerAgent == nullptr, ERR_INVALID_VALUE, "windowManagerAgent is null");
     data.WriteRemoteObject(windowManagerAgent->AsObject());
  
-    int32_t error = Remote()->SendRequest(static_cast<uint32_t>(
+    sptr<IRemoteObject> remote = Remote();
+    CHECK_RETURN_RET_ELOG(remote == nullptr, ERR_INVALID_VALUE, "Remote is null");
+    int32_t error = remote->SendRequest(static_cast<uint32_t>(
         SceneSessionManagerMessage::TRANS_ID_REGISTER_WINDOW_MANAGER_AGENT),
         data, reply, option);
     CHECK_PRINT_ELOG(error != ERR_NONE, "RegisterWindowManagerAgent failed, error: %{public}d", error);
@@ -46,9 +49,12 @@ int32_t CameraSceneSessionManagerProxy::UnregisterWindowManagerAgent(WindowManag
     MessageParcel data;
     data.WriteInterfaceToken(GetDescriptor());
     data.WriteUint32(static_cast<uint32_t>(type));
+    CHECK_RETURN_RET_ELOG(windowManagerAgent == nullptr, ERR_INVALID_VALUE, "windowManagerAgent is null");
     data.WriteRemoteObject(windowManagerAgent->AsObject());
  
-    int32_t error = Remote()->SendRequest(static_cast<uint32_t>(
+    sptr<IRemoteObject> remote = Remote();
+    CHECK_RETURN_RET_ELOG(remote == nullptr, ERR_INVALID_VALUE, "Remote is null");
+    int32_t error = remote->SendRequest(static_cast<uint32_t>(
         SceneSessionManagerMessage::TRANS_ID_UNREGISTER_WINDOW_MANAGER_AGENT),
         data, reply, option);
     CHECK_PRINT_ELOG(error != ERR_NONE, "UnregisterWindowManagerAgent failed, error: %{public}d", error);
@@ -75,7 +81,7 @@ void CameraSceneSessionManagerProxy::GetFocusWindowInfo(OHOS::Rosen::FocusChange
         return;
     }
  
-    int32_t error = Remote()->SendRequest(
+    int32_t error = remote->SendRequest(
         static_cast<uint32_t>(SceneSessionManagerMessage::TRANS_ID_GET_FOCUS_SESSION_INFO),
         data, reply, option);
     CHECK_RETURN_ELOG(error != ERR_NONE, "HCameraDeviceProxy DisableResult failed, error: %{public}d", error);

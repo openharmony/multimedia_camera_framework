@@ -124,7 +124,11 @@ void UnifiedPipelineAudioCaptureWrap::OnReadBufferStart()
 void UnifiedPipelineAudioCaptureWrap::OnReadBuffer(uint8_t* buffer, size_t bufferSize, int64_t timestamp)
 {
     std::lock_guard<std::mutex> lock(bufferListenerMutex_);
-    CHECK_RETURN_ELOG(bufferSize > BUFFERSIZE_MAX, "bufferSize is valid");
+    CHECK_RETURN_ELOG(bufferSize > BUFFERSIZE_MAX, "bufferSize is invalid");
+    if (captureBufferSize_ > 0) {
+        // bufferSize 正常应不超过单次读取缓存；额外允许 2x 以兼容未来实现变化
+        CHECK_RETURN_ELOG(bufferSize > captureBufferSize_ * 2, "bufferSize is too large");
+    }
     for (auto& listener : bufferListeners_) {
         auto bufferListener = listener.lock();
         CHECK_CONTINUE(bufferListener == nullptr);
@@ -184,9 +188,19 @@ void UnifiedPipelineAudioCaptureWrap::ProcessAudioBuffer()
                 std::this_thread::sleep_for(std::chrono::milliseconds(MOVIE_FILE_AUDIO_READ_WAIT_TIME));
                 continue;
             }
-            int32_t len = audioCapture->Read(*(bufferCache.data() + bytesRead), bufferLen - bytesRead, true);
+            if (bytesRead >= bufferLen) {
+                break;
+            }
+            size_t remain = bufferLen - bytesRead;
+            int32_t len = audioCapture->Read(*(bufferCache.data() + bytesRead), remain, true);
             if (len > 0) {
                 bytesRead += static_cast<size_t>(len);
+                if (bytesRead > bufferLen) {
+                    MEDIA_ERR_LOG("AudioCapturer::Read returned oversize, bytesRead:%{public}zu bufferLen:%{public}zu",
+                        bytesRead, bufferLen);
+                    bytesRead = 0;
+                    break;
+                }
             } else if (len == 0) {
                 std::this_thread::sleep_for(std::chrono::milliseconds(MOVIE_FILE_AUDIO_READ_WAIT_TIME));
             } else {

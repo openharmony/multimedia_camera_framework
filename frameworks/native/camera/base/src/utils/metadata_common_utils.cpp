@@ -355,7 +355,7 @@ void MetadataCommonUtils::ProcessFaceDetectInfo(sptr<MetadataObjectFactory> fact
     const uint32_t LOCAL_SIZE_FACE = 13;
     const uint32_t LOCAL_SIZE = 11;
     CHECK_RETURN_ELOG(
-        index + (typeFromHal == MetadataObjectType::FACE ? LOCAL_SIZE_FACE : LOCAL_SIZE) >= metadataItem.count,
+        index + (typeFromHal == MetadataObjectType::FACE ? LOCAL_SIZE_FACE : LOCAL_SIZE) > metadataItem.count,
         "invalid index");
     int32_t version = metadataItem.data.i32[index++];
     MEDIA_DEBUG_LOG("isNeedMirror: %{public}d, isNeedFlip: %{public}d, version: %{public}d",
@@ -417,7 +417,7 @@ void MetadataCommonUtils::ProcessCatFaceDetectInfo(sptr<MetadataObjectFactory> f
 {
     // LCOV_EXCL_START
     const uint32_t LOCAL_SIZE = 8;
-    CHECK_RETURN_ELOG(index + LOCAL_SIZE >= metadataItem.count, "invalid index");
+    CHECK_RETURN_ELOG(index + LOCAL_SIZE > metadataItem.count, "invalid index");
     int32_t version = metadataItem.data.i32[index++];
     MEDIA_DEBUG_LOG("isNeedMirror: %{public}d, isNeedFlip: %{public}d, version: %{public}d",
         isNeedMirror, isNeedFlip, version);
@@ -444,7 +444,7 @@ void MetadataCommonUtils::ProcessDogFaceDetectInfo(sptr<MetadataObjectFactory> f
 {
     // LCOV_EXCL_START
     const uint32_t LOCAL_SIZE = 8;
-    CHECK_RETURN_ELOG(index + LOCAL_SIZE >= metadataItem.count, "invalid index");
+    CHECK_RETURN_ELOG(index + LOCAL_SIZE > metadataItem.count, "invalid index");
     int32_t version = metadataItem.data.i32[index++];
     MEDIA_DEBUG_LOG("isNeedMirror: %{public}d, isNeedFlip: %{public}d, version: %{public}d",
         isNeedMirror, isNeedFlip, version);
