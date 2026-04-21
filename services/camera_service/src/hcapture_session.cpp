@@ -895,6 +895,99 @@ int32_t HCaptureSession::GetBeautyMetadata(std::vector<int32_t>& beautyApertureM
     return CAMERA_OK;
 }
 
+int32_t HCaptureSession::GetColorEffectsMetadata(std::vector<int32_t>& colorEffectMetadata)
+{
+    CHECK_RETURN_RET_ELOG(!CheckSystemApp(), CAMERA_NO_PERMISSION,
+        "GetColorEffectsMetadata HCaptureSession::CheckSystemApp fail");
+    CHECK_RETURN_RET_ELOG(!controlCenterPrecondition, CAMERA_INVALID_STATE,
+        "HCaptureSession::GetColorEffectsMetadata controlCenterPrecondition false");
+    MEDIA_INFO_LOG("HCaptureSession::GetColorEffectsMetadata");
+    uint32_t callerToken = IPCSkeleton::GetCallingTokenID();
+    int32_t errCode = CheckPermission(OHOS_PERMISSION_CAMERA, callerToken);
+    CHECK_RETURN_RET_ELOG(errCode != CAMERA_OK, errCode,
+        "HCaptureSession::GetColorEffectsMetadata check permission failed.");
+ 
+    auto device = GetCameraDevice();
+    CHECK_RETURN_RET(!device, CAMERA_INVALID_STATE);
+    auto settings = device->GetDeviceAbility();
+    camera_metadata_item_t item;
+    int ret = OHOS::Camera::FindCameraMetadataItem(settings->get(), OHOS_ABILITY_SUPPORTED_COLOR_MODES, &item);
+    CHECK_RETURN_RET_ELOG(ret != CAMERA_OK, -1, "CaptureSession::GetColorEffectsMetadata abilityId is NULL");
+    for (uint32_t i = 0; i < item.count;) {
+        int32_t mode = item.data.i32[i];
+        i++;
+        std::vector<int32_t> currentColorEffects = {};
+        while (i < item.count && item.data.i32[i] != -1) {
+            auto itr = g_metaColorEffectMap_.find(static_cast<camera_xmage_color_type_t>(item.data.i32[i]));
+            if (itr != g_metaColorEffectMap_.end()) {
+                currentColorEffects.emplace_back(itr->second);
+            }
+            i++;
+        }
+        i++;
+        // 提供一个基础的支持type
+        if (mode == 0) {
+            colorEffectMetadata = currentColorEffects;
+        }
+        // 找到对应type
+        if (mode == opMode_) {
+            colorEffectMetadata = currentColorEffects;
+            break;
+        }
+    }
+    return CAMERA_OK;
+}
+
+int32_t HCaptureSession::GetColorEffect(int32_t& colourEffect)
+{
+    CHECK_RETURN_RET_ELOG(!CheckSystemApp(), CAMERA_NO_PERMISSION,
+        "GetColorEffect HCaptureSession::CheckSystemApp fail");
+    CHECK_RETURN_RET_ELOG(!controlCenterPrecondition, CAMERA_INVALID_STATE,
+        "HCaptureSession::GetColorEffect controlCenterPrecondition false");
+    MEDIA_INFO_LOG("HCaptureSession::GetColorEffect");
+    uint32_t callerToken = IPCSkeleton::GetCallingTokenID();
+    int32_t errCode = CheckPermission(OHOS_PERMISSION_CAMERA, callerToken);
+    CHECK_RETURN_RET_ELOG(errCode != CAMERA_OK, errCode, "HCaptureSession::GetColorEffect check permission failed.");
+ 
+    auto device = GetCameraDevice();
+    CHECK_RETURN_RET(!device, CAMERA_INVALID_STATE);
+    auto settings = device->GetDeviceAbility();
+ 
+    camera_metadata_item_t item;
+    int ret = OHOS::Camera::FindCameraMetadataItem(settings->get(), OHOS_CONTROL_SUPPORTED_COLOR_MODES, &item);
+    CHECK_RETURN_RET_ELOG(ret != CAM_META_SUCCESS || item.count == 0, ret,
+        "HCaptureSession::GetColorEffect Failed with return code %{public}d", ret);
+    auto itr = g_metaColorEffectMap_.find(static_cast<camera_xmage_color_type_t>(item.data.u8[0]));
+    if (itr != g_metaColorEffectMap_.end()) {
+        colourEffect = itr->second;
+    }
+    return CAMERA_OK;
+}
+
+int32_t HCaptureSession::SetColorEffect(int32_t colourEffect)
+{
+    CHECK_RETURN_RET_ELOG(!CheckSystemApp(), CAMERA_NO_PERMISSION,
+        "SetColorEffect HCaptureSession::CheckSystemApp fail");
+    CHECK_RETURN_RET_ELOG(!controlCenterPrecondition, CAMERA_INVALID_STATE,
+        "HCaptureSession::SetColorEffect controlCenterPrecondition false");
+    MEDIA_INFO_LOG("HCaptureSession::SetColorEffect");
+    uint32_t callerToken = IPCSkeleton::GetCallingTokenID();
+    int32_t errCode = CheckPermission(OHOS_PERMISSION_CAMERA, callerToken);
+    CHECK_RETURN_RET_ELOG(errCode != CAMERA_OK, errCode, "HCaptureSession::SetColorEffect check permission failed.");
+ 
+    auto device = GetCameraDevice();
+    CHECK_RETURN_RET(!device, CAMERA_INVALID_STATE);
+    constexpr int32_t DEFAULT_ITEMS = 1;
+    constexpr int32_t DEFAULT_DATA_LENGTH = 1;
+    shared_ptr<OHOS::Camera::CameraMetadata> changedMetadata =
+        make_shared<OHOS::Camera::CameraMetadata>(DEFAULT_ITEMS, DEFAULT_DATA_LENGTH);
+    AddOrUpdateMetadata(changedMetadata,
+        OHOS_CONTROL_SUPPORTED_COLOR_MODES, &colourEffect, 1);
+    int32_t ret = device->UpdateSetting(changedMetadata);
+    CHECK_RETURN_RET_ELOG(ret != CAMERA_OK, ret, "HCaptureSession::SetColorEffect UpdateSetting failed.");
+    return CAMERA_OK;
+}
+
 int32_t HCaptureSession::GetBeautyRange(std::vector<int32_t>& range, int32_t type)
 {
     CHECK_RETURN_RET_ELOG(!CheckSystemApp(), CAMERA_NO_PERMISSION,
