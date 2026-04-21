@@ -125,10 +125,6 @@ void UnifiedPipelineAudioCaptureWrap::OnReadBuffer(uint8_t* buffer, size_t buffe
 {
     std::lock_guard<std::mutex> lock(bufferListenerMutex_);
     CHECK_RETURN_ELOG(bufferSize > BUFFERSIZE_MAX, "bufferSize is invalid");
-    if (captureBufferSize_ > 0) {
-        // bufferSize 正常应不超过单次读取缓存；额外允许 2x 以兼容未来实现变化
-        CHECK_RETURN_ELOG(bufferSize > captureBufferSize_ * 2, "bufferSize is too large");
-    }
     for (auto& listener : bufferListeners_) {
         auto bufferListener = listener.lock();
         CHECK_CONTINUE(bufferListener == nullptr);
@@ -208,6 +204,9 @@ void UnifiedPipelineAudioCaptureWrap::ProcessAudioBuffer()
                 std::this_thread::sleep_for(std::chrono::milliseconds(MOVIE_FILE_AUDIO_READ_WAIT_TIME));
             }
         } while (bytesRead < bufferLen);
+        if (bytesRead == 0) {
+            continue;
+        }
         AudioStandard::Timestamp timestamp;
         audioCapture->GetTimeStampInfo(timestamp, AudioStandard::Timestamp::Timestampbase::MONOTONIC);
         int64_t microTimestamp =

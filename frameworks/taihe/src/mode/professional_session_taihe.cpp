@@ -247,13 +247,7 @@ void ProfessionalSessionImpl::UnregisterLuminationInfoCallbackListener(const std
 {
     if (luminationInfoCallback_ == nullptr) {
         MEDIA_ERR_LOG("luminationInfoCallback is null");
-        return;
     } else {
-        if (professionSession_ == nullptr) {
-            MEDIA_ERR_LOG("professionSession_ is nullptr");
-            luminationInfoCallback_->RemoveCallbackRef(eventName, callback);
-            return;
-        }
         OHOS::CameraStandard::ExposureHintMode mode = OHOS::CameraStandard::EXPOSURE_HINT_MODE_OFF;
         professionSession_->LockForControl();
         professionSession_->SetExposureHintMode(mode);
