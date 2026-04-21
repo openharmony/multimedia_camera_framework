@@ -39,8 +39,7 @@ ImageTaihe::PixelMap DeferredPhotoProxyImpl::GetThumbnailSync()
     int32_t thumbnailWidth = deferredPhotoProxy_->GetWidth();
     int32_t thumbnailHeight = deferredPhotoProxy_->GetHeight();
     CHECK_RETURN_RET_ELOG(thumbnailWidth <= 0 || thumbnailHeight <= 0,
-            ANI::Image::PixelMapImpl::CreatePixelMap(nullptr),
-        "GetThumbnailSync invalid thumbnail size");
+            ANI::Image::PixelMapImpl::CreatePixelMap(nullptr), "GetThumbnailSync invalid thumbnail size");
     constexpr size_t bytesPerPixel = 4;
     size_t pixelCount = static_cast<size_t>(thumbnailWidth) * static_cast<size_t>(thumbnailHeight);
     CHECK_RETURN_RET_ELOG(pixelCount > (std::numeric_limits<size_t>::max() / bytesPerPixel),
