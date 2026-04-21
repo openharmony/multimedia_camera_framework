@@ -213,6 +213,12 @@ public:
     Camera_ErrorCode GetWhiteBalance(int32_t *colorTemperature);
 
     Camera_ErrorCode SetWhiteBalance(int32_t colorTemperature);
+
+    Camera_ErrorCode GetColorTintRange(std::vector<int32_t>& colorTintRange) const;
+ 
+    Camera_ErrorCode GetColorTint(int32_t* colorTintValue) const;
+ 
+    Camera_ErrorCode SetColorTint(int32_t colorTintValue) const;
     
     Camera_ErrorCode SetIso(int32_t iso) const;
 

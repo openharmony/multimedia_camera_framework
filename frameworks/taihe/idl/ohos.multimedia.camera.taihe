@@ -2520,6 +2520,7 @@ interface ManualFocusQuery {
 interface WhiteBalanceQuery {
   IsWhiteBalanceModeSupported(mode: WhiteBalanceMode): bool;
   GetWhiteBalanceRange(): Array<i32>;
+  GetColorTintRange(): Array<i32>;
 }
 
 interface WhiteBalance : WhiteBalanceQuery {
@@ -2527,6 +2528,8 @@ interface WhiteBalance : WhiteBalanceQuery {
   GetWhiteBalance(): i32;
   SetWhiteBalanceMode(mode: WhiteBalanceMode): void;
   GetWhiteBalanceMode(): WhiteBalanceMode;
+  SetColorTint(colorTint: i32): void;
+  GetColorTint(): i32;
 }
 
 interface ManualIsoQuery {

@@ -760,6 +760,40 @@ Camera_ErrorCode OH_CaptureSession_SetWhiteBalance(Camera_CaptureSession* sessio
     return session->SetWhiteBalance(colorTemperature);
 }
 
+Camera_ErrorCode OH_CaptureSession_GetColorTintRange(
+    const Camera_CaptureSession* session, int32_t* minColorTint, int32_t* maxColorTint)
+{
+    MEDIA_DEBUG_LOG("OH_CaptureSession_GetColorTintRange is called");
+    CHECK_RETURN_RET_ELOG(session == nullptr, CAMERA_INVALID_ARGUMENT, "Invalid argument, session is null!");
+    CHECK_RETURN_RET_ELOG(minColorTint == nullptr || maxColorTint == nullptr, CAMERA_INVALID_ARGUMENT,
+        "Invalid argument, minColorTint or maxColorTint is null!");
+    
+    std::vector<int32_t> colorTintRange;
+    Camera_ErrorCode ret = session->GetColorTintRange(colorTintRange);
+    int32_t num = 2;
+    if (ret == CAMERA_OK && colorTintRange.size() >= num) {
+        *minColorTint = colorTintRange[0];
+        *maxColorTint = colorTintRange[1];
+    }
+    return ret;
+}
+ 
+Camera_ErrorCode OH_CaptureSession_GetColorTint(const Camera_CaptureSession* session, int32_t* colorTintValue)
+{
+    MEDIA_DEBUG_LOG("OH_CaptureSession_GetColorTint is called");
+    CHECK_RETURN_RET_ELOG(session == nullptr, CAMERA_INVALID_ARGUMENT, "Invalid argument, session is null!");
+    CHECK_RETURN_RET_ELOG(colorTintValue == nullptr, CAMERA_INVALID_ARGUMENT,
+        "Invalid argument, colorTintValue is null!");
+    return session->GetColorTint(colorTintValue);
+}
+ 
+Camera_ErrorCode OH_CaptureSession_SetColorTint(const Camera_CaptureSession* session, int32_t colorTintValue)
+{
+    MEDIA_DEBUG_LOG("OH_CaptureSession_SetColorTint is called");
+    CHECK_RETURN_RET_ELOG(session == nullptr, CAMERA_INVALID_ARGUMENT, "Invalid argument, session is null!");
+    return session->SetColorTint(colorTintValue);
+}
+
 Camera_ErrorCode OH_CaptureSession_SetExposureDuration(const Camera_CaptureSession* session, int32_t exposureDuration)
 {
     MEDIA_DEBUG_LOG("OH_CaptureSession_SetExposureDuration is called");
