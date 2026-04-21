@@ -79,6 +79,7 @@ enum BeautyType {
 };
 
 enum ColorEffect {
+    COLOR_EFFECT_INVALID = -1,
     COLOR_EFFECT_NORMAL = 0,
     COLOR_EFFECT_BRIGHT,
     COLOR_EFFECT_SOFT,

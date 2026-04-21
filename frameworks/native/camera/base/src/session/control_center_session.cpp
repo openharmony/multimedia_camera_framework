@@ -111,6 +111,52 @@ std::vector<int32_t> ControlCenterSession::GetSupportedBeautyTypes()
     return metadata;
 }
 
+std::vector<int32_t> ControlCenterSession::GetSupportedColorEffects()
+{
+    MEDIA_INFO_LOG("ControlCenterSession::GetSupportedColorEffects");
+    CHECK_RETURN_RET_ELOG(!CheckIsSupportControlCenter(), {}, "Current status does not support control center.");
+    sptr<ICaptureSession> session = GetSessionForControlCenter();
+    std::vector<int32_t> metadata = {};
+    CHECK_RETURN_RET_ELOG(
+        session == nullptr, {}, "ControlCenterSession::GetSupportedColorEffects failed, session is nullptr.");
+    int32_t ret = session->GetColorEffectsMetadata(metadata);
+    CHECK_RETURN_RET_ELOG(ret != CAMERA_OK, metadata,
+        "ControlCenterSession::GetSupportedColorEffects failed, GetSupportedColorEffects failed.");
+    return metadata;
+}
+
+ColorEffect ControlCenterSession::GetColorEffect()
+{
+    MEDIA_INFO_LOG("ControlCenterSession::GetColorEffect");
+    CHECK_RETURN_RET_ELOG(!CheckIsSupportControlCenter(), COLOR_EFFECT_INVALID,
+        "Current status does not support control center.");
+    sptr<ICaptureSession> session = GetSessionForControlCenter();
+    int32_t effect = COLOR_EFFECT_INVALID;
+    ColorEffect retval = COLOR_EFFECT_INVALID;
+    CHECK_RETURN_RET_ELOG(
+        session == nullptr, retval, "ControlCenterSession::GetColorEffect failed, session is nullptr.");
+    int32_t ret = session->GetColorEffect(effect);
+    retval = static_cast<ColorEffect>(effect);
+    CHECK_RETURN_RET_ELOG(ret != CAMERA_OK, retval,
+        "ControlCenterSession::GetColorEffect failed, GetColorEffect failed.");
+    CHECK_RETURN_RET_ELOG(effect == COLOR_EFFECT_INVALID, retval,
+        "ControlCenterSession::GetColorEffect invalid val");
+    return retval;
+}
+
+void ControlCenterSession::SetColorEffect(ColorEffect coloreffect)
+{
+    MEDIA_INFO_LOG("ControlCenterSession::SetColorEffect:%{public}d", static_cast<int32_t>(coloreffect));
+    CHECK_RETURN_ELOG(!CheckIsSupportControlCenter(), "Current status does not support control center.");
+    sptr<ICaptureSession> session = GetSessionForControlCenter();
+    CHECK_RETURN_ELOG(
+        session == nullptr, "ControlCenterSession::SetColorEffect failed, session is nullptr.");
+ 
+    int32_t ret = session->SetColorEffect(coloreffect);
+    CHECK_RETURN_ELOG(ret != CAMERA_OK, "ControlCenterSession::SetColorEffect failed, SetColorEffect failed.");
+    return ;
+}
+
 std::vector<int32_t> ControlCenterSession::GetSupportedBeautyRange(BeautyType type)
 {
     MEDIA_INFO_LOG("ControlCenterSession::GetSupportedBeautyRange");
