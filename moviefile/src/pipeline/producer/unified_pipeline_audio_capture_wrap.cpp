@@ -184,19 +184,9 @@ void UnifiedPipelineAudioCaptureWrap::ProcessAudioBuffer()
                 std::this_thread::sleep_for(std::chrono::milliseconds(MOVIE_FILE_AUDIO_READ_WAIT_TIME));
                 continue;
             }
-            if (bytesRead >= bufferLen) {
-                break;
-            }
-            size_t remain = bufferLen - bytesRead;
-            int32_t len = audioCapture->Read(*(bufferCache.data() + bytesRead), remain, true);
+            int32_t len = audioCapture->Read(*(bufferCache.data() + bytesRead), bufferLen - bytesRead, true);
             if (len > 0) {
                 bytesRead += static_cast<size_t>(len);
-                if (bytesRead > bufferLen) {
-                    MEDIA_ERR_LOG("AudioCapturer::Read returned oversize, bytesRead:%{public}zu bufferLen:%{public}zu",
-                        bytesRead, bufferLen);
-                    bytesRead = 0;
-                    break;
-                }
             } else if (len == 0) {
                 std::this_thread::sleep_for(std::chrono::milliseconds(MOVIE_FILE_AUDIO_READ_WAIT_TIME));
             } else {
@@ -204,9 +194,6 @@ void UnifiedPipelineAudioCaptureWrap::ProcessAudioBuffer()
                 std::this_thread::sleep_for(std::chrono::milliseconds(MOVIE_FILE_AUDIO_READ_WAIT_TIME));
             }
         } while (bytesRead < bufferLen);
-        if (bytesRead == 0) {
-            continue;
-        }
         AudioStandard::Timestamp timestamp;
         audioCapture->GetTimeStampInfo(timestamp, AudioStandard::Timestamp::Timestampbase::MONOTONIC);
         int64_t microTimestamp =
