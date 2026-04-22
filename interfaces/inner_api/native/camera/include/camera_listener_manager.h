@@ -129,7 +129,7 @@ private:
         if (listener == nullptr) {
             return;
         }
-        for (auto it = listeners_.begin(); it != listeners.end(); it++) {
+        for (auto it = listeners.begin(); it != listeners.end(); it++) {
             if (*it == listener) {
                 listeners.erase(it);
                 return;

@@ -43,7 +43,15 @@ public:
     void RemoveCameraDeathRecipient()
     {
         std::lock_guard<std::mutex> lock(deathRecipientLock_);
-        (void)this->AsObject()->RemoveDeathRecipient(deathRecipient_.promote());
+        sptr<IRemoteObject> obj = this->AsObject();
+        if (obj == nullptr) {
+            return;
+        }
+        sptr<CameraDeathRecipient> recipient = deathRecipient_.promote();
+        if (recipient == nullptr) {
+            return;
+        }
+        (void)obj->RemoveDeathRecipient(recipient);
     }
 private:
     std::mutex deathRecipientLock_;

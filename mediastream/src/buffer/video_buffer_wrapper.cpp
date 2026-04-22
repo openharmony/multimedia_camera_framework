@@ -53,7 +53,8 @@ bool VideoBufferWrapper::Release()
 bool VideoBufferWrapper::DetachBufferFromOutputSurface()
 {
     CHECK_RETURN_RET_ELOG(videoBuffer_ == nullptr, false, "videoBuffer_ has released");
-    CHECK_RETURN_RET_ELOG(outputSurface_ == nullptr, false, "outputSurface_ has released");
+    sptr<Surface> outputSurface = outputSurface_.promote();
+    CHECK_RETURN_RET_ELOG(outputSurface == nullptr, false, "outputSurface_ has released");
     sptr<SurfaceBuffer> releaseBuffer;
     sptr<SyncFence> syncFence = SyncFence::INVALID_FENCE;
     BufferRequestConfig requestConfig = {
@@ -66,12 +67,12 @@ bool VideoBufferWrapper::DetachBufferFromOutputSurface()
         .colorGamut = videoBuffer_->GetSurfaceBufferColorGamut(),
         .transform = videoBuffer_->GetSurfaceBufferTransform(),
     };
-    SurfaceError ret = outputSurface_->RequestBuffer(releaseBuffer, syncFence, requestConfig);
+    SurfaceError ret = outputSurface->RequestBuffer(releaseBuffer, syncFence, requestConfig);
     CHECK_RETURN_RET_ELOG(ret != SURFACE_ERROR_OK, false, "RequestBuffer failed. %{public}d", ret);
     constexpr uint32_t waitForEver = -1;
     (void)syncFence->Wait(waitForEver);
     CHECK_RETURN_RET_ELOG(releaseBuffer == nullptr, ret, "Failed to request codec Buffer");
-    ret = outputSurface_->DetachBufferFromQueue(releaseBuffer);
+    ret = outputSurface->DetachBufferFromQueue(releaseBuffer);
     CHECK_RETURN_RET_ELOG(ret != SURFACE_ERROR_OK, false, "Failed to detach buffer %{public}d", ret);
     return true;
 }
@@ -79,8 +80,9 @@ bool VideoBufferWrapper::DetachBufferFromOutputSurface()
 bool VideoBufferWrapper::Flush2Target()
 {
     CHECK_RETURN_RET_ELOG(videoBuffer_ == nullptr, false, "video buffer is nullptr");
-    CHECK_RETURN_RET_ELOG(outputSurface_ == nullptr, false, "outputSurface_ has released");
-    SurfaceError ret = outputSurface_->AttachBufferToQueue(videoBuffer_);
+    sptr<Surface> outputSurface = outputSurface_.promote();
+    CHECK_RETURN_RET_ELOG(outputSurface == nullptr, false, "outputSurface_ has released");
+    SurfaceError ret = outputSurface->AttachBufferToQueue(videoBuffer_);
     if (ret != SURFACE_ERROR_OK) {
         MEDIA_ERR_LOG("AttachBufferToQueue ret: %{public}d", ret);
         Release();
@@ -94,7 +96,7 @@ bool VideoBufferWrapper::Flush2Target()
         },
         .timestamp = GetTimestamp(),
     };
-    ret = outputSurface_->FlushBuffer(videoBuffer_, invalidFence, flushConfig);
+    ret = outputSurface->FlushBuffer(videoBuffer_, invalidFence, flushConfig);
     CHECK_RETURN_RET_ELOG(ret != 0, false, "FlushBuffer failed");
     return true;
 }

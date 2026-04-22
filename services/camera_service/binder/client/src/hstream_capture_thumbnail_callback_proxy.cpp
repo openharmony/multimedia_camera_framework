@@ -28,6 +28,7 @@ HStreamCaptureThumbnailCallbackProxy::HStreamCaptureThumbnailCallbackProxy(const
 int32_t HStreamCaptureThumbnailCallbackProxy::OnThumbnailAvailable(sptr<SurfaceBuffer> surfaceBuffer, int64_t timestamp)
 {
     MEDIA_INFO_LOG("HStreamCaptureThumbnailCallbackProxy::OnThumbnailAvailable is called!");
+    CHECK_RETURN_RET_ELOG(surfaceBuffer == nullptr, ERR_INVALID_VALUE, "surfaceBuffer is null");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
@@ -36,7 +37,9 @@ int32_t HStreamCaptureThumbnailCallbackProxy::OnThumbnailAvailable(sptr<SurfaceB
     data.WriteInterfaceToken(GetDescriptor());
     surfaceBuffer->WriteToMessageParcel(data);
     sptr<BufferExtraData> bufferExtraData = surfaceBuffer->GetExtraData();
-    bufferExtraData->WriteToParcel(data);
+    CHECK_RETURN_RET_ELOG(bufferExtraData == nullptr, ERR_INVALID_VALUE, "bufferExtraData is null");
+    GSError ret = bufferExtraData->WriteToParcel(data);
+    CHECK_RETURN_RET_ELOG(ret != GSERROR_OK, ERR_INVALID_VALUE, "WriteToParcel failed, ret:%{public}d", ret);
     data.WriteInt64(timestamp);
 
     int error = Remote()->SendRequest(
