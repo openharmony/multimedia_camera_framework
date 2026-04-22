@@ -41,10 +41,14 @@ int HStreamCaptureThumbnailCallbackStub::HandleOnThumbnailAvailable(MessageParce
 {
     MEDIA_INFO_LOG("HStreamCaptureThumbnailCallbackStub::OnThumbnailAvailable is called!");
     sptr<SurfaceBuffer> surfaceBuffer = SurfaceBuffer::Create();
-    surfaceBuffer->ReadFromMessageParcel(data);
+    CHECK_RETURN_RET(surfaceBuffer == nullptr, -1);
+    GSError ret = surfaceBuffer->ReadFromMessageParcel(data);
+    CHECK_RETURN_RET_ELOG(ret != GSERROR_OK, -1, "ReadFromMessageParcel failed, ret:%{public}d", ret);
     sptr<BufferExtraData> bufferExtraData = surfaceBuffer->GetExtraData();
-    bufferExtraData->ReadFromParcel(data);
-    surfaceBuffer->SetExtraData(bufferExtraData);
+    CHECK_RETURN_RET_ELOG(bufferExtraData == nullptr, -1, "GetExtraData is null");
+    ret = bufferExtraData->ReadFromParcel(data);
+    CHECK_RETURN_RET_ELOG(ret != GSERROR_OK, -1, "ReadFromParcel failed, ret:%{public}d", ret);
+    (void)surfaceBuffer->SetExtraData(bufferExtraData);
     int64_t timestamp = data.ReadInt64();
     return OnThumbnailAvailable(surfaceBuffer, timestamp);
 }

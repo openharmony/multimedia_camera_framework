@@ -556,6 +556,7 @@ void CameraInputNapi::RegisterErrorCallbackListener(
     const std::string& eventName, napi_env env, napi_value callback, const std::vector<napi_value>& args, bool isOnce)
 {
     MEDIA_INFO_LOG("CameraInputNapi::RegisterErrorCallbackListener arg size is %{public}zu", args.size());
+    CHECK_RETURN_ELOG(cameraInput_ == nullptr, "CameraInputNapi::RegisterErrorCallbackListener cameraInput_ is null");
     CameraNapiObject emptyDevice { {} };
     CameraNapiParamParser jsParamParser(env, args, emptyDevice);
     if (!jsParamParser.AssertStatus(INVALID_ARGUMENT, "Could not able to read cameraDevice argument!")) {
@@ -594,6 +595,8 @@ void CameraInputNapi::UnregisterErrorCallbackListener(
 void CameraInputNapi::RegisterOcclusionDetectCallbackListener(
     const std::string& eventName, napi_env env, napi_value callback, const std::vector<napi_value>& args, bool isOnce)
 {
+    CHECK_RETURN_ELOG(cameraInput_ == nullptr,
+        "CameraInputNapi::RegisterOcclusionDetectCallbackListener cameraInput_ is null");
     if (occlusionDetectCallback_ == nullptr) {
         occlusionDetectCallback_ = make_shared<OcclusionDetectCallbackListener>(env);
         cameraInput_->SetOcclusionDetectCallback(occlusionDetectCallback_);
@@ -667,6 +670,8 @@ napi_value CameraInputNapi::UsedAsPosition(napi_env env, napi_callback_info info
         return nullptr;
     }
     MEDIA_INFO_LOG("CameraInputNapi::UsedAsPosition params: %{public}d", cameraPosition);
+    CHECK_RETURN_RET_ELOG(cameraInputNapi == nullptr || cameraInputNapi->cameraInput_ == nullptr, nullptr,
+        "CameraInputNapi::UsedAsPosition cameraInput is null");
     cameraInputNapi->cameraInput_->SetInputUsedAsPosition(static_cast<const CameraPosition>(cameraPosition));
     return CameraNapiUtils::GetUndefinedValue(env);
 }
@@ -686,6 +691,8 @@ napi_value CameraInputNapi::ControlAuxiliary(napi_env env, napi_callback_info in
         MEDIA_ERR_LOG("CameraInputNapi::ControlAuxiliary invalid arguments");
         return nullptr;
     }
+    CHECK_RETURN_RET_ELOG(cameraInputNapi == nullptr || cameraInputNapi->cameraInput_ == nullptr, nullptr,
+        "CameraInputNapi::ControlAuxiliary cameraInput is null");
     cameraInputNapi->cameraInput_->ControlAuxiliary(static_cast<const AuxiliaryType>(auxiliaryType),
         static_cast<const AuxiliaryStatus>(auxiliaryStatus));
     return CameraNapiUtils::GetUndefinedValue(env);
@@ -704,6 +711,8 @@ napi_value CameraInputNapi::IsPhysicalCameraOrientationVariable(napi_env env, na
         MEDIA_ERR_LOG("CameraInputNapi::IsPhysicalCameraOrientationVariable invalid arguments");
         return nullptr;
     }
+    CHECK_RETURN_RET_ELOG(cameraInputNapi == nullptr || cameraInputNapi->cameraInput_ == nullptr, nullptr,
+        "CameraInputNapi::IsPhysicalCameraOrientationVariable cameraInput is null");
     cameraInputNapi->cameraInput_->IsPhysicalCameraOrientationVariable(&isVariable);
     MEDIA_DEBUG_LOG("isVariable: %{public}d", isVariable);
     napi_get_boolean(env, isVariable, &result);
@@ -723,6 +732,8 @@ napi_value CameraInputNapi::GetPhysicalCameraOrientation(napi_env env, napi_call
         MEDIA_ERR_LOG("CameraInputNapi::GetPhysicalCameraOrientation invalid arguments");
         return nullptr;
     }
+    CHECK_RETURN_RET_ELOG(cameraInputNapi == nullptr || cameraInputNapi->cameraInput_ == nullptr, nullptr,
+        "CameraInputNapi::GetPhysicalCameraOrientation cameraInput is null");
     cameraInputNapi->cameraInput_->GetPhysicalCameraOrientation(&orientation);
     MEDIA_DEBUG_LOG("orientation: %{public}d", orientation);
     napi_create_int32(env, static_cast<int32_t>(orientation), &result);
@@ -740,6 +751,8 @@ napi_value CameraInputNapi::UsePhysicalCameraOrientation(napi_env env, napi_call
         MEDIA_ERR_LOG("CameraInputNapi::UsePhysicalCameraOrientation invalid arguments");
         return nullptr;
     }
+    CHECK_RETURN_RET_ELOG(cameraInputNapi == nullptr || cameraInputNapi->cameraInput_ == nullptr, nullptr,
+        "CameraInputNapi::UsePhysicalCameraOrientation cameraInput is null");
     int retCode = cameraInputNapi->cameraInput_->SetUsePhysicalCameraOrientation(isUsed);
     if (!CameraNapiUtils::CheckError(env, retCode)) {
         MEDIA_DEBUG_LOG("UsePhysicalCameraOrientation fail throw error");

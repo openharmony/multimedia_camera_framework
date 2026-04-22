@@ -1532,6 +1532,7 @@ napi_value CameraManagerNapi::CreateCameraConcurrentResult(napi_env env, vector<
     for (size_t i = 0; i < cameraDeviceArrray.size(); i++) {
         napi_value obj = nullptr;
         napi_create_object(env, &obj);
+        CHECK_CONTINUE(cameraDeviceArrray[i] == nullptr);
         napi_value cameranow = CameraNapiObjCameraDevice(*cameraDeviceArrray[i]).GenerateNapiValue(env);
         napi_set_named_property(env, obj, "device", cameranow);
         napi_value cameraconcurrent = nullptr;

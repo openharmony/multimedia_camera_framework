@@ -29,6 +29,7 @@ int32_t HStreamCapturePhotoCallbackProxy::OnPhotoAvailable(
     sptr<SurfaceBuffer> surfaceBuffer, int64_t timestamp, bool isRaw)
 {
     MEDIA_INFO_LOG("HStreamCapturePhotoCallbackProxy::OnPhotoAvailable is called!");
+    CHECK_RETURN_RET_ELOG(surfaceBuffer == nullptr, ERR_INVALID_VALUE, "surfaceBuffer is null");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
@@ -37,7 +38,9 @@ int32_t HStreamCapturePhotoCallbackProxy::OnPhotoAvailable(
     data.WriteInterfaceToken(GetDescriptor());
     surfaceBuffer->WriteToMessageParcel(data);
     sptr<BufferExtraData> bufferExtraData = surfaceBuffer->GetExtraData();
-    bufferExtraData->WriteToParcel(data);
+    CHECK_RETURN_RET_ELOG(bufferExtraData == nullptr, ERR_INVALID_VALUE, "bufferExtraData is null");
+    GSError ret = bufferExtraData->WriteToParcel(data);
+    CHECK_RETURN_RET_ELOG(ret != GSERROR_OK, ERR_INVALID_VALUE, "WriteToParcel failed, ret:%{public}d", ret);
     data.WriteInt64(timestamp);
     data.WriteBool(isRaw);
 
@@ -55,13 +58,14 @@ int32_t HStreamCapturePhotoCallbackProxy::OnPhotoAvailable(
 int32_t HStreamCapturePhotoCallbackProxy::OnPhotoAvailable(std::shared_ptr<PictureIntf> picture)
 {
     MEDIA_INFO_LOG("HStreamCapturePhotoCallbackProxy::OnPhotoAvailable is called!");
+    CHECK_RETURN_RET_ELOG(picture == nullptr, ERR_INVALID_VALUE, "picture is null");
     MessageParcel data;
     MessageParcel reply;
     MessageOption option;
     option.SetFlags(option.TF_ASYNC);
 
     data.WriteInterfaceToken(GetDescriptor());
-    CHECK_EXECUTE(picture, picture->Marshalling(data));
+    CHECK_RETURN_RET_ELOG(!picture->Marshalling(data), ERR_INVALID_VALUE, "Marshalling picture failed");
 
     int error = Remote()->SendRequest(
         static_cast<uint32_t>(StreamCapturePhotoCallbackInterfaceCode::CAMERA_STREAM_CAPTURE_ON_PICTURE_AVAILABLE),

@@ -76,6 +76,7 @@ void MovieFileControllerVideo::SelectTargetAudioInputDevice()
         CHECK_RETURN_ELOG(descs.size() != 1, "GetRecommendInputDevices return invalid data, descs size: %{public}zu",
                           descs.size());
         auto audioSessionManager = AudioStandard::AudioSessionManager::GetInstance();
+        CHECK_RETURN_ELOG(audioSessionManager == nullptr, "AudioSessionManager is null");
         int32_t ret = audioSessionManager->SelectInputDevice(descs[0]);
         CHECK_RETURN_ELOG(ret != 0, "SelectInputDevice failed, ret: %{public}d", ret);
         MEDIA_INFO_LOG("Audio post edit is supported, and built in mic is selected.");
@@ -86,7 +87,9 @@ void MovieFileControllerVideo::SelectTargetAudioInputDevice()
 void MovieFileControllerVideo::DeselectTargetAudioInputDevice()
 {
     MEDIA_INFO_LOG("MovieFileControllerVideo::DeselectTargetAudioInputDevice");
-    AudioStandard::AudioSessionManager::GetInstance()->ClearSelectedInputDevice();
+    auto audioSessionManager = AudioStandard::AudioSessionManager::GetInstance();
+    CHECK_RETURN_ELOG(audioSessionManager == nullptr, "AudioSessionManager is null");
+    audioSessionManager->ClearSelectedInputDevice();
 }
 
 void MovieFileControllerVideo::ConfigAudioCapture()

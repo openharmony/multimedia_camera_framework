@@ -124,7 +124,7 @@ void UnifiedPipelineAudioCaptureWrap::OnReadBufferStart()
 void UnifiedPipelineAudioCaptureWrap::OnReadBuffer(uint8_t* buffer, size_t bufferSize, int64_t timestamp)
 {
     std::lock_guard<std::mutex> lock(bufferListenerMutex_);
-    CHECK_RETURN_ELOG(bufferSize > BUFFERSIZE_MAX, "bufferSize is valid");
+    CHECK_RETURN_ELOG(bufferSize > BUFFERSIZE_MAX, "bufferSize is invalid");
     for (auto& listener : bufferListeners_) {
         auto bufferListener = listener.lock();
         CHECK_CONTINUE(bufferListener == nullptr);
