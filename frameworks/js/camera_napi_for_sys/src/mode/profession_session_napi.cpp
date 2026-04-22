@@ -108,7 +108,8 @@ void ProfessionSessionNapi::Init(napi_env env)
         CameraSessionNapi::flash_props, CameraSessionForSysNapi::flash_sys_props,
         CameraSessionNapi::zoom_props, CameraSessionForSysNapi::zoom_sys_props,
         CameraSessionForSysNapi::color_effect_sys_props, CameraSessionForSysNapi::aperture_sys_props,
-        ProfessionSessionNapi::pro_session_props, CameraSessionNapi::color_management_props };
+        ProfessionSessionNapi::pro_session_props, CameraSessionNapi::color_management_props,
+        CameraSessionNapi::raw_props, CameraSessionNapi::color_style_props };
     std::vector<napi_property_descriptor> professional_session_props =
         CameraNapiUtils::GetPropertyDescriptor(descriptors);
     status = napi_define_class(env, PROFESSIONAL_SESSION_NAPI_CLASS_NAME, NAPI_AUTO_LENGTH,

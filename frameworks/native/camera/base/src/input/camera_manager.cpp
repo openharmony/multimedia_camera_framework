@@ -3906,8 +3906,8 @@ void CameraManager::RemoveExtendedSupportPhotoFormats(std::vector<Profile>& phot
         if (profile.format_ == CAMERA_FORMAT_JPEG || profile.format_ == CAMERA_FORMAT_RGBA_8888) {
             preserveProfiles.push_back(profile);
         }
-        //open DNG
-        if (!completeRemove && (profile.format_ == CAMERA_FORMAT_DNG)) {
+        //open DNG and XDRAW
+        if (!completeRemove && (profile.format_ == CAMERA_FORMAT_DNG || profile.format_ == CAMERA_FORMAT_DNG_XDRAW)) {
             preserveProfiles.push_back(profile);
         }
     }
