@@ -3692,17 +3692,30 @@ int32_t CaptureSession::GetRAWZoomRatioRange(std::vector<float>& zoomRatioRange)
         metadata == nullptr, CameraErrorCode::OPERATION_NOT_ALLOWED, "GetZoomRatioRange camera metadata is null");
     camera_metadata_item_t item;
     int ret = Camera::FindCameraMetadataItem(metadata->get(), OHOS_ABILITY_RAW_CAPTURE_SCENE_ZOOM_CAP, &item);
-    CHECK_RETURN_RET_WLOG(ret != CAM_META_SUCCESS || item.count < 2, CameraErrorCode::SUCCESS,
+    CHECK_RETURN_RET_WLOG(ret != CAM_META_SUCCESS || item.count == 0, CameraErrorCode::SUCCESS,
         "CaptureSession::GetRAWZoomRatioRange Failed with return code %{public}d,item.count = %{public}d", ret,
         item.count);
     float minZoom = 0.0;
     float maxZoom = 0.0;
-    uint32_t Offset = 1;
-    minZoom = item.data.f[0];
-    maxZoom = item.data.f[Offset];
+    const uint32_t step = 3;
+    const uint32_t minOffset = 1;
+    const uint32_t maxOffset = 2;
+    const uint32_t minIndex = 0;
+    const uint32_t maxIndex = 1;
+    for (uint32_t i = 0; i < item.count; i += step) {
+        CHECK_BREAK_ELOG(i + maxOffset >= item.count,
+            "CaptureSession::GetRAWZoomRatioRange: invalid data format, i + maxOffset >= item.count");
+        if (GetMode() == static_cast<int32_t>(item.data.f[i])) {
+            minZoom = item.data.f[i + minOffset];
+            maxZoom = item.data.f[i + maxOffset];
+            break;
+        }
+    }
+    CHECK_PRINT_ELOG(minZoom == 0.0 && maxZoom == 0.0,
+        "CaptureSession::GetRAWZoomRatioRange: current mode %{public}d is not supported", GetMode());
     zoomRatioRange = { minZoom, maxZoom };
-    MEDIA_INFO_LOG(
-            "CaptureSession::GetRAWZoomRatioRange:%{public}f,%{public}f", zoomRatioRange[0], zoomRatioRange[Offset]);
+    MEDIA_INFO_LOG("CaptureSession::GetRAWZoomRatioRange:%{public}f,%{public}f", zoomRatioRange[minIndex],
+        zoomRatioRange[maxIndex]);
     return CameraErrorCode::SUCCESS;
 }
 
@@ -3816,7 +3829,8 @@ int32_t CaptureSession::SetZoomRatio(float zoomRatio)
     int32_t maxIndex = 1;
     MEDIA_DEBUG_LOG("CaptureSession::SetZoomRatio Zoom ratio: %{public}f", zoomRatio);
     std::vector<float> zoomRange = GetZoomRatioRange();
-    CHECK_EXECUTE(photoProfile_.format_ == CAMERA_FORMAT_DNG, GetRAWZoomRatioRange(zoomRange));
+    CHECK_EXECUTE(photoProfile_.format_ == CAMERA_FORMAT_DNG || photoProfile_.format_ == CAMERA_FORMAT_DNG_XDRAW,
+        GetRAWZoomRatioRange(zoomRange));
     CHECK_RETURN_RET_ELOG(
         zoomRange.empty(), CameraErrorCode::SUCCESS, "CaptureSession::SetZoomRatio Zoom range is empty");
     float tempZoomRatio = std::clamp(zoomRatio, zoomRange[minIndex], zoomRange[maxIndex]);
@@ -3886,7 +3900,8 @@ int32_t CaptureSession::SetSmoothZoom(float targetZoomRatio, uint32_t smoothZoom
     int32_t minIndex = 0;
     int32_t maxIndex = 1;
     std::vector<float> zoomRange = GetZoomRatioRange();
-    CHECK_EXECUTE(photoProfile_.format_ == CAMERA_FORMAT_DNG, GetRAWZoomRatioRange(zoomRange));
+    CHECK_EXECUTE(photoProfile_.format_ == CAMERA_FORMAT_DNG || photoProfile_.format_ == CAMERA_FORMAT_DNG_XDRAW,
+        GetRAWZoomRatioRange(zoomRange));
     CHECK_RETURN_RET_ELOG(
         zoomRange.empty(), CameraErrorCode::SUCCESS, "CaptureSession::SetSmoothZoom Zoom range is empty");
     CHECK_EXECUTE(!CameraSecurity::CheckSystemApp(),
