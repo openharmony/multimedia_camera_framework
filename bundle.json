@@ -39,6 +39,7 @@
               "ace_engine",
               "audio_framework",
               "av_codec",
+              "bounds_checking_function",
               "bundle_framework",
               "c_utils",
               "common_event_service",
