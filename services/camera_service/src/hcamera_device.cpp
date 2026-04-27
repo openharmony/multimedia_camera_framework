@@ -1324,6 +1324,40 @@ int32_t HCameraDevice::UpdateRotateAngleForSpecialBundle(bool isResetDegree)
     return retCode;
 }
 
+int32_t HCameraDevice::UpdateRotateAngleJudge(int32_t displayMode)
+{
+    bool isResetDegree = false;
+    CHECK_RETURN_RET_DLOG(
+        foldScreenType_.empty(), CAMERA_OK, "HCameraDevice::UpdateRotateAngleJudge foldScreenType is empty");
+    bool isVariable = IsPhysicalCameraOrientationVariable();
+    if (foldScreenType_[0] == '6') {
+        if (!isLogicCamera_ || !isVariable) {
+            isResetDegree = (displayMode != static_cast<int32_t>(OHOS::Rosen::FoldDisplayMode::GLOBAL_FULL));
+            UpdateRotateAngleForSpecialBundle(isResetDegree);
+            return CAMERA_OK;
+        }
+        return isVariable ? CAMERA_INVALID_ARG : CAMERA_OK;
+    } else if (foldScreenType_[0] == '7') {
+        isResetDegree = !(displayMode == static_cast<int32_t>(OHOS::Rosen::FoldDisplayMode::FULL) ||
+            displayMode == static_cast<int32_t>(OHOS::Rosen::FoldDisplayMode::COORDINATION));
+        int32_t retCode = UpdateRotateAngleForSpecialBundle(isResetDegree);
+        CHECK_RETURN_RET_DLOG(
+            retCode == CAMERA_OK, CAMERA_OK, "HCameraDevice::UpdateCameraRotateAngle Use HAL Rotate WhiteList");
+        CHECK_RETURN_RET_DLOG(!isLogicCamera_ || !isVariable || GetUsePhysicalCameraOrientation(),
+            CAMERA_OK, "HCameraDevice::UpdateCameraRotateAngle not use Logic Camera");
+        return CAMERA_INVALID_ARG;
+    } else if (foldScreenType_[0] == '8') {
+        isResetDegree = (displayMode != static_cast<int32_t>(OHOS::Rosen::FoldDisplayMode::GLOBAL_FULL));
+        int32_t retCode = UpdateRotateAngleForSpecialBundle(isResetDegree);
+        CHECK_RETURN_RET_DLOG(
+            retCode == CAMERA_OK, CAMERA_OK, "HCameraDevice::UpdateCameraRotateAngle Use HAL Rotate WhiteList");
+        CHECK_RETURN_RET_DLOG(!isLogicCamera_ || !isVariable || GetUsePhysicalCameraOrientation(),
+            CAMERA_OK, "HCameraDevice::UpdateCameraRotateAngle not use Logic Camera");
+        return CAMERA_INVALID_ARG;
+    }
+    return CAMERA_OK;
+}
+
 void HCameraDevice::UpdateCameraRotateAngle()
 {
     bool isFoldable = OHOS::Rosen::DisplayManagerLite::GetInstance().IsFoldable();
@@ -1335,23 +1369,8 @@ void HCameraDevice::UpdateCameraRotateAngle()
         CHECK_RETURN(!isFoldable || deviceAbility_ == nullptr || lastDisplayMode_ == curDisplayMode);
         lastDisplayMode_ = curDisplayMode;
     }
-    bool isResetDegree = false;
-    if (!foldScreenType_.empty() && foldScreenType_[0] == '6') {
-        if (!isLogicCamera_ || !IsPhysicalCameraOrientationVariable()) {
-            isResetDegree = (curDisplayMode != static_cast<int32_t>(OHOS::Rosen::FoldDisplayMode::GLOBAL_FULL));
-            UpdateRotateAngleForSpecialBundle(isResetDegree);
-            return;
-        }
-    } else if (!foldScreenType_.empty() && (foldScreenType_[0] == '7' || foldScreenType_[0] == '8')) {
-        isResetDegree = !(curDisplayMode == static_cast<int32_t>(OHOS::Rosen::FoldDisplayMode::FULL) ||
-            curDisplayMode == static_cast<int32_t>(OHOS::Rosen::FoldDisplayMode::COORDINATION));
-        int32_t retCode = UpdateRotateAngleForSpecialBundle(isResetDegree);
-        CHECK_RETURN_DLOG(retCode == CAMERA_OK, "HCameraDevice::UpdateCameraRotateAngle Use HAL Rotate WhiteList");
-        CHECK_RETURN_DLOG(!isLogicCamera_ || !IsPhysicalCameraOrientationVariable() ||
-            GetUsePhysicalCameraOrientation(), "HCameraDevice::UpdateCameraRotateAngle not use Logic Camera");
-    } else {
-        return;
-    }
+    CHECK_RETURN(UpdateRotateAngleJudge(curDisplayMode) == CAMERA_OK);
+
     int cameraOrientation = GetOriginalCameraOrientation();
     CHECK_RETURN(cameraOrientation == -1);
     int32_t truthCameraOrientation = -1;
