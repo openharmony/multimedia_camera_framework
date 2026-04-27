@@ -33,6 +33,7 @@ enum DpsMetadataError {
 };
 
 const char* const DEFERRED_PROCESSING_TYPE_KEY = "deferredProcessingType";
+const char* const DPS_PHOTO_COMPRESSION_QUALITY_KEY = "OHOS_PHOTO_COMPRESSION_QUALITY";
 
 enum DeferredProcessingType {
     DPS_BACKGROUND = 0,
