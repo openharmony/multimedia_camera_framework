@@ -21,6 +21,14 @@
    OHOS::CameraStandard::PhotoSessionNapi*;
    OHOS::CameraStandard::VideoSessionNapi*;
    OHOS::CameraStandard::SecureCameraSessionNapi*;
+   OHOS::CameraStandard::CameraInputNapi*;
+   OHOS::CameraStandard::PhotoOutputNapi*;
+   OHOS::CameraStandard::VideoOutputNapi*;
+   OHOS::CameraStandard::PreviewOutputNapi*;
+   OHOS::CameraStandard::VideoOutputNapi::CreateVideoOutput*;
+   OHOS::CameraStandard::MetadataOutputNapi*;
+   OHOS::CameraStandard::CameraManagerNapi*;
+   OHOS::CameraStandard::CameraNapi*;
 
    OHOS::CameraStandard::CameraInputNapi::Init*;
    OHOS::CameraStandard::PreviewOutputNapi::Init*;

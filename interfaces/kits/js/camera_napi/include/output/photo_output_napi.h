@@ -243,6 +243,8 @@ public:
 
     sptr<PhotoOutput> GetPhotoOutput();
     bool GetEnableMirror();
+    sptr<PhotoOutput> photoOutput_;
+    std::shared_ptr<PhotoOutputCallback> photoOutputCallback_;
 
     const EmitterFunctions& GetEmitterFunctions() override;
 
@@ -312,12 +314,10 @@ private:
     static thread_local napi_ref sConstructor_;
     static thread_local sptr<PhotoOutput> sPhotoOutput_;
 
-    sptr<PhotoOutput> photoOutput_;
     std::shared_ptr<Profile> profile_;
     bool isQuickThumbnailEnabled_ = false;
     bool isDeferredPhotoEnabled_ = false;
     bool isMirrorEnabled_ = false;
-    std::shared_ptr<PhotoOutputCallback> photoOutputCallback_;
     static thread_local uint32_t photoOutputTaskId;
     static thread_local napi_ref rawCallback_;
     uint8_t callbackFlag_ = 0;
