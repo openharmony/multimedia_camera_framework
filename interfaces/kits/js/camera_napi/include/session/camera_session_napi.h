@@ -692,13 +692,6 @@ public:
     static const std::vector<napi_property_descriptor> physical_aperture_props;
     static const std::vector<napi_property_descriptor> optical_image_stabilization_props;
 
-private:
-    static const EmitterFunctions fun_map_;
-    static void CommitConfigAsync(uv_work_t *work);
-    static void StartAsync(uv_work_t *work);
-    static void UvWorkAsyncCompleted(uv_work_t* work, int status);
-
-protected:
     void RegisterExposureCallbackListener(const std::string& eventName, napi_env env, napi_value callback,
         const std::vector<napi_value>& args, bool isOnce);
     void UnregisterExposureCallbackListener(
@@ -841,6 +834,14 @@ protected:
         napi_env env, napi_value callback, const std::vector<napi_value>& args, bool isOnce) {}
     virtual void UnregisterStitchingCaptureStateCallbackListener(const std::string& eventName,
         napi_env env, napi_value callback, const std::vector<napi_value>& args) {}
+        
+private:
+    static const EmitterFunctions fun_map_;
+    static void CommitConfigAsync(uv_work_t *work);
+    static void StartAsync(uv_work_t *work);
+    static void UvWorkAsyncCompleted(uv_work_t* work, int status);
+
+protected:
     typedef enum {
         MATRIX = 0,
         CENTER = 1,

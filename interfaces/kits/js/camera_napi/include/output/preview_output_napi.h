@@ -128,7 +128,7 @@ public:
     static napi_value EnableBandwidthCompression(napi_env env, napi_callback_info info);
 
     const EmitterFunctions& GetEmitterFunctions() override;
-
+    sptr<PreviewOutput> previewOutput_;
     PreviewOutputNapi();
     ~PreviewOutputNapi() override;
 
@@ -158,7 +158,6 @@ private:
         const std::string& eventName, napi_env env, napi_value callback, const std::vector<napi_value>& args);
 
     napi_env env_;
-    sptr<PreviewOutput> previewOutput_;
 
     static thread_local napi_ref sConstructor_;
     static thread_local sptr<PreviewOutput> sPreviewOutput_;

@@ -107,16 +107,16 @@ public:
     static napi_value On(napi_env env, napi_callback_info info);
     static napi_value Once(napi_env env, napi_callback_info info);
     static napi_value Off(napi_env env, napi_callback_info info);
-
+    static napi_value Start(napi_env env, napi_callback_info info);
+    static napi_value Stop(napi_env env, napi_callback_info info);
+    static napi_value Release(napi_env env, napi_callback_info info);
     const EmitterFunctions& GetEmitterFunctions() override;
+
+    sptr<MetadataOutput> metadataOutput_;
 
 private:
     static void MetadataOutputNapiDestructor(napi_env env, void* nativeObject, void* finalize_hint);
     static napi_value MetadataOutputNapiConstructor(napi_env env, napi_callback_info info);
-
-    static napi_value Start(napi_env env, napi_callback_info info);
-    static napi_value Stop(napi_env env, napi_callback_info info);
-    static napi_value Release(napi_env env, napi_callback_info info);
 
     void RegisterMetadataObjectsAvailableCallbackListener(const std::string& eventName, napi_env env,
         napi_value callback, const std::vector<napi_value>& args, bool isOnce);
@@ -136,7 +136,6 @@ private:
     static thread_local uint32_t metadataOutputTaskId;
 
     napi_env env_;
-    sptr<MetadataOutput> metadataOutput_;
     std::shared_ptr<MetadataOutputCallback> metadataOutputCallback_;
     std::shared_ptr<MetadataStateCallbackNapi> metadataStateCallback_;
     std::shared_ptr<FocusTrackingMetaInfoCallbackListener> focusTrackingMetaInfoCallbackListener_;

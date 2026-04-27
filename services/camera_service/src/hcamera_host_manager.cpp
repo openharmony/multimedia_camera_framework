@@ -889,6 +889,10 @@ int32_t HCameraHostManager::Init()
                     CHECK_RETURN_ELOG(
                         status.serviceName == DISTRIBUTED_SERVICE_NAME, "HCameraHostManager::service no need to add");
                     AddCameraHost(status.serviceName);
+                    {
+                        auto statusCallback = statusCallback_.lock();
+                        statusCallback->OnAbilityReady();
+                    }
                     break;
                 case SERVIE_STATUS_STOP:
                     RemoveCameraHost(status.serviceName);

@@ -34,6 +34,7 @@ const std::string IMAGE_EFFECT_SO = "libcamera_dynamic_image_effect.z.so";
 const std::string MOVIE_FILE_SO = "libmovie_file.z.so";
 const std::string MEDIA_STREAM_SO = "libmedia_stream.z.so";
 const std::string WATERMARK_EXIF_METADATA_SO = "libcamera_dynamic_watermark_exif_metadata.z.so";
+const std::string CAMERA_EXTEND_SO = "libcameraextend_service.z.so";
 
 constexpr uint32_t LIB_DELAYED_UNLOAD_TIME = 30000; // 30 second
 
