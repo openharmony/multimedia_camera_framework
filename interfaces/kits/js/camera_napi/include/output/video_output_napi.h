@@ -108,19 +108,19 @@ public:
     static napi_value SetRotation(napi_env env, napi_callback_info info);
     static napi_value IsAutoVideoFrameRateSupported(napi_env env, napi_callback_info info);
     static napi_value EnableAutoVideoFrameRate(napi_env env, napi_callback_info info);
+    static napi_value Start(napi_env env, napi_callback_info info);
+    static napi_value Stop(napi_env env, napi_callback_info info);
+    static napi_value Release(napi_env env, napi_callback_info info);
     VideoOutputNapi();
     ~VideoOutputNapi() override;
     sptr<VideoOutput> GetVideoOutput();
     const EmitterFunctions& GetEmitterFunctions() override;
     static napi_value GetVideoRotation(napi_env env, napi_callback_info info);
+    sptr<VideoOutput> videoOutput_;
 
 private:
     static void VideoOutputNapiDestructor(napi_env env, void* nativeObject, void* finalize_hint);
     static napi_value VideoOutputNapiConstructor(napi_env env, napi_callback_info info);
-
-    static napi_value Start(napi_env env, napi_callback_info info);
-    static napi_value Stop(napi_env env, napi_callback_info info);
-    static napi_value Release(napi_env env, napi_callback_info info);
 
     void RegisterFrameStartCallbackListener(const std::string& eventName, napi_env env, napi_value callback,
         const std::vector<napi_value>& args, bool isOnce);
@@ -143,7 +143,6 @@ private:
     static thread_local sptr<VideoOutput> sVideoOutput_;
 
     napi_env env_;
-    sptr<VideoOutput> videoOutput_;
     std::shared_ptr<VideoCallbackListener> videoCallback_;
     static thread_local uint32_t videoOutputTaskId;
 };

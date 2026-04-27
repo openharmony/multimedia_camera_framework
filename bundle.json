@@ -166,6 +166,16 @@
               }
             },
             {
+              "type": "none",
+              "name": "//foundation/multimedia/camera_framework/common:camera_utils",
+              "header": {
+                "header_base": "//foundation/multimedia/camera_framework/common/utils",
+                "header_files": [
+                  "camera_extend/include/camera_extend_interface.h"
+                ]
+              }
+            },
+            {
               "type": "so",
               "name": "//foundation/multimedia/camera_framework/frameworks/native/camera/extension:camera_framework_ex",
               "header": {
@@ -205,6 +215,17 @@
                 ]
               }
            },
+           {
+              "type": "none",
+              "name": "//foundation/multimedia/camera_framework/interfaces/kits/js/camera_napi:camera_napi_base",
+              "header": {
+                "header_base": [
+                    "//foundation/multimedia/camera_framework/interfaces/kits/js/camera_napi/include"
+                ],
+                "header_files": [
+                ]
+              }
+            },
             {
               "type": "none",
               "name": "//foundation/multimedia/camera_framework/interfaces/kits/js/camera_napi:camerapicker_napi",

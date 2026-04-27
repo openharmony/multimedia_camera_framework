@@ -219,6 +219,9 @@ public:
 
     virtual const EmitterFunctions& GetEmitterFunctions() override;
 
+    napi_env env_;
+    sptr<CameraManager> cameraManager_;
+
 private:
     static void CameraManagerNapiDestructor(napi_env env, void* nativeObject, void* finalize_hint);
     static napi_value CameraManagerNapiConstructor(napi_env env, napi_callback_info info);
@@ -271,8 +274,6 @@ private:
 
     static thread_local napi_ref sConstructor_;
 
-    napi_env env_;
-    sptr<CameraManager> cameraManager_;
     static thread_local uint32_t cameraManagerTaskId;
 };
 

@@ -60,6 +60,7 @@
 #include "input/i_standard_camera_listener.h"
 #include "suspend_state_observer.h"
 #include "res_sched_event_listener.h"
+#include "camera_extend_proxy.h"
 
 namespace OHOS {
 namespace CameraStandard {
@@ -221,6 +222,7 @@ public:
                         CallbackInvoker invoker) override;
     void OnFlashlightStatus(const string& cameraId, FlashStatus status) override;
     void OnTorchStatus(TorchStatus status) override;
+    void OnAbilityReady() override;
     void clearPreScanConfig() override;
     // for resource proxy
     [[deprecated]] int32_t ProxyForFreeze(const std::set<int32_t>& pidList, bool isProxy) override;
@@ -344,6 +346,13 @@ private:
                 cameraService->OnTorchStatus(status);
             }
         }
+        void OnAbilityReady() override
+        {
+            auto cameraService = cameraService_.promote();
+            if (cameraService != nullptr) {
+                cameraService->OnAbilityReady();
+            }
+        }
         void clearPreScanConfig() override
         {
             auto cameraService = cameraService_.promote();
@@ -459,6 +468,8 @@ private:
 
     std::mutex peerCallbackMutex_;
     sptr<ICameraBroker> peerCallback_;
+
+    SpHolder<std::shared_ptr<CameraExtendProxy>> cameraExtendProxy_;
 
     bool isFoldRegister = false;
     sptr<IFoldServiceCallback> innerFoldCallback_;

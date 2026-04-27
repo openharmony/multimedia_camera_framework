@@ -189,9 +189,23 @@ void HCameraService::OnStart()
 #endif
     isLogicCamera_ = system::GetParameter("const.system.sensor_correction_enable", "0") == "1";
     foldScreenType_ = system::GetParameter("const.window.foldscreen.type", "");
+    cameraExtendProxy_.Set(CameraExtendProxy::CreateCameraExtendProxy());
     cameraHostManager_->ParseJsonFileToMap(SAVE_RESTORE_FILE_PATH, preCameraClient_, preCameraId_);
     RefreshRssCameraStatus();
     MEDIA_INFO_LOG("HCameraService OnStart end");
+}
+
+void HCameraService::OnAbilityReady()
+{
+    auto cameraExtendProxy = cameraExtendProxy_.Get();
+    CHECK_RETURN_ELOG(cameraExtendProxy == nullptr,
+        "HCameraService::OnAbilityReady cameraExtendProxy is null");
+    std::vector<std::string> cameraIds;
+    std::vector<std::shared_ptr<OHOS::Camera::CameraMetadata>> cameraAbilityList;
+    int32_t retCode = GetCameras(cameraIds, cameraAbilityList);
+    CHECK_RETURN_ELOG(retCode != CAMERA_OK, "HCameraService::OnAbilityReady GetCameras failed");
+    MEDIA_INFO_LOG("HCameraService::OnAbilityReady cameraIds size: %{public}zu", cameraIds.size());
+    cameraExtendProxy->SetCameraAbility(cameraIds, cameraAbilityList);
 }
 
 void HCameraService::RegisterSuspendObserver()
