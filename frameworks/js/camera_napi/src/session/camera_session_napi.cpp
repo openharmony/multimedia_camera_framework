@@ -239,8 +239,11 @@ const std::vector<napi_property_descriptor> CameraSessionNapi::zoom_sys_props = 
 const std::vector<napi_property_descriptor> CameraSessionNapi::exposure_cb_props = {
     DECLARE_NAPI_FUNCTION("onExposureInfoChange", CameraSessionNapi::OnExposureInfoChange),
     DECLARE_NAPI_FUNCTION("offExposureInfoChange", CameraSessionNapi::OffExposureInfoChange),
+};
+
+const std::vector<napi_property_descriptor> CameraSessionNapi::exposure_state_cb_props = {
     DECLARE_NAPI_FUNCTION("onExposureStateChange", CameraSessionNapi::OnExposureStateChange),
-    DECLARE_NAPI_FUNCTION("offExposureStateChange", CameraSessionNapi::OffExposureStateChange)
+    DECLARE_NAPI_FUNCTION("offExposureStateChange", CameraSessionNapi::OffExposureStateChange),
 };
 
 const std::vector<napi_property_descriptor> CameraSessionNapi::flash_cb_props = {

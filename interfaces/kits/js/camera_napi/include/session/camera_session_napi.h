@@ -670,6 +670,7 @@ public:
     static const std::vector<napi_property_descriptor> zoom_props;
     static const std::vector<napi_property_descriptor> zoom_sys_props;
     static const std::vector<napi_property_descriptor> exposure_cb_props;
+    static const std::vector<napi_property_descriptor> exposure_state_cb_props;
     static const std::vector<napi_property_descriptor> filter_props;
     static const std::vector<napi_property_descriptor> beauty_props;
     static const std::vector<napi_property_descriptor> macro_props;
