@@ -16,6 +16,7 @@
 #include "hstream_repeat.h"
 #include "iproxy_broker.h"
 
+#include <charconv>
 #include <cstdint>
 #include <mutex>
 
@@ -49,6 +50,15 @@ using CM_ColorSpaceType_V2_1 = OHOS::HDI::Display::Graphic::Common::V2_1::CM_Col
 constexpr int32_t INT32_ZERO = 0;
 constexpr int32_t INT32_ONE = 1;
 constexpr int32_t INT32_TWO = 2;
+
+bool ParseInt32(const std::string &value, int32_t &result)
+{
+    const char *begin = value.data();
+    const char *end = begin + value.size();
+    auto parsed = std::from_chars(begin, end, result);
+    return parsed.ec == std::errc{} && parsed.ptr == end;
+}
+
 HStreamRepeat::HStreamRepeat(
     sptr<OHOS::IBufferProducer> producer, int32_t format, int32_t width, int32_t height, RepeatStreamType type)
     : HStreamCommon(StreamType::REPEAT, producer, format, width, height), repeatStreamType_(type)
@@ -1486,8 +1496,12 @@ bool HStreamRepeat::IsNeedBeautyNotification()
         CHECK_CONTINUE(configInfo.size() < CONFIG_SIZE);
         CHECK_CONTINUE(!isIntegerRegex(configInfo[INT32_ONE]) || !isIntegerRegex(configInfo[INT32_TWO]));
         std::string configBundleName = configInfo[INT32_ZERO];
-        int32_t configMinFPS = std::atoi(configInfo[INT32_ONE].c_str());
-        int32_t configMAXFPS = std::atoi(configInfo[INT32_TWO].c_str());
+        int32_t configMinFPS = 0;
+        int32_t configMAXFPS = 0;
+        if (!ParseInt32(configInfo[INT32_ONE], configMinFPS) ||
+            !ParseInt32(configInfo[INT32_TWO], configMAXFPS)) {
+            continue;
+        }
         if (configBundleName == bundleName && configMinFPS == streamFrameRateRange_[INT32_ZERO] &&
             configMAXFPS == streamFrameRateRange_[INT32_ONE]) {
             ret = true;
@@ -1517,7 +1531,10 @@ bool HStreamRepeat::IsLive()
         CHECK_CONTINUE(configBundleName != bundleName);
         for (int j = INT32_ONE; j < configInfo.size(); ++j) {
             CHECK_CONTINUE(!isIntegerRegex(configInfo[j]));
-            int32_t configFPS = std::atoi(configInfo[j].c_str());
+            int32_t configFPS = 0;
+            if (!ParseInt32(configInfo[j], configFPS)) {
+                continue;
+            }
             if (configFPS == streamFrameRateRange_[INT32_ZERO] && configFPS == streamFrameRateRange_[INT32_ONE]) {
                 ret = true;
                 break;
