@@ -15,6 +15,7 @@
 
 #include "output/preview_output_napi.h"
 
+#include <charconv>
 #include <cstdint>
 #include <memory>
 #include <string>
@@ -47,8 +48,14 @@ namespace {
 sptr<Surface> GetSurfaceFromSurfaceId(napi_env env, std::string& surfaceId)
 {
     MEDIA_DEBUG_LOG("GetSurfaceFromSurfaceId enter");
-    char *ptr;
-    uint64_t iSurfaceId = std::strtoull(surfaceId.c_str(), &ptr, 10);
+    uint64_t iSurfaceId = 0;
+    const char *begin = surfaceId.data();
+    const char *end = begin + surfaceId.size();
+    auto parsed = std::from_chars(begin, end, iSurfaceId);
+    if (parsed.ec != std::errc{} || parsed.ptr != end) {
+        MEDIA_ERR_LOG("GetSurfaceFromSurfaceId invalid surface id");
+        return nullptr;
+    }
     MEDIA_INFO_LOG("GetSurfaceFromSurfaceId surfaceId %{public}" PRIu64, iSurfaceId);
 
     return SurfaceUtils::GetInstance()->GetSurface(iSurfaceId);
