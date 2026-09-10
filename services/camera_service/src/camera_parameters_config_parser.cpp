@@ -14,6 +14,7 @@
  */
 
 #include "camera_parameters_config_parser.h"
+#include <charconv>
 #include "config_policy_utils.h"
 #include "camera_log.h"
 #include "camera_util.h"
@@ -40,10 +41,15 @@ bool ParseParameterNode(std::shared_ptr<CameraXmlNode> parameterNode, Parameter 
     std::string type;
     parameterNode->GetProp("type", type);
     CHECK_RETURN_RET(!IsUint8Regex(type), false);
+    uint32_t parsedType = 0;
+    const char *begin = type.data();
+    const char *end = begin + type.size();
+    auto parsed = std::from_chars(begin, end, parsedType);
+    CHECK_RETURN_RET(parsed.ec != std::errc{} || parsed.ptr != end || parsedType > UINT8_MAX, false);
     std::string tagName;
     parameterNode->GetProp("tagName", tagName);
     parameter.tagName = tagName;
-    parameter.type = static_cast<uint8_t>(std::stoi(type));
+    parameter.type = static_cast<uint8_t>(parsedType);
     std::map<std::string, std::string> kvPairs;
     for (auto pairNode = parameterNode->GetChildrenNode(); pairNode->IsNodeValid(); pairNode->MoveToNext()) {
         CHECK_CONTINUE(!pairNode->IsElementNode());
@@ -81,4 +87,4 @@ std::map<std::string, Parameter> CameraParametersConfigParser::ParseXML()
     return parameters;
 }
 } // namespace CameraStandard
-} // namespace OHOS
+} // namespace OHOS
