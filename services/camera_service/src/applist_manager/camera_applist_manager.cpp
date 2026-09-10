@@ -15,6 +15,7 @@
 // LCOV_EXCL_START
 #include "applist_manager/camera_applist_manager.h"
 
+#include <charconv>
 #include <cstring>
 #include <dlfcn.h>
 #include <parameters.h>
@@ -23,6 +24,16 @@
 
 namespace OHOS {
 namespace CameraStandard {
+namespace {
+bool ParseInt32(const std::string &value, int32_t &result)
+{
+    const char *begin = value.data();
+    const char *end = begin + value.size();
+    auto parsed = std::from_chars(begin, end, result);
+    return parsed.ec == std::errc{} && parsed.ptr == end;
+}
+} // namespace
+
 sptr<CameraApplistManager> CameraApplistManager::cameraApplistManager_;
 std::mutex CameraApplistManager::instanceMutex_;
 
@@ -88,8 +99,11 @@ int32_t CameraApplistManager::GetLogicCameraScreenStatus()
         CHECK_RETURN_RET_ELOG((subElems.size() != SIZE_TWO) ||
             !(isIntegerRegex(subElems[0]) && isIntegerRegex(subElems[1])), CAMERA_INVALID_STATE,
             "GetLogicCameraScreenStatus subElems isIntegerRegex false");
-        int32_t logicDisplayMode = std::stoi(subElems[0]);
-        int32_t systemNaturalDirection = std::stoi(subElems[1]);
+        int32_t logicDisplayMode = 0;
+        int32_t systemNaturalDirection = 0;
+        CHECK_RETURN_RET_ELOG(!ParseInt32(subElems[0], logicDisplayMode) ||
+            !ParseInt32(subElems[1], systemNaturalDirection), CAMERA_INVALID_STATE,
+            "GetLogicCameraScreenStatus numeric value is out of range");
         displayModeToNaturalDirectionMap_[logicDisplayMode] = systemNaturalDirection;
         MEDIA_INFO_LOG("CameraApplistManager::GetLogicCameraScreenStatus logicDisplayMode: %{public}d, "
             "naturalDirection: %{public}d", logicDisplayMode, systemNaturalDirection);
@@ -173,7 +187,9 @@ std::shared_ptr<ApplistConfigure> CameraApplistManager::GetApplistConfigureFromJ
     if (json.contains(USE_LOGIC_CAMERA_STRING) && json[USE_LOGIC_CAMERA_STRING].is_object()) {
         for (const auto &[key, value] : json[USE_LOGIC_CAMERA_STRING].items()) {
             CHECK_CONTINUE(key.empty() || !isIntegerRegex(key) || !value.is_number_integer());
-            useLogicCamera[std::stoi(key)] = value.get<int>();
+            int32_t parsedKey = 0;
+            CHECK_CONTINUE(!ParseInt32(key, parsedKey));
+            useLogicCamera[parsedKey] = value.get<int>();
         }
     }
     config->useLogicCamera = useLogicCamera;
@@ -182,7 +198,9 @@ std::shared_ptr<ApplistConfigure> CameraApplistManager::GetApplistConfigureFromJ
     if (json.contains(CUSTOM_LOGIC_DIRECTION_STRING) && json[CUSTOM_LOGIC_DIRECTION_STRING].is_object()) {
         for (const auto &[key, value] : json[CUSTOM_LOGIC_DIRECTION_STRING].items()) {
             CHECK_CONTINUE(key.empty() || !isIntegerRegex(key) || !value.is_number_integer());
-            customLogicDirection[std::stoi(key)] = value.get<int>();
+            int32_t parsedKey = 0;
+            CHECK_CONTINUE(!ParseInt32(key, parsedKey));
+            customLogicDirection[parsedKey] = value.get<int>();
         }
     }
     config->customLogicDirection = customLogicDirection;
