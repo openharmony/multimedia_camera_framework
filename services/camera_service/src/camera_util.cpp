@@ -572,7 +572,8 @@ bool isIntegerRegex(const std::string& input)
 bool IsUint8Regex(const std::string& input)
 {
     CHECK_RETURN_RET(!isIntegerRegex(input), false);
-    int number = std::stoi(input);
+    int number = 0;
+    CHECK_RETURN_RET(!SafeStoi(input, number), false);
     return (number >= MIN_UINT8) && (number <= MAX_UINT8);
 }
 
